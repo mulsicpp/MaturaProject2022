@@ -1,12 +1,20 @@
 incpath .
 incpath mete/src
-#libpath mete/lib/$(_platform)/$(_arch)
-#linklib mete
+incpath mete/external/glad/include
+incpath mete/external/glfw/include
+libpath mete/external/glfw/lib/$(_platform)/$(_arch)
+linklib glfw3
+[$(_platform) = win32 ? (linklib opengl32)]
+[$(_platform) = win32 ? (linklib kernel32)]
+[$(_platform) = win32 ? (linklib user32)]
+[$(_platform) = win32 ? (linklib gdi32)]
+[$(_platform) = win32 ? (linklib shell32)]
 
 
 link game/out/$(_platform)/$(_arch)/exe(game) game/bin/$(_platform)/$(_arch)/** mete/lib/$(_platform)/$(_arch)/lib(mete) {
-  lib mete/lib/$(_platform)/$(_arch)/lib(mete) mete/bin/$(_platform)/$(_arch)/** {
+  lib mete/lib/$(_platform)/$(_arch)/lib(mete) mete/bin/$(_platform)/$(_arch)/** mete/external/glad/bin/$(_platform)/$(_arch)/** {
     comp_fr mete/bin/$(_platform)/$(_arch) mete/src
+    comp_fr mete/external/glad/bin/$(_platform)/$(_arch) mete/external/glad/src
   }
   comp_fr game/bin/$(_platform)/$(_arch) game/src
 }

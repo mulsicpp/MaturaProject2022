@@ -6,7 +6,8 @@ void mete::Game::on_Startup(void) {
 }
 
 void mete::Game::in_Loop(void) {
-  
+  printf("hello from loop! %p %i %p %i\n", this, this->should_close, game, game->should_close);
+  game->close();
 }
 
 void mete::Game::on_Shutdown(void) {
