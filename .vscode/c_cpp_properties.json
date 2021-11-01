@@ -4,9 +4,9 @@
             "name": "Win32",
             "includePath": [
                 ".",
-                "mete/src",
-                "mete/external/glad/include",
-                "mete/external/glfw/include"
+                "gear/src",
+                "gear/external/glad/include",
+                "gear/external/glfw/include"
             ],
             "defines": [
                 "_DEBUG",
