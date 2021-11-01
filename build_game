@@ -1,7 +1,10 @@
 incpath .
 incpath mete/src
+#libpath mete/lib/$(_platform)/$(_arch)
+#linklib mete
 
-link game/out/$(_platform)/$(_arch)/exe(game) mete/lib/$(_platform)/$(_arch)/lib(mete) game/bin/$(_platform)/$(_arch)/** {
+
+link game/out/$(_platform)/$(_arch)/exe(game) game/bin/$(_platform)/$(_arch)/** mete/lib/$(_platform)/$(_arch)/lib(mete) {
   lib mete/lib/$(_platform)/$(_arch)/lib(mete) mete/bin/$(_platform)/$(_arch)/** {
     comp_fr mete/bin/$(_platform)/$(_arch) mete/src
   }
