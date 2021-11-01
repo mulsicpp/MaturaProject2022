@@ -6,9 +6,11 @@ _METE_START
 
 class Game {
 private:
+  static Game* instance;
+
   Game(void);
 public:
-  static Game get_Instance(void);
+  static Game* get_Instance(void);
 
   void on_Startup(void);
   void on_Shutdown(void);

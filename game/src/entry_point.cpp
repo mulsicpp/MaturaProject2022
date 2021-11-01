@@ -1,7 +1,7 @@
-#include "Game.h"
+#include "core/Game.h"
 
 int main(void) {
-  mete::Game game = mete::Game::get_Instance();
+  mete::Game game = *mete::Game::get_Instance();
 
   game.on_Startup();
 
@@ -10,4 +10,6 @@ int main(void) {
   }
 
   game.on_Shutdown();
+
+  return 0;
 }
