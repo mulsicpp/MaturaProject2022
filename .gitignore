@@ -1,2 +1,6 @@
 # Intermediate files
 *.o
+game/out/win32/x64/game.exe
+gear/lib/win32/x64/gear.lib
+game/out/win32/x86/game.exe
+gear/lib/win32/x86/gear.lib
