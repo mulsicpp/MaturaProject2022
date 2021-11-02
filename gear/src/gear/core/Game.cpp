@@ -1,9 +1,12 @@
 #include "Game.h"
 #include <stdlib.h>
+#include <stdio.h>
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
-void gearInit(void);
+void gear_Init(void);
 
-void gearTerminate(void);
+void gear_Terminate(void);
 
 gear::Game* gear::Game::game;
 
@@ -16,7 +19,7 @@ gear::Game *gear::Game::get_Instance(void) {
 }
 
 void gear::Game::run(void) {
-  gearInit();
+  gear_Init();
   on_Startup();
   while(1){
     per_Frame();
@@ -25,15 +28,18 @@ void gear::Game::run(void) {
 
 void gear::Game::close(int exit_code) {
   on_Shutdown();
-  gearTerminate();
+  gear_Terminate();
   delete game;
   exit(exit_code);
 }
 
-void gearInit(void) {
-
+void gear_Init(void) {
+  if(glfwInit() != GLFW_TRUE){
+    printf("GLFW initialisation failed!\n");
+    gear::Game::get_Instance()->close(1);
+  }
 }
 
-void gearTerminate(void) {
-
+void gear_Terminate(void) {
+  glfwTerminate();
 }

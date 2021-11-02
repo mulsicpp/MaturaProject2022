@@ -2,7 +2,7 @@
 
 #include "core.h"
 #include "Game.h"
-#include <glad/glad.h>
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 _GEAR_START
@@ -18,6 +18,8 @@ public:
   static Window *create_Fullscreen_Window(const char *name);
 
   void destroy(void);
+
+  bool should_Close(void);
 
   void set_Fullscreen();
   void set_Windowed(int width, int height);

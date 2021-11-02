@@ -1,12 +1,15 @@
 #pragma once
 
-#include <gear/core/core.h>
+#include "core.h"
+#include "Window.h"
+
 
 _GEAR_START
 
 class Game {
 private:
   static Game* game;
+  Window* main_Window;
 
   Game(void);
 public:
