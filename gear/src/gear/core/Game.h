@@ -1,25 +1,23 @@
 #pragma once
 
-#include <core/core.h>
+#include <gear/core/core.h>
 
-_METE_START
+_GEAR_START
 
 class Game {
 private:
   static Game* game;
-  bool should_close;
 
   Game(void);
 public:
   static Game* get_Instance(void);
-  void destroy(void);
+  void run(void);
 
   void on_Startup(void);
   void on_Shutdown(void);
-  void in_Loop(void);
-
-  bool should_Close() const;
-  void close();
+  void per_Frame(void);
+  
+  void close(int exit_code);
 };
 
-_METE_END
+_GEAR_END

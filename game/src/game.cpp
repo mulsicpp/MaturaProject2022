@@ -5,9 +5,9 @@ void gear::Game::on_Startup(void) {
   printf("init game\n");
 }
 
-void gear::Game::in_Loop(void) {
-  printf("hello from loop! %p %i %p %i\n", this, this->should_close, game, game->should_close);
-  game->close();
+void gear::Game::per_Frame(void) {
+  printf("hello\n");
+  game->close(0);
 }
 
 void gear::Game::on_Shutdown(void) {
