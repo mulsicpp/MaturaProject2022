@@ -7,12 +7,11 @@
 
 #if defined(_WIN32)
 #define GEAR_PLATFORM_WINDOWS
-#else
-#error Gear only supports windows at the moment
-#endif
-
 #if defined(GEAR_INCLUDE_WINDOWS_H)
 #include <windows.h>
+#endif
+#else
+#error Gear only supports windows at the moment
 #endif
 
 #define GEAR_TYPE_PUN(var, type) (*(type *)(&var))
@@ -24,7 +23,8 @@
 _GEAR_START
 
 template <class... T>
-void error(const char *str, T... args){
+void error(const char *str, T... args)
+{
   printf(str, args...);
   exit(1);
 }
