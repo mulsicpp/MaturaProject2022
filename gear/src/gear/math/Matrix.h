@@ -66,9 +66,9 @@ public:
   */
   T& operator()(int row, int column){
     if (row >= N1 || row < 0) {
-      GEAR_ERROR("Matrix row out of bounds: %i", row);
+      error("Matrix row out of bounds: %i", row);
     } else if (column >= N2 || column < 0) {
-      GEAR_ERROR("Matrix column out of bounds: %i", column);
+      error("Matrix column out of bounds: %i", column);
     } else {
       return data[row][column];
     }
@@ -81,9 +81,9 @@ public:
   */
   const T& operator()(int row, int column) const {
     if (row >= N1 || row < 0) {
-      GEAR_ERROR("Matrix row out of bounds: %i", row);
+      error("Matrix row out of bounds: %i", row);
     } else if (column >= N2 || column < 0) {
-      GEAR_ERROR("Matrix column out of bounds: %i", column);
+      error("Matrix column out of bounds: %i", column);
     } else {
       return data[row][column];
     }

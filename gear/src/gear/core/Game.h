@@ -10,6 +10,8 @@ class Game
 private:
   static Game *game;
   gear::Window *main_Window;
+  const char path_To_App[512]{0};
+  const char *relative_Path_To_Assets = "..\\..";
 
   Game(void);
 

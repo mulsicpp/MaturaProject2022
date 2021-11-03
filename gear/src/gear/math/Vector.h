@@ -61,7 +61,7 @@ public:
   */
   T &operator[](int index) {
     if (index >= N || index < 0) {
-      GEAR_ERROR("Vector index out of bounds: %i", index);
+      error("Vector index out of bounds: %i", index);
     } else {
       return data[index];
     }
@@ -73,7 +73,7 @@ public:
   */
   const T &operator[](int index) const {
     if (index >= N || index < 0) {
-      GEAR_ERROR("Vector index out of bounds: %i", index);
+      error("Vector index out of bounds: %i", index);
     } else {
       return data[index];
     }
@@ -234,7 +234,7 @@ public:
   template <int N2>
   Vector<T, N2> &use_As() const {
     if (N2 > N) {
-      GEAR_ERROR("Vector element count to big: %i", N2);
+      error("Vector element count to big: %i", N2);
     } else
       return *(Vector<T, N2> *)this;
   }
