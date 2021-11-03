@@ -86,6 +86,14 @@ public:
   */
   void set_Position(int x, int y);
 
+
+  /*
+  Enables or disables V-Sync for the window.
+
+  @param v_sync boolean to turn V-Sync on or off
+  */
+  void set_V_Sync(bool v_sync);
+
   /*
   Swaps the front and back buffers of the specified window.
   */

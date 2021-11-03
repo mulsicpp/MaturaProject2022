@@ -2,8 +2,12 @@ incpath .
 incpath gear/src
 incpath gear/external/glad/include
 incpath gear/external/glfw/include
+
+define GEAR_DEBUG
+
 libpath gear/external/glfw/lib/$(_platform)/$(_arch)
 linklib glfw3
+
 [$(_platform) = win32 ? (linklib opengl32)]
 [$(_platform) = win32 ? (linklib kernel32)]
 [$(_platform) = win32 ? (linklib user32)]

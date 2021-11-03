@@ -8,7 +8,7 @@ void gear_Init(void);
 
 void gear_Terminate(void);
 
-gear::Game* gear::Game::game;
+gear::Game* gear::Game::game = nullptr;
 
 gear::Game::Game(void) {}
 
