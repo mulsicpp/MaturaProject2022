@@ -246,7 +246,7 @@ public:
   @param vector the vector to be printed
   */
   friend std::ostream &operator<<(std::ostream &ostream,
-                                  engine::Vector<T, N> vector) {
+                                  gear::Vector<T, N> vector) {
     ostream << "[";
     for (int i = 0; i < N; i++) {
       ostream << vector.data[i];
