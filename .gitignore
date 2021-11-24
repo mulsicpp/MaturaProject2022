@@ -1,12 +1,6 @@
 # Intermediate files
 *.o
 *.i
-gear/lib/win32/x64/gear.lib
-gear/lib/win32/x86/gear.lib
-gear/lib/linux/x64/libgear.a
-gear/lib/linux/x86/libgear.a
+gear/lib
 
-game/out/win32/x64/game.exe
-game/out/win32/x86/game.exe
-game/out/linux/x64/game
-game/out/linux/x86/game
+game/out
