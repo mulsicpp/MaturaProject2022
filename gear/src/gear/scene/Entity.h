@@ -15,13 +15,12 @@ public:
   template<class T>
   bool has_Component() {
     T* array = Component_Manager<T>::get_Instance().getComponents();
+    return true;
   }
 
   template<class T, class ...Ts>
   static void iterate(void(*function)(T& arg, Ts& ...args)){
     Component_Manager<T> manager = Component_Manager<T>::get_Instance();
-
-    iterate<...Ts>();
   }
 
   template<class T>

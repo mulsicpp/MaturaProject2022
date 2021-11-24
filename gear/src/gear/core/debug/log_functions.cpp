@@ -25,5 +25,6 @@ void gear::log_Open_File(const char *filename)
 
 void gear::log_Close_File()
 {
-  fclose(_p_File);
+  if(_p_File != nullptr) 
+    fclose(_p_File);
 }

@@ -1,0 +1,28 @@
+output app out/$_platform/$_arch/app(game)
+
+std c++17
+
+incpath ../gear/src
+incpath ../gear/external/glad/include
+incpath ../gear/external/glfw/include
+
+[$conf != release ? (define GEAR_DEBUG)]
+
+libpath ../gear/external/glfw/lib/$_platform/$_arch
+linklib glfw3
+
+[$_platform = win32 ? (linklib opengl32)]
+[$_platform = win32 ? (linklib kernel32)]
+[$_platform = win32 ? (linklib user32)]
+[$_platform = win32 ? (linklib gdi32)]
+[$_platform = win32 ? (linklib shell32)]
+
+
+[$_platform = linux ? (linklib X11)]
+[$_platform = linux ? (linklib dl)]
+[$_platform = linux ? (linklib pthread)]
+
+dependency ../gear
+
+src src
+lib ../gear/lib/$_platform/$_arch/lib(gear)

@@ -1,0 +1,10 @@
+output lib lib/$_platform/$_arch/lib(gear)
+
+incpath src
+incpath external/glad/include
+incpath external/glfw/include
+
+std c++17
+
+src src
+src external/glad/src

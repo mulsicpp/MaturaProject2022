@@ -10,12 +10,18 @@
 #if defined(GEAR_INCLUDE_WINDOWS_H)
 #include <windows.h>
 #endif
+#elif defined(__linux__)
+#define GEAR_PLATFORM_LINUX
+#error Gear doesn't support Linux yet
 #else
-#error Gear only supports windows at the moment
+#error Gear is not supported on your platform
 #endif
 
 #define GEAR_TYPE_PUN(var, type) (*(type *)(&var))
 #define GEAR_TYPE_PUN_POINTER(var, type) ((type *)(&var))
+
+#define GEAR_BIT(x) (1 << x)
+#define GEAR_BIT_TYPE(type, x) ((type)1 << x)
 
 #include <stdio.h>
 #include <stdlib.h>

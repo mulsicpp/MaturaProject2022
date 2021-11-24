@@ -1,7 +1,10 @@
 #define GEAR_INCLUDE_WINDOWS_H
 #include "Game.h"
+#include "debug/log.h"
+#include <gear/scene/Component_Manager.h>
 #include <filesystem>
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 
 
@@ -13,7 +16,7 @@ void gear_Init(void);
 
 void gear_Terminate(void);
 
-gear::Game* gear::Game::game = nullptr;
+gear::Game *gear::Game::game = nullptr;
 
 gear::Game::Game(void) {
 #if defined(GEAR_PLATFORM_WINDOWS)
@@ -21,6 +24,10 @@ gear::Game::Game(void) {
   GetModuleFileNameA(NULL, temp_Path, MAX_PATH);
   std::filesystem::path path = std::filesystem::weakly_canonical(std::filesystem::path(temp_Path).parent_path());
   strcpy((char*)path_To_App, path.string().c_str());
+
+#elif defined(GEAR_PLATFORM_LINUX)
+  char path[100] = "some/path";
+  strcpy((char*)path_To_App, path);
 #endif
 }
 
@@ -54,4 +61,7 @@ void gear_Init(void) {
 
 void gear_Terminate(void) {
   glfwTerminate();
+  GEAR_DEBUG_LOG("%lli", GEAR_COMP_FLAG(double));
+  GEAR_DEBUG_LOG("%lli", GEAR_COMP_FLAG(int));
+  GEAR_DEBUG_LOG("%lli", GEAR_COMP_FLAG(float));
 }
