@@ -92,7 +92,7 @@ public:
 
   @param v_sync boolean to turn V-Sync on or off
   */
-  void set_V_Sync(bool v_sync);
+  static void set_V_Sync(bool v_sync);
 
   /*
   Swaps the front and back buffers of the specified window.

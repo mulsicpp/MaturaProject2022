@@ -1,4 +1,4 @@
-#include "Component_Manager.h"
+#include "Component.h"
 
 static uint64_t type_ID = 0;
 

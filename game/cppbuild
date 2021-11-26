@@ -1,12 +1,20 @@
 output app out/$_platform/$_arch/app(game)
 
+const var conf ?= debug
+
+echo conf = $conf
+
+[$conf = debug ? (define GEAR_DEBUG)]
+
+dependency ../gear --var:conf=$conf
+[$conf = debug ? (dependency ../gear/external/imgui)]
+
 std c++17
 
 incpath ../gear/src
 incpath ../gear/external/glad/include
 incpath ../gear/external/glfw/include
 
-[$conf != release ? (define GEAR_DEBUG)]
 
 libpath ../gear/external/glfw/lib/$_platform/$_arch
 linklib glfw3
@@ -22,7 +30,6 @@ linklib glfw3
 [$_platform = linux ? (linklib dl)]
 [$_platform = linux ? (linklib pthread)]
 
-dependency ../gear
 
 src src
 lib ../gear/lib/$_platform/$_arch/lib(gear)

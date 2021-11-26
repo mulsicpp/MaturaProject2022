@@ -2,5 +2,5 @@
 *.o
 *.i
 gear/lib
-
+gear/external/imgui/lib
 game/out

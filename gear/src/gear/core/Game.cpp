@@ -1,7 +1,7 @@
 #define GEAR_INCLUDE_WINDOWS_H
 #include "Game.h"
 #include "debug/log.h"
-#include <gear/scene/Component_Manager.h>
+#include <gear/scene/ComponentManager.h>
 #include <filesystem>
 #include <stdlib.h>
 #include <string.h>
@@ -54,14 +54,11 @@ void gear::Game::close(int exit_code) {
 
 void gear_Init(void) {
   if(glfwInit() != GLFW_TRUE){
-    printf("GLFW initialisation failed!\n");
+    GEAR_DEBUG_LOG("GLFW initialisation failed!\n");
     gear::Game::get_Instance()->close(1);
   }
 }
 
 void gear_Terminate(void) {
   glfwTerminate();
-  GEAR_DEBUG_LOG("%lli", GEAR_COMP_FLAG(double));
-  GEAR_DEBUG_LOG("%lli", GEAR_COMP_FLAG(int));
-  GEAR_DEBUG_LOG("%lli", GEAR_COMP_FLAG(float));
 }
