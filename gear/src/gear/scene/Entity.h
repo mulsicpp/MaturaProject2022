@@ -115,19 +115,21 @@ public:
   bool
   has_Component()
   {
-    return ComponentManager<T>::get_Instance(scene_ID).find(entity_ID) ? true : false;
+    return Component<T>::get_Flag() & comp_Flags ? true : false;
   }
 
   template <class T>
   void add_Component(T component)
   {
     ComponentManager<T>::get_Instance(scene_ID).add_Component(Component<T>{entity_ID, component});
+    comp_Flags |= Component<T>::get_Flag();
   }
 
   template <class T>
   void delete_Component(void)
   {
     ComponentManager<T>::get_Instance(scene_ID).delete_Component(entity_ID);
+    comp_Flags &= ~Component<T>::get_Flag();
   }
 
   template <class T>
