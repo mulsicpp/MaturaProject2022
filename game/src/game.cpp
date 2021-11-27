@@ -19,9 +19,10 @@ void gear::Game::on_Startup(void)
   GEAR_DEBUG_LOG("%lli", gear::Component<double>::get_Flag());
   GEAR_DEBUG_LOG("%lli", gear::component_Flag<int, double, float>());
 
-  //Scene *scene = Scene::create_Scene("main");
-  //Entity *entity = scene->create_Entity();
-  //entity->add_Component<double>(0);
+  Scene *scene = Scene::create_Scene();
+  Entity *entity = scene->create_Entity();
+  entity->add_Component<double>(0);
+  entity->has_Component<double>();
 }
 
 void gear::Game::per_Frame(void)

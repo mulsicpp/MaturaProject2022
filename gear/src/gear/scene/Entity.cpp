@@ -1,13 +1,3 @@
 #include "Entity.h"
 
-void gear::Entity::add_Manager_Destructor(std::function<void(void)> function)
-{
-  component_Manager_Destructors.push_back(function);
-}
-
-void gear::Entity::destruct_Managers(void) {
-  for(std::function<void(void)> function : component_Manager_Destructors)
-    function();
-  
-  component_Manager_Destructors = std::vector<std::function<void(void)>>(0);
-}
+gear::Entity::Entity(const unsigned int entity_ID, const uint8_t scene_ID) : entity_ID(entity_ID), comp_Flags(0), scene_ID(scene_ID) {}

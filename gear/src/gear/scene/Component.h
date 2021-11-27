@@ -22,7 +22,7 @@ class Component {
 private:
   static const uint64_t flag;
 public:
-  int entity_ID;
+  unsigned int entity_ID;
   T data;
 
   static uint64_t get_Flag(void) {

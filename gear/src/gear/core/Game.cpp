@@ -1,7 +1,6 @@
 #define GEAR_INCLUDE_WINDOWS_H
 #include "Game.h"
 #include "debug/log.h"
-#include <gear/scene/ComponentManager.h>
 #include <filesystem>
 #include <stdlib.h>
 #include <string.h>

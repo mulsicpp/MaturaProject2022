@@ -6,4 +6,4 @@
 
 #include "math/math.h"
 
-#include "scene/Scene.h"
+#include "scene/Entity.h"
