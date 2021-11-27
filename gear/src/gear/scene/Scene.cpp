@@ -13,6 +13,7 @@ gear::Scene *gear::Scene::create_Scene(void) {
 }
 
 void gear::Scene::delete_Scene(uint8_t scene_ID) {
+  scenes[scene_ID].destruct_Managers();
   scenes.erase(scenes.begin() + scene_ID);
   Scene* scene = scenes.data();
   for(uint8_t i = scene_ID; i < scenes.size(); i++) {
@@ -37,6 +38,10 @@ const uint8_t &gear::Scene::get_ID(void) {
 gear::Entity *gear::Scene::create_Entity(void) {
   entities.push_back({++next_ID, scene_ID});
   return &entities[entities.size() - 1];
+}
+
+gear::Entity *gear::Scene::get_Entity_At(int index) {
+  return &entities[index];
 }
 
 void gear::Scene::add_Manager_Destructor(std::function<void(void)> function)

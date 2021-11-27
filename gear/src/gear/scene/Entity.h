@@ -34,7 +34,7 @@ private:
     {
 
       Scene::get_Scene(scene_ID)->add_Manager_Destructor([&](void) {
-        //instances.erase(this);
+        instances.erase(instances.begin() + (this - instances.data()));
       });
     }
 
@@ -86,10 +86,22 @@ private:
 
     void add_Component(Component<T> component)
     {
+      Component<T> *data = components.data();
+      int count = components.size();
+      int i;
+      for(i = 0; i < count; i++)
+      {
+        if(data[i].entity_ID > component.entity_ID)
+          break;
+      }
+      components.insert(components.begin() + i, component);
     }
 
     void delete_Component(unsigned int entity_ID)
     {
+      Component<T> comp = find(entity_ID);
+      if(comp != nullptr)
+        components.erase(components.begin() + (comp - components.data()));
     }
   };
 
