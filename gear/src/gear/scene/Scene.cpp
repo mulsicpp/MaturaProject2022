@@ -1,57 +1,127 @@
 #include "Scene.h"
 #include "Entity.h"
+#include <gear/core/debug/log.h>
+#include <gear/data/WeakVector.h>
 
-std::vector<gear::Scene> gear::Scene::scenes;
+#define GEAR_PHYSICAL_COUNT(count, block_Size) (((count / block_Size) + 1) * block_Size)
 
-gear::Scene::Scene(void) {}
+gear::Scene gear::Scene::scenes[GEAR_MAX_SCENES];
+unsigned int gear::Scene::block_Size = 8;
 
-gear::Scene *gear::Scene::create_Scene(void) {
-  scenes.push_back(Scene());
-  Scene *scene = &scenes[scenes.size() - 1];
-  scene->scene_ID = scenes.size() - 1;
-  return scene;
+gear::Scene::Scene(void)
+{
+  destroy();
 }
 
-void gear::Scene::delete_Scene(uint8_t scene_ID) {
-  scenes[scene_ID].destruct_Managers();
-  scenes.erase(scenes.begin() + scene_ID);
-  Scene* scene = scenes.data();
-  for(uint8_t i = scene_ID; i < scenes.size(); i++) {
-    (scene + i)->set_ID(i);
+gear::Scene *const gear::Scene::get(uint8_t scene_ID)
+{
+  return scenes + scene_ID;
+}
+
+void gear::Scene::create(void)
+{
+  entities = new Entity[block_Size];
+  entity_Count = 0;
+  physical_Entity_Count = block_Size;
+  next_ID = 0;
+  manager_Callbacks = new ManagerCallbacks[GEAR_MAX_COMPONENTS]{nullptr, nullptr};
+  insert_Index = 0;
+}
+
+void gear::Scene::destroy(void) {
+  if(entities != nullptr){
+    delete[] entities;
+    entities = nullptr;
+  }
+  if(manager_Callbacks != nullptr){
+    delete[] manager_Callbacks;
+    manager_Callbacks = nullptr;
   }
 }
 
-gear::Scene *gear::Scene::get_Scene(uint8_t scene_ID) {
-  return scenes.data() + scene_ID;
+uint8_t gear::Scene::get_ID(void) const
+{
+  return this - scenes;
 }
 
-void gear::Scene::set_ID(uint8_t scene_ID) {
-  this->scene_ID = scene_ID;
-  for(Entity &entity : entities)
-    entity.scene_ID = scene_ID;
+struct X{
+  int x;
+  X(int i) : x(i) {}
+};
+
+gear::Entity *gear::Scene::create_Entity(void)
+{
+  if(entity_Count == physical_Entity_Count)
+  {
+    physical_Entity_Count += block_Size;
+    Entity* temp = new Entity[physical_Entity_Count];
+    gear::memcpy(temp, entities, entity_Count);
+    delete[] entities;
+    entities = temp;
+  }
+  return &(entities[entity_Count++] = {next_ID++, (uint8_t)(this - scenes)});
 }
 
-const uint8_t &gear::Scene::get_ID(void) {
-  return scene_ID;
+gear::Entity *gear::Scene::find(unsigned int entity_ID)
+{
+  int count = entity_Count;
+  if (count == 0)
+    return nullptr;
+  Entity *data = entities;
+  int index = 0;
+  while (count > 1)
+  {
+    index = count / 2;
+    if (data[index].entity_ID == entity_ID)
+    {
+      return data + index;
+    }
+    else if (data[index].entity_ID > entity_ID)
+    {
+      count = index;
+    }
+    else
+    {
+      count -= index + 1;
+      data = data + index + 1;
+    }
+  }
+  if (data->entity_ID == entity_ID)
+    return data;
+  else
+    return nullptr;
 }
 
-gear::Entity *gear::Scene::create_Entity(void) {
-  entities.push_back({++next_ID, scene_ID});
-  return &entities[entities.size() - 1];
+void gear::Scene::remove_Entity(Entity *entity)
+{
+  remove_Entity_At(entity - entities);
 }
 
-gear::Entity *gear::Scene::get_Entity_At(int index) {
+void gear::Scene::remove_Entity_At(int index)
+{
+  remove_All_Components_On(entities[index].entity_ID);
+}
+
+void gear::Scene::remove_Entity_With_ID(unsigned int entity_ID)
+{
+  remove_Entity_At(find(entity_ID) - entities);
+}
+
+gear::Entity *gear::Scene::get_Entity_At(int index)
+{
   return &entities[index];
 }
 
-void gear::Scene::add_Manager_Destructor(std::function<void(void)> function)
+gear::Entity *gear::Scene::get_Entity_With_ID(unsigned int entity_ID)
 {
-  manager_Destructors.push_back(function);
+  return find(entity_ID);
 }
 
-void gear::Scene::destruct_Managers(void) {
-  for(std::function<void(void)> function : manager_Destructors)
-    function();
-  
-  manager_Destructors = std::vector<std::function<void(void)>>(0);
+void gear::Scene::remove_All_Components_On(unsigned int entity_ID) {
+  for(int i = 0; i < insert_Index; i++)
+    manager_Callbacks[i].remove_Entity((uint8_t)(this - scenes), entity_ID);
+}
+
+void gear::Scene::add_Manager_Callbacks(gear::ManagerCallbacks callbacks) {
+  manager_Callbacks[insert_Index++] = callbacks;
 }

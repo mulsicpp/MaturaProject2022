@@ -23,6 +23,18 @@
 #define GEAR_BIT(x) (1 << x)
 #define GEAR_BIT_TYPE(type, x) ((type)1 << x)
 
+#if !defined(GEAR_MAX_SCENES)
+#define GEAR_MAX_SCENES 8
+#else
+#if GEAR_MAX_SCENES > 255
+#error "Maximum amount of scenes cannot be more than 255"
+#endif
+#endif
+
+#if !defined(GEAR_MAX_COMPONENTS)
+#define GEAR_MAX_COMPONENTS 64
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 

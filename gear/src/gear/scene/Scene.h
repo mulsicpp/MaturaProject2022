@@ -1,46 +1,57 @@
 #pragma once
 
 #include <gear/core/core.h>
-#include <vector>
 #include <functional>
 
 _GEAR_START
 
 class Entity;
 
+struct ManagerCallbacks
+{
+  void (*destruct_Manager)(uint8_t);
+  void (*remove_Entity)(uint8_t, unsigned int);
+};
+
 class Scene
 {
 private:
-  uint8_t scene_ID;
+  Entity *entities;
+  unsigned int entity_Count, physical_Entity_Count;
+  unsigned int next_ID;
 
-  std::vector<Entity> entities;
-  unsigned int next_ID = 0;
+  static Scene scenes[GEAR_MAX_SCENES];
+  static unsigned int block_Size;
 
-  std::vector<std::function<void(void)>> manager_Destructors;
-
-  static std::vector<Scene> scenes;
-
+  ManagerCallbacks *manager_Callbacks;
+  uint8_t insert_Index;
   Scene(void);
 
-public:
-  static Scene *create_Scene(void);
-  static void delete_Scene(uint8_t scene_ID);
-  static Scene *get_Scene(uint8_t scene_ID);
+  Entity *find(unsigned int entity_ID);
 
-private:
-  void set_ID(uint8_t scene_ID);
 public:
-  const uint8_t &get_ID(void);
+  Scene(const Scene &scene) = delete;
+
+  static Scene *const get(uint8_t scene_ID);
+
+  void create(void);
+  void destroy(void);
+
+  uint8_t get_ID(void) const;
 
   Entity *create_Entity(void);
   //Entity *create_Entity(void(*constructor)(Entity *entity));
 
+  void remove_Entity(Entity *entity);
+  void remove_Entity_At(int index);
+  void remove_Entity_With_ID(unsigned int entity_ID);
+
   Entity *get_Entity_At(int index);
-  Entity *get_Entity_With_ID(int id);
+  Entity *get_Entity_With_ID(unsigned int entity_ID);
 
-  void add_Manager_Destructor(std::function<void(void)> function);
+  void remove_All_Components_On(unsigned int entity_ID);
 
-  void destruct_Managers(void);
+  void add_Manager_Callbacks(ManagerCallbacks callbacks);
 };
 
 _GEAR_END

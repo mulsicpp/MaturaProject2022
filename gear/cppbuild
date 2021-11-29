@@ -1,5 +1,7 @@
 output lib lib/$_platform/$_arch/lib(gear)
 
+[$conf = debug ? (define GEAR_DEBUG)]
+
 incpath src
 incpath external/glad/include
 incpath external/glfw/include

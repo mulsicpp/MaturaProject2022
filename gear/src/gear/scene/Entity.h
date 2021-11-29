@@ -5,10 +5,9 @@
 #include <functional>
 #include "Component.h"
 #include "Scene.h"
+#include <gear/data/WeakVector.h>
 
 _GEAR_START
-
-class Scene;
 
 /*
 This class represents an entity your game. 
@@ -17,47 +16,60 @@ It is part of a scene and can have components attached to it.
 class Entity
 {
 private:
-  const unsigned int entity_ID;
+  unsigned int entity_ID;
   uint64_t comp_Flags;
   uint8_t scene_ID;
-  Entity(const unsigned int entity_ID, const uint8_t scene_ID);
+
+  Entity(void) = default;
+  Entity(unsigned int entity_ID, const uint8_t scene_ID);
+  Entity(const Entity&) = default;
 
   template <class T>
   class ComponentManager
   {
   private:
-    std::vector<Component<T>> components;
-    static std::vector<ComponentManager<T>> instances;
-    static void destroy_Instance(void);
+    WeakVector<Component<T>, 8> components;
+    static ComponentManager<T> instances[GEAR_MAX_SCENES];
 
-    ComponentManager<T>(uint8_t scene_ID)
+    void create(void)
     {
+      components.create();
+      Scene::get(this - instances)->add_Manager_Callbacks({destroy_Instance, remove_Entity});
+    }
 
-      Scene::get_Scene(scene_ID)->add_Manager_Destructor([&](void) {
-        instances.erase(instances.begin() + (this - instances.data()));
-      });
+    void destroy(void) {
+      components.destroy();
+    }
+
+    static void destroy_Instance(uint8_t scene_ID)
+    {
+      instances[scene_ID].destroy();
+    }
+
+    static void remove_Entity(uint8_t scene_ID, unsigned int entity_ID) {
+
     }
 
   public:
     static ComponentManager<T> &get_Instance(uint8_t scene_ID)
     {
-      if (scene_ID >= instances.size())
+      if (instances[scene_ID].components.data() == nullptr)
       {
-        instances.push_back(scene_ID);
+        instances[scene_ID].create();
       }
       return instances[scene_ID];
     }
 
     Component<T> *get_Components(size_t *count)
     {
-      *count = components.size();
+      *count = components.count();
       return components.data();
     }
 
     Component<T> *find(unsigned int entity_ID)
     {
-      int count = components.size();
-      if(count == 0)
+      int count = components.count();
+      if (count == 0)
         return nullptr;
       Component<T> *data = components.data();
       int index = 0;
@@ -87,21 +99,21 @@ private:
     void add_Component(Component<T> component)
     {
       Component<T> *data = components.data();
-      int count = components.size();
+      int count = components.count();
       int i;
-      for(i = 0; i < count; i++)
+      for (i = 0; i < count; i++)
       {
-        if(data[i].entity_ID > component.entity_ID)
+        if (data[i].entity_ID > component.entity_ID)
           break;
       }
-      components.insert(components.begin() + i, component);
+      //components.insert(components.begin() + i, component);
     }
 
-    void delete_Component(unsigned int entity_ID)
+    void remove_Component(unsigned int entity_ID)
     {
-      Component<T> comp = find(entity_ID);
-      if(comp != nullptr)
-        components.erase(components.begin() + (comp - components.data()));
+      Component<T> *comp = find(entity_ID);
+      if (comp != nullptr)
+        ;//TODO: implementation
     }
   };
 
@@ -111,37 +123,47 @@ public:
   @param T the type of the component
   @return true, if the component is present, else false
   */
-  template <class T>
-  bool
-  has_Component()
+  template <class... T>
+  bool has()
   {
-    return Component<T>::get_Flag() & comp_Flags ? true : false;
+    return component_Flag<T...>() & comp_Flags ? true : false;
   }
 
   template <class T>
-  void add_Component(T component)
+  void add(T component)
   {
     ComponentManager<T>::get_Instance(scene_ID).add_Component(Component<T>{entity_ID, component});
     comp_Flags |= Component<T>::get_Flag();
   }
 
   template <class T>
-  void delete_Component(void)
+  void remove(void)
   {
-    ComponentManager<T>::get_Instance(scene_ID).delete_Component(entity_ID);
+    ComponentManager<T>::get_Instance(scene_ID).remove_Component(entity_ID);
     comp_Flags &= ~Component<T>::get_Flag();
   }
 
   template <class T>
-  Component<T> *get_Component(void)
+  Component<T> *get(void)
   {
     return ComponentManager<T>::get_Instance(scene_ID).find(entity_ID);
   }
+
+  template<class T>
+  void set(T component) {
+    ComponentManager<T>::get_Instance(scene_ID).find(entity_ID)->data = component;
+  }
+
+  void remove_All(void);
+
+  unsigned int get_Entity_ID(void) const;
+  uint8_t get_Scene_ID(void) const;
+  uint64_t get_Component_Flags(void) const;
 
   friend class gear::Scene;
 };
 
 template <class T>
-std::vector<Entity::ComponentManager<T>> Entity::ComponentManager<T>::instances;
+Entity::ComponentManager<T> Entity::ComponentManager<T>::instances[GEAR_MAX_SCENES];
 
 _GEAR_END
