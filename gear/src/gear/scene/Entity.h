@@ -33,7 +33,6 @@ private:
 
     void create(void)
     {
-      GEAR_DEBUG_LOG("Created instance for scene %i for component %i (flag: %i)", this - instances, Component<T>::get_ID(), Component<T>::get_Flag());
       components.create();
       Scene::get(this - instances)->add_Manager_Callbacks({destroy_Instance, remove_Entity, print_Manager});
     }
@@ -44,7 +43,6 @@ private:
 
     static void destroy_Instance(uint8_t scene_ID)
     {
-      GEAR_DEBUG_LOG("Destroyed component manager for scene %i and component %i", scene_ID, Component<T>::get_ID());
       instances[scene_ID].destroy();
     }
 

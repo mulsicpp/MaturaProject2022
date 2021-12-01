@@ -1,6 +1,5 @@
 #include "Scene.h"
 #include "Entity.h"
-#include <gear/core/debug/log.h>
 #include <gear/data/WeakVector.h>
 
 #define GEAR_PHYSICAL_COUNT(count, block_Size) (((count / block_Size) + 1) * block_Size)
@@ -125,7 +124,6 @@ void gear::Scene::remove_All_Components_On(unsigned int entity_ID)
 
 void gear::Scene::add_Manager_Callbacks(gear::ManagerCallbacks callbacks)
 {
-  GEAR_DEBUG_LOG("Added ManagerCallback");
   manager_Callbacks[insert_Index++] = callbacks;
 }
 
