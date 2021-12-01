@@ -28,13 +28,14 @@ private:
   class ComponentManager
   {
   private:
-    WeakVector<Component<T>, 8> components;
+    WeakVector<Component<T>> components;
     static ComponentManager<T> instances[GEAR_MAX_SCENES];
 
     void create(void)
     {
+      GEAR_DEBUG_LOG("Created instance for scene %i for component %i (flag: %i)", this - instances, Component<T>::get_ID(), Component<T>::get_Flag());
       components.create();
-      Scene::get(this - instances)->add_Manager_Callbacks({destroy_Instance, remove_Entity});
+      Scene::get(this - instances)->add_Manager_Callbacks({destroy_Instance, remove_Entity, print_Manager});
     }
 
     void destroy(void) {
@@ -43,11 +44,14 @@ private:
 
     static void destroy_Instance(uint8_t scene_ID)
     {
+      GEAR_DEBUG_LOG("Destroyed component manager for scene %i and component %i", scene_ID, Component<T>::get_ID());
       instances[scene_ID].destroy();
     }
 
     static void remove_Entity(uint8_t scene_ID, unsigned int entity_ID) {
-
+      Component<T> *comp = instances[scene_ID].find(entity_ID);
+      if(comp != nullptr)
+        instances[scene_ID].components.remove(comp- instances[scene_ID].components.data());
     }
 
   public:
@@ -103,17 +107,35 @@ private:
       int i;
       for (i = 0; i < count; i++)
       {
-        if (data[i].entity_ID > component.entity_ID)
+        if (data[i].entity_ID >= component.entity_ID)
           break;
       }
-      //components.insert(components.begin() + i, component);
+      if(i == count)
+        components.push_Back(component);
+      if(data[i].entity_ID != component.entity_ID)
+        components.insert(component, i);
+      else
+        components[i].data = component.data;
     }
 
     void remove_Component(unsigned int entity_ID)
     {
       Component<T> *comp = find(entity_ID);
       if (comp != nullptr)
-        ;//TODO: implementation
+        components.remove(comp - components.data());
+    }
+
+    void print(void) {
+      std::cout << "component manager " << Component<T>::get_ID() << ":\n";
+      Component<T> *data = components.data();
+      int count = components.count();
+      for(int i = 0; i < count; i++)
+        std::cout << data[i] << std::endl;
+    }
+
+  private:
+    static void print_Manager(uint8_t scene_ID) {
+      instances[scene_ID].print();
     }
   };
 
@@ -132,7 +154,7 @@ public:
   template <class T>
   void add(T component)
   {
-    ComponentManager<T>::get_Instance(scene_ID).add_Component(Component<T>{entity_ID, component});
+    ComponentManager<T>::get_Instance(scene_ID).add_Component(Component<T>{scene_ID, entity_ID, component});
     comp_Flags |= Component<T>::get_Flag();
   }
 
@@ -151,7 +173,8 @@ public:
 
   template<class T>
   void set(T component) {
-    ComponentManager<T>::get_Instance(scene_ID).find(entity_ID)->data = component;
+    if(Component<T>::get_Flag() & comp_Flags)
+      ComponentManager<T>::get_Instance(scene_ID).find(entity_ID)->data = component;
   }
 
   void remove_All(void);
@@ -161,6 +184,7 @@ public:
   uint64_t get_Component_Flags(void) const;
 
   friend class gear::Scene;
+  friend class gear::WeakVector<Entity>;
 };
 
 template <class T>

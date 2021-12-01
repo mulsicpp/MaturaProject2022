@@ -2,6 +2,7 @@
 
 #include <gear/core/core.h>
 #include <functional>
+#include <gear/data/WeakVector.h>
 
 _GEAR_START
 
@@ -11,13 +12,13 @@ struct ManagerCallbacks
 {
   void (*destruct_Manager)(uint8_t);
   void (*remove_Entity)(uint8_t, unsigned int);
+  void (*print_Manager)(uint8_t);
 };
 
 class Scene
 {
 private:
-  Entity *entities;
-  unsigned int entity_Count, physical_Entity_Count;
+  WeakVector<Entity> entities;
   unsigned int next_ID;
 
   static Scene scenes[GEAR_MAX_SCENES];
@@ -40,7 +41,7 @@ public:
   uint8_t get_ID(void) const;
 
   Entity *create_Entity(void);
-  //Entity *create_Entity(void(*constructor)(Entity *entity));
+  Entity *create_Entity(void(*constructor)(Entity *entity));
 
   void remove_Entity(Entity *entity);
   void remove_Entity_At(int index);
@@ -52,6 +53,8 @@ public:
   void remove_All_Components_On(unsigned int entity_ID);
 
   void add_Manager_Callbacks(ManagerCallbacks callbacks);
+
+  void print(void);
 };
 
 _GEAR_END

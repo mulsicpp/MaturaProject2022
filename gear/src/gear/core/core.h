@@ -20,8 +20,8 @@
 #define GEAR_TYPE_PUN(var, type) (*(type *)(&var))
 #define GEAR_TYPE_PUN_POINTER(var, type) ((type *)(&var))
 
-#define GEAR_BIT(x) (1 << x)
-#define GEAR_BIT_TYPE(type, x) ((type)1 << x)
+#define GEAR_BIT(x) (1 << (x))
+#define GEAR_BIT_TYPE(type, x) ((type)1 << (x))
 
 #if !defined(GEAR_MAX_SCENES)
 #define GEAR_MAX_SCENES 8
@@ -43,7 +43,9 @@ _GEAR_START
 template <class... T>
 void error(const char *str, T... args)
 {
+  printf("\033[0;31m");
   printf(str, args...);
+  printf("\033[0m\n");
   exit(1);
 }
 

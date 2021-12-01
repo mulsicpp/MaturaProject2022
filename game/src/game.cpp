@@ -5,46 +5,56 @@
 #include <vector>
 #include <chrono>
 
+struct X {
+  int a;
+  long long int b;
+  double c;
+};
+
+void double_Entity(gear::Entity *entity) {
+  entity->add<double>(gear::PI);
+}
+
 void gear::Game::on_Startup(void)
 {
   main_Window = gear::Window::create_Window("Game Window", 1280, 720);
-  main_Window->set_V_Sync(true);
-  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
+  Window::set_V_Sync(true);
+//  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
+  GEAR_DEBUG_LOG_OPEN_FILE("log.txt");
+  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_FILE | GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
 
-  std::chrono::time_point start = std::chrono::steady_clock::now();
+  Component<int>::allow();
+  Component<double>::allow();
+  Component<float>::allow();
+  Component<short>::allow();
+  Component<char>::allow();
 
-  WeakVector<double, 1> v;
-  v.create();
-  for(int i = 0; i < 10000; i++) {
-    v.push_Back(i);
+  Scene &scene = *Scene::get(0);
+  scene.create();
+
+  for(int i = 0; i < 10; i++){
+    Entity *entity = scene.create_Entity();
+    if(i % 2 == 0)
+      entity->add<int>(i);
+    if(i / 3 == 1)
+      entity->add<double>(i);
+    if(i % 4 != 0)
+      entity->add<short>(i);
+    if(i == 3 || i == 5 || i == 8)
+      entity->add<char>('a' + i);
   }
+  scene.print();
 
-  for(int i = 0; i < 10000; i++) {
-    v.pop_Back();
-  }
-  v.destroy();
+  scene.get_Entity_With_ID(1)->add<double>(1);
+  scene.get_Entity_With_ID(1)->add<double>(2);
+  scene.get_Entity_With_ID(4)->set<double>(7);
+  scene.get_Entity_With_ID(5)->set<double>(7);
+  scene.get_Entity_With_ID(8)->set<double>(7);
+  scene.print();
 
-  std::chrono::time_point end = std::chrono::steady_clock::now();
-
-  GEAR_DEBUG_LOG("%lli ns", (end - start).count());
-
-  start = std::chrono::steady_clock::now();
-
-  WeakVector<double, 12> v2;
-  v2.create();
-  for(int i = 0; i < 10000; i++) {
-    v2.push_Back(i);
-  }
-
-  for(int i = 0; i < 10000; i++) {
-    v2.pop_Back();
-  }
-  v2.destroy();
-
-  end = std::chrono::steady_clock::now();
-
-  GEAR_DEBUG_LOG("%lli ns", (end - start).count());
+  scene.destroy();
+  scene.print();
 }
 
 void gear::Game::per_Frame(void)

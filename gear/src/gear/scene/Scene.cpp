@@ -20,20 +20,19 @@ gear::Scene *const gear::Scene::get(uint8_t scene_ID)
 
 void gear::Scene::create(void)
 {
-  entities = new Entity[block_Size];
-  entity_Count = 0;
-  physical_Entity_Count = block_Size;
+  entities.create();
   next_ID = 0;
   manager_Callbacks = new ManagerCallbacks[GEAR_MAX_COMPONENTS]{nullptr, nullptr};
   insert_Index = 0;
 }
 
-void gear::Scene::destroy(void) {
-  if(entities != nullptr){
-    delete[] entities;
-    entities = nullptr;
-  }
-  if(manager_Callbacks != nullptr){
+void gear::Scene::destroy(void)
+{
+  entities.destroy();
+  if (manager_Callbacks != nullptr)
+  {
+    for (int i = 0; i < insert_Index; i++)
+      manager_Callbacks[i].destruct_Manager((uint8_t)(this - scenes));
     delete[] manager_Callbacks;
     manager_Callbacks = nullptr;
   }
@@ -44,30 +43,30 @@ uint8_t gear::Scene::get_ID(void) const
   return this - scenes;
 }
 
-struct X{
+struct X
+{
   int x;
   X(int i) : x(i) {}
 };
 
 gear::Entity *gear::Scene::create_Entity(void)
 {
-  if(entity_Count == physical_Entity_Count)
-  {
-    physical_Entity_Count += block_Size;
-    Entity* temp = new Entity[physical_Entity_Count];
-    gear::memcpy(temp, entities, entity_Count);
-    delete[] entities;
-    entities = temp;
-  }
-  return &(entities[entity_Count++] = {next_ID++, (uint8_t)(this - scenes)});
+  return entities.push_Back({next_ID++, (uint8_t)(this - scenes)});
+}
+
+gear::Entity *gear::Scene::create_Entity(void (*constructor)(gear::Entity *entity))
+{
+  Entity *entity = entities.push_Back({next_ID++, (uint8_t)(this - scenes)});
+  constructor(entity);
+  return entity;
 }
 
 gear::Entity *gear::Scene::find(unsigned int entity_ID)
 {
-  int count = entity_Count;
+  int count = entities.count();
   if (count == 0)
     return nullptr;
-  Entity *data = entities;
+  Entity *data = entities.data();
   int index = 0;
   while (count > 1)
   {
@@ -94,22 +93,23 @@ gear::Entity *gear::Scene::find(unsigned int entity_ID)
 
 void gear::Scene::remove_Entity(Entity *entity)
 {
-  remove_Entity_At(entity - entities);
+  remove_Entity_At(entity - entities.data());
 }
 
 void gear::Scene::remove_Entity_At(int index)
 {
   remove_All_Components_On(entities[index].entity_ID);
+  entities.remove(index);
 }
 
 void gear::Scene::remove_Entity_With_ID(unsigned int entity_ID)
 {
-  remove_Entity_At(find(entity_ID) - entities);
+  remove_Entity_At(find(entity_ID) - entities.data());
 }
 
 gear::Entity *gear::Scene::get_Entity_At(int index)
 {
-  return &entities[index];
+  return entities.data() + index;
 }
 
 gear::Entity *gear::Scene::get_Entity_With_ID(unsigned int entity_ID)
@@ -117,11 +117,30 @@ gear::Entity *gear::Scene::get_Entity_With_ID(unsigned int entity_ID)
   return find(entity_ID);
 }
 
-void gear::Scene::remove_All_Components_On(unsigned int entity_ID) {
-  for(int i = 0; i < insert_Index; i++)
+void gear::Scene::remove_All_Components_On(unsigned int entity_ID)
+{
+  for (int i = 0; i < insert_Index; i++)
     manager_Callbacks[i].remove_Entity((uint8_t)(this - scenes), entity_ID);
 }
 
-void gear::Scene::add_Manager_Callbacks(gear::ManagerCallbacks callbacks) {
+void gear::Scene::add_Manager_Callbacks(gear::ManagerCallbacks callbacks)
+{
+  GEAR_DEBUG_LOG("Added ManagerCallback");
   manager_Callbacks[insert_Index++] = callbacks;
+}
+
+void gear::Scene::print(void)
+{
+  std::cout << "scene " << this - scenes << ":\n";
+  std::cout << "entities:\n";
+  if (entities.data() != nullptr)
+    for (int i = 0; i < entities.count(); i++)
+      std::cout << entities[i].entity_ID << std::endl;
+  else
+    std::cout << "null\n";
+  if (manager_Callbacks != nullptr)
+    for (int i = 0; i < insert_Index; i++)
+      manager_Callbacks[i].print_Manager(this - scenes);
+  else
+    std::cout << "no managers\n";
 }

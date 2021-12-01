@@ -6,9 +6,9 @@ gear::Window *gear::Window::create_Window(const char *name, int width, int heigh
 {
   gear::Window *ret = new gear::Window();
   if (width <= 0)
-    error("Width of a window cannot be less than or equal to 0\n");
+    error("Width of a window cannot be less than or equal to 0");
   if (height <= 0)
-    error("Height of a window cannot be less than or equal to 0\n");
+    error("Height of a window cannot be less than or equal to 0");
   ret->p_Window = glfwCreateWindow(width, height, name, NULL, NULL);
   return ret;
 }
@@ -17,9 +17,9 @@ gear::Window *gear::Window::create_Window(const char *name, int x, int y, int wi
 {
   gear::Window *ret = new gear::Window();
   if (width <= 0)
-    error("Width of a window cannot be less than or equal to 0\n");
+    error("Width of a window cannot be less than or equal to 0");
   if (height <= 0)
-    error("Height of a window cannot be less than or equal to 0\n");
+    error("Height of a window cannot be less than or equal to 0");
   ret->p_Window = glfwCreateWindow(width, height, name, NULL, NULL);
   glfwSetWindowPos(ret->p_Window, x, y);
   return ret;
@@ -59,18 +59,18 @@ void gear::Window::set_Windowed(int width, int height)
 void gear::Window::set_Bounds(int x, int y, int width, int height)
 {
   if(width <= 0)
-      error("Width of a window cannot be less than or equal to 0\n");
+      error("Width of a window cannot be less than or equal to 0");
     if(height <= 0)
-      error("Height of a window cannot be less than or equal to 0\n");
+      error("Height of a window cannot be less than or equal to 0");
   glfwSetWindowSize(p_Window, width, height);
   glfwSetWindowPos(p_Window, x, y);
 }
 void gear::Window::set_Size(int width, int height)
 {
   if(width <= 0)
-      error("Width of a window cannot be less than or equal to 0\n");
+      error("Width of a window cannot be less than or equal to 0");
     if(height <= 0)
-      error("Height of a window cannot be less than or equal to 0\n");
+      error("Height of a window cannot be less than or equal to 0");
   glfwSetWindowSize(p_Window, width, height);
 }
 void gear::Window::set_Position(int x, int y)
