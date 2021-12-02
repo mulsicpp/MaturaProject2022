@@ -1,14 +1,2 @@
-[2021-12-01 20:16:51] Opened application
-[2021-12-01 20:16:51] Created instance for scene 0 for component 0 (flag: 1)
-[2021-12-01 20:16:51] Added ManagerCallback
-[2021-12-01 20:16:51] Created instance for scene 0 for component 3 (flag: 8)
-[2021-12-01 20:16:51] Added ManagerCallback
-[2021-12-01 20:16:51] Created instance for scene 0 for component 1 (flag: 2)
-[2021-12-01 20:16:51] Added ManagerCallback
-[2021-12-01 20:16:51] Created instance for scene 0 for component 4 (flag: 16)
-[2021-12-01 20:16:51] Added ManagerCallback
-[2021-12-01 20:16:51] Destroyed component manager for scene 0 and component 0
-[2021-12-01 20:16:51] Destroyed component manager for scene 0 and component 3
-[2021-12-01 20:16:51] Destroyed component manager for scene 0 and component 1
-[2021-12-01 20:16:51] Destroyed component manager for scene 0 and component 4
-[2021-12-01 20:16:54] Closed application
+[2021-12-02 15:50:49] Opened application
+[2021-12-02 15:50:52] Closed application

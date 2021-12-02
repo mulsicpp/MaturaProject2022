@@ -3,6 +3,8 @@
 #include <gear/core/core.h>
 #include <functional>
 #include <gear/data/WeakVector.h>
+#include <stdint.h>
+#include "Component.h"
 
 _GEAR_START
 
@@ -53,6 +55,16 @@ public:
   void remove_All_Components_On(unsigned int entity_ID);
 
   void add_Manager_Callbacks(ManagerCallbacks callbacks);
+
+  template<class... T>
+  void for_Each(void(*function)(T&...args)){
+    uint8_t scene_ID = this - scenes;
+    Entity::reset_Iterators(Entity::ComponentManager<T>::get_Instance(scene_ID)...);
+    for(int i = 0; i < entities.count(); i++) {
+      if(entities[i].has<T...>())
+        function(Entity::ComponentManager<T>::get_Instance(scene_ID).iterate_To(entities[i].entity_ID)...);
+    }
+  }
 
   void print(void);
 };

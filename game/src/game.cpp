@@ -5,14 +5,9 @@
 #include <vector>
 #include <chrono>
 
-struct X {
-  int a;
-  long long int b;
-  double c;
-};
-
-void double_Entity(gear::Entity *entity) {
-  entity->add<double>(gear::PI);
+void some_System(double &comp1, short &comp2, char &comp3)
+{
+  std::cout << comp1 << " " << comp2 << " " << comp3 << std::endl;
 }
 
 void gear::Game::on_Startup(void)
@@ -37,11 +32,11 @@ void gear::Game::on_Startup(void)
     Entity *entity = scene.create_Entity();
     if(i % 2 == 0)
       entity->add<int>(i);
-    if(i / 3 == 1)
+    if((i / 3) % 2 == 1)
       entity->add<double>(i);
     if(i % 4 != 0)
       entity->add<short>(i);
-    if(i == 3 || i == 5 || i == 8)
+    if(i == 3 || i == 5 || i == 6 || i == 8 || i == 9)
       entity->add<char>('a' + i);
   }
   scene.print();
@@ -52,6 +47,9 @@ void gear::Game::on_Startup(void)
   scene.get_Entity_With_ID(5)->set<double>(7);
   scene.get_Entity_With_ID(8)->set<double>(7);
   scene.print();
+
+  scene.for_Each(some_System);
+  
 
   scene.destroy();
   scene.print();

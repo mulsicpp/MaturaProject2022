@@ -30,6 +30,7 @@ private:
   private:
     WeakVector<Component<T>> components;
     static ComponentManager<T> instances[GEAR_MAX_SCENES];
+    int next_Elem;
 
     void create(void)
     {
@@ -123,6 +124,16 @@ private:
         components.remove(comp - components.data());
     }
 
+    void reset_Iterator(void) {
+      next_Elem = -1;
+    }
+
+    T &iterate_To(unsigned int entity_ID)
+    {
+      while(components[++next_Elem].entity_ID < entity_ID);
+      return components[next_Elem].data;
+    }
+
     void print(void) {
       std::cout << "component manager " << Component<T>::get_ID() << ":\n";
       Component<T> *data = components.data();
@@ -143,10 +154,16 @@ public:
   @param T the type of the component
   @return true, if the component is present, else false
   */
-  template <class... T>
+  template <class T1, class T2, class ... Ts>
   bool has()
   {
-    return component_Flag<T...>() & comp_Flags ? true : false;
+    return component_Flag<T1, T2, Ts...>() == (comp_Flags & component_Flag<T1, T2, Ts...>()) ? true : false;
+  }
+
+  template <class T>
+  bool has()
+  {
+    return component_Flag<T>()  & comp_Flags ? true : false;
   }
 
   template <class T>
@@ -180,6 +197,20 @@ public:
   unsigned int get_Entity_ID(void) const;
   uint8_t get_Scene_ID(void) const;
   uint64_t get_Component_Flags(void) const;
+
+private:
+  template<class T1, class T2, class ...Ts>
+  static void reset_Iterators(ComponentManager<T1> &iterator1, ComponentManager<T2> &iterator2, ComponentManager<Ts>& ...iterators)
+  {
+    iterator1.reset_Iterator();
+    reset_Iterators(iterator2, iterators...);
+  }
+
+  template<class T>
+  static void reset_Iterators(ComponentManager<T> &iterator)
+  {
+    iterator.reset_Iterator();
+  }
 
   friend class gear::Scene;
   friend class gear::WeakVector<Entity>;
