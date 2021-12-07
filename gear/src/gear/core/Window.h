@@ -9,7 +9,7 @@ _GEAR_START
 class Window
 {
 private:
-  GLFWwindow *p_Window;
+  GLFWwindow *m_Window;
 
   /*
   Default Constructor
@@ -103,6 +103,11 @@ public:
   Processes all pending events. This function processes only those events that are already in the event queue.
   */
   void poll_Events(void);
+
+  /*
+  Sets the window as the current render context.
+  */
+  void make_Render_Context_Current(void);
 };
 
 _GEAR_END
