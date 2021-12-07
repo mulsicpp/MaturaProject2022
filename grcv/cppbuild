@@ -1,0 +1,3 @@
+output app out/$_platform/$_arch/app(grcv)
+
+src src
