@@ -1,8 +1,10 @@
-output app out/$_platform/$_arch/app(game)
-
 const var conf ?= debug
-
+compvar conf
 echo conf = $conf
+[$conf != debug ? ([$conf != release ? (error conf has to be debug or release)])]
+
+output app out/$conf/$_platform/$_arch/app(game)
+
 
 [$conf = debug ? (define GEAR_DEBUG)]
 
@@ -32,4 +34,7 @@ linklib glfw3
 
 
 src src
-lib ../gear/lib/$_platform/$_arch/lib(gear)
+lib ../gear/lib/$conf/$_platform/$_arch/lib(gear)
+
+#dependency ../grcv
+cmd ../grcv/out/$_platform/$_arch/app(grcv) unconverted_assets assets
