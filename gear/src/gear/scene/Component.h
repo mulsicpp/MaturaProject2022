@@ -11,28 +11,39 @@ class Entity;
 
 unsigned int get_Next_Component_ID(void);
 
-template<class T1, class T2, class ...Ts>
-uint64_t component_Flag(void) {
-  return component_Flag<T2, Ts...>() | Component<T1>::get_Flag();
-}
-
 template<class T>
+/*
+@return all the flags of the specified types combined
+*/
 uint64_t component_Flag() {
   return Component<T>::get_Flag();
 }
 
+template<class T1, class T2, class ...Ts>
+/*
+@return all the flags of the specified types combined
+*/
+uint64_t component_Flag(void) {
+  return component_Flag<T2, Ts...>() | Component<T1>::get_Flag();
+}
+
+
 template<class T>
+/**
+A component, that can be added to an entity.
+Before a component with a certain type can be used, it has to be allowed.
+*/
 class Component {
 private:
   static unsigned int id;
   static uint64_t flag;
   
-  uint8_t scene_ID;
-  unsigned int entity_ID;
+  uint8_t m_Scene_ID;
+  unsigned int m_Entity_ID;
 
   Component(void) = default;
 
-  Component(uint8_t scene_ID, unsigned int entity_ID, T data) : scene_ID(scene_ID), entity_ID(entity_ID), data(data) {
+  Component(uint8_t scene_ID, unsigned int entity_ID, T data) : m_Scene_ID(scene_ID), entity_ID(entity_ID), data(data) {
     if(id == -1)
       gear::error("Not allowed component used");
   }
@@ -42,14 +53,23 @@ private:
 public:
   T data;
 
+  /*
+  @return the ID of the component. Can be between 0 to GEAR_MAX_COMPONENTS-1 if it is allowed, else it is -1
+  */
   static uint64_t get_ID(void) {
     return id;
   }
 
+  /*
+  @return the flag of the component. Is 0 if the component is not allowed
+  */
   static uint64_t get_Flag(void) {
     return flag;
   }
 
+  /*
+  Allows components of this type to be created and added to entites.
+  */
   static void allow(void) {
     if(id == -1){
       id = get_Next_Component_ID();
@@ -59,7 +79,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& ostream, const Component<T>& component)
   {
-    ostream << "{scene_ID=" << (int)component.scene_ID << ", entity_ID=" << component.entity_ID << ", data=" << component.data << "}";
+    ostream << "{scene_ID=" << (int)component.m_Scene_ID << ", entity_ID=" << component.m_Entity_ID << ", data=" << component.data << "}";
     return ostream;
   }
 

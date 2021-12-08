@@ -14,127 +14,127 @@ template <class T>
 class WeakVector
 {
 private:
-  T *_data;
-  unsigned int _count;
-  unsigned int _capacity;
+  T *m_Data;
+  unsigned int m_Count;
+  unsigned int m_Capacity;
 
   static const unsigned int _min_capacity;
 
 public:
   void create(void)
   {
-    _data = new T[_min_capacity];
-    _count = 0;
-    _capacity = _min_capacity;
+    m_Data = new T[_min_capacity];
+    m_Count = 0;
+    m_Capacity = _min_capacity;
   }
 
   void destroy(void)
   {
-    if (_data != nullptr)
+    if (m_Data != nullptr)
     {
-      delete[] _data;
-      _data = nullptr;
+      delete[] m_Data;
+      m_Data = nullptr;
     }
   }
 
   WeakVector(void)
   {
-    _data = nullptr;
-    _count = 0;
-    _capacity = 0;
+    m_Data = nullptr;
+    m_Count = 0;
+    m_Capacity = 0;
   }
 
   T &operator[](int index)
   {
-    return _data[index];
+    return m_Data[index];
   }
 
   unsigned int count(void)
   {
-    return _count;
+    return m_Count;
   }
 
   unsigned int capacity(void)
   {
-    return _capacity;
+    return m_Capacity;
   }
 
   T *data(void)
   {
-    return _data;
+    return m_Data;
   }
 
   T *push_Back(T element)
   {
-    if (_count == _capacity)
+    if (m_Count == m_Capacity)
     {
-      _capacity *= 2;
-      T *temp = new T[_capacity];
-      gear::memcpy(temp, _data, _count);
-      delete[] _data;
-      _data = temp;
+      m_Capacity *= 2;
+      T *temp = new T[m_Capacity];
+      gear::memcpy(temp, m_Data, m_Count);
+      delete[] m_Data;
+      m_Data = temp;
     }
-    return &(_data[_count++] = element);
+    return &(m_Data[m_Count++] = element);
   }
 
   void pop_Back()
   {
-    _count--;
-    if (_count > _min_capacity && _capacity / _count == 2)
+    m_Count--;
+    if (m_Count > _min_capacity && m_Capacity / m_Count == 2)
     {
-      _capacity /= 2;
-      T *temp = new T[_capacity];
-      gear::memcpy(temp, _data, _count);
-      delete[] _data;
-      _data = temp;
+      m_Capacity /= 2;
+      T *temp = new T[m_Capacity];
+      gear::memcpy(temp, m_Data, m_Count);
+      delete[] m_Data;
+      m_Data = temp;
     }
   }
 
   T *insert(T element, int index)
   {
-    if (_count == _capacity)
+    if (m_Count == m_Capacity)
     {
-      _capacity *= 2;
-      T *temp = new T[_capacity];
-      gear::memcpy(temp, _data, index);
-      gear::memcpy_reverse(temp + _count + 1, _data + _count, _count - index);
-      delete[] _data;
-      _data = temp;
-      _count++;
-      return &(_data[index] = element);
+      m_Capacity *= 2;
+      T *temp = new T[m_Capacity];
+      gear::memcpy(temp, m_Data, index);
+      gear::memcpy_reverse(temp + m_Count + 1, m_Data + m_Count, m_Count - index);
+      delete[] m_Data;
+      m_Data = temp;
+      m_Count++;
+      return &(m_Data[index] = element);
     }
     else
     {
-      gear::memcpy_reverse(_data + _count + 1, _data + _count, _count - index);
-      _count++;
-      return &(_data[index] = element);
+      gear::memcpy_reverse(m_Data + m_Count + 1, m_Data + m_Count, m_Count - index);
+      m_Count++;
+      return &(m_Data[index] = element);
     }
   }
 
   void remove(int index)
   {
-    _count--;
-    if (_count > _min_capacity && _capacity / _count == 2)
+    m_Count--;
+    if (m_Count > _min_capacity && m_Capacity / m_Count == 2)
     {
-      _capacity /= 2;
-      T *temp = new T[_capacity];
-      gear::memcpy(temp, _data, index * sizeof(T));
-      gear::memcpy(temp + index, _data + index + 1, _count - index);
-      delete[] _data;
-      _data = temp;
+      m_Capacity /= 2;
+      T *temp = new T[m_Capacity];
+      gear::memcpy(temp, m_Data, index * sizeof(T));
+      gear::memcpy(temp + index, m_Data + index + 1, m_Count - index);
+      delete[] m_Data;
+      m_Data = temp;
     }
     else
     {
-      gear::memcpy(_data + index, _data + index + 1, _count - index);
+      gear::memcpy(m_Data + index, m_Data + index + 1, m_Count - index);
     }
   }
 
   void print(const char *format)
   {
-    printf("{ count=%i, capacity=%i, data={", _count, _capacity);
-    if (_data != nullptr)
-      for (int i = 0; i < _capacity; i++)
-        printf(format, _data[i]);
+    printf("{ count=%i, capacity=%i, data={", m_Count, m_Capacity);
+    if (m_Data != nullptr)
+      for (int i = 0; i < m_Capacity; i++)
+        printf(format, m_Data[i]);
     else
       printf("null");
     printf("}}\n");

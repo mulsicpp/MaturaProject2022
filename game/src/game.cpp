@@ -5,6 +5,8 @@
 #include <vector>
 #include <chrono>
 
+#include <gear/data/FileStream.h>
+
 void some_System(double &comp1, short &comp2, char &comp3)
 {
   std::cout << comp1 << " " << comp2 << " " << comp3 << std::endl;
@@ -14,45 +16,15 @@ void gear::Game::on_Startup(void)
 {
   main_Window = gear::Window::create_Window("Game Window", 1280, 720);
   Window::set_V_Sync(true);
-//  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
-  GEAR_DEBUG_LOG_OPEN_FILE("log.txt");
-  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_FILE | GEAR_CONSOLE);
-  GEAR_DEBUG_LOG("Opened application");
+  //  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
+  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
+  GEAR_DEBUG_LOG("Opened application ");
 
   Component<int>::allow();
-  Component<double>::allow();
-  Component<float>::allow();
-  Component<short>::allow();
-  Component<char>::allow();
+  gear::component_Flag<int, double>();
 
-  Scene &scene = *Scene::get(0);
-  scene.create();
-
-  for(int i = 0; i < 10; i++){
-    Entity *entity = scene.create_Entity();
-    if(i % 2 == 0)
-      entity->add<int>(i);
-    if((i / 3) % 2 == 1)
-      entity->add<double>(i);
-    if(i % 4 != 0)
-      entity->add<short>(i);
-    if(i == 3 || i == 5 || i == 6 || i == 8 || i == 9)
-      entity->add<char>('a' + i);
-  }
-  scene.print();
-
-  scene.get_Entity_With_ID(1)->add<double>(1);
-  scene.get_Entity_With_ID(1)->add<double>(2);
-  scene.get_Entity_With_ID(4)->set<double>(7);
-  scene.get_Entity_With_ID(5)->set<double>(7);
-  scene.get_Entity_With_ID(8)->set<double>(7);
-  scene.print();
-
-  scene.for_Each(some_System);
-  
-
-  scene.destroy();
-  scene.print();
+  Scene *s = Scene::get(0);
+  Scene *s2 = Scene::get(1);
 }
 
 void gear::Game::per_Frame(void)
@@ -67,5 +39,4 @@ void gear::Game::on_Shutdown(void)
 {
   main_Window->destroy();
   GEAR_DEBUG_LOG("Closed application");
-  GEAR_DEBUG_LOG_CLOSE_FILE();
 }

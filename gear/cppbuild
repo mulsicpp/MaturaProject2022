@@ -1,4 +1,9 @@
-output lib lib/$_platform/$_arch/lib(gear)
+const var conf ?= debug
+compvar conf
+echo conf = $conf
+[$conf != debug ? ([$conf != release ? (error conf has to be debug or release)])]
+
+output lib lib/$conf/$_platform/$_arch/lib(gear)
 
 [$conf = debug ? (define GEAR_DEBUG)]
 

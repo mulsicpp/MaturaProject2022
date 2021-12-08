@@ -1,0 +1,18 @@
+type font
+dep font2.png
+
+img font2.png
+
+color_count 3
+
+color 0 ffffffff
+color 1 ffff00ff
+color 2 7f7f00ff
+color 3 00000000
+
+line_height 26
+
+char_gap -2
+line_gap -2
+
+char_range ! ~

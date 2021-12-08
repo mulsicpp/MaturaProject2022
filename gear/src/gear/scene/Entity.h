@@ -16,9 +16,9 @@ It is part of a scene and can have components attached to it.
 class Entity
 {
 private:
-  unsigned int entity_ID;
-  uint64_t comp_Flags;
-  uint8_t scene_ID;
+  unsigned int m_Entity_ID;
+  uint64_t m_Comp_Flags;
+  uint8_t m_Scene_ID;
 
   Entity(void) = default;
   Entity(unsigned int entity_ID, const uint8_t scene_ID);
@@ -28,18 +28,18 @@ private:
   class ComponentManager
   {
   private:
-    WeakVector<Component<T>> components;
+    WeakVector<Component<T>> m_Components;
     static ComponentManager<T> instances[GEAR_MAX_SCENES];
-    int next_Elem;
+    int m_Next_Elem;
 
     void create(void)
     {
-      components.create();
+      m_Components.create();
       Scene::get(this - instances)->add_Manager_Callbacks({destroy_Instance, remove_Entity, print_Manager});
     }
 
     void destroy(void) {
-      components.destroy();
+      m_Components.destroy();
     }
 
     static void destroy_Instance(uint8_t scene_ID)
@@ -50,13 +50,13 @@ private:
     static void remove_Entity(uint8_t scene_ID, unsigned int entity_ID) {
       Component<T> *comp = instances[scene_ID].find(entity_ID);
       if(comp != nullptr)
-        instances[scene_ID].components.remove(comp- instances[scene_ID].components.data());
+        instances[scene_ID].m_Components.remove(comp- instances[scene_ID].m_Components.data());
     }
 
   public:
     static ComponentManager<T> &get_Instance(uint8_t scene_ID)
     {
-      if (instances[scene_ID].components.data() == nullptr)
+      if (instances[scene_ID].m_Components.data() == nullptr)
       {
         instances[scene_ID].create();
       }
@@ -65,16 +65,16 @@ private:
 
     Component<T> *get_Components(size_t *count)
     {
-      *count = components.count();
-      return components.data();
+      *count = m_Components.count();
+      return m_Components.data();
     }
 
     Component<T> *find(unsigned int entity_ID)
     {
-      int count = components.count();
+      int count = m_Components.count();
       if (count == 0)
         return nullptr;
-      Component<T> *data = components.data();
+      Component<T> *data = m_Components.data();
       int index = 0;
       while (count > 1)
       {
@@ -101,8 +101,8 @@ private:
 
     void add_Component(Component<T> component)
     {
-      Component<T> *data = components.data();
-      int count = components.count();
+      Component<T> *data = m_Components.data();
+      int count = m_Components.count();
       int i;
       for (i = 0; i < count; i++)
       {
@@ -110,34 +110,34 @@ private:
           break;
       }
       if(i == count)
-        components.push_Back(component);
+        m_Components.push_Back(component);
       if(data[i].entity_ID != component.entity_ID)
-        components.insert(component, i);
+        m_Components.insert(component, i);
       else
-        components[i].data = component.data;
+        m_Components[i].data = component.data;
     }
 
     void remove_Component(unsigned int entity_ID)
     {
       Component<T> *comp = find(entity_ID);
       if (comp != nullptr)
-        components.remove(comp - components.data());
+        m_Components.remove(comp - m_Components.data());
     }
 
     void reset_Iterator(void) {
-      next_Elem = -1;
+      m_Next_Elem = -1;
     }
 
     T &iterate_To(unsigned int entity_ID)
     {
-      while(components[++next_Elem].entity_ID < entity_ID);
-      return components[next_Elem].data;
+      while(m_Components[++m_Next_Elem].entity_ID < entity_ID);
+      return m_Components[m_Next_Elem].data;
     }
 
     void print(void) {
       std::cout << "component manager " << Component<T>::get_ID() << ":\n";
-      Component<T> *data = components.data();
-      int count = components.count();
+      Component<T> *data = m_Components.data();
+      int count = m_Components.count();
       for(int i = 0; i < count; i++)
         std::cout << data[i] << std::endl;
     }
@@ -149,53 +149,93 @@ private:
   };
 
 public:
+  template <class T1, class T2, class ... Ts>
   /*
   Checks if this entity has a component of the specified type.
   @param T the type of the component
   @return true, if the component is present, else false
   */
-  template <class T1, class T2, class ... Ts>
   bool has()
   {
-    return component_Flag<T1, T2, Ts...>() == (comp_Flags & component_Flag<T1, T2, Ts...>()) ? true : false;
+    return component_Flag<T1, T2, Ts...>() == (m_Comp_Flags & component_Flag<T1, T2, Ts...>()) ? true : false;
   }
 
   template <class T>
+  /*
+  Checks if this entity has a component of the specified type.
+  @param T the type of the component
+  @return true, if the component is present, else false
+  */
   bool has()
   {
-    return component_Flag<T>()  & comp_Flags ? true : false;
+    return component_Flag<T>()  & m_Comp_Flags ? true : false;
   }
 
   template <class T>
+  /*
+  Adds a component of type T to the entity. If the component already exists
+  it will be overwritten.
+  @param T the type of the component
+  @param component the data of the component
+  */
   void add(T component)
   {
-    ComponentManager<T>::get_Instance(scene_ID).add_Component(Component<T>{scene_ID, entity_ID, component});
-    comp_Flags |= Component<T>::get_Flag();
+    ComponentManager<T>::get_Instance(m_Scene_ID).add_Component(Component<T>{m_Scene_ID, m_Entity_ID, component});
+    m_Comp_Flags |= Component<T>::get_Flag();
   }
 
   template <class T>
+  /*
+  Removes the component of type T from the entity if it exists.
+  @param T the type of the component
+  */
   void remove(void)
   {
-    ComponentManager<T>::get_Instance(scene_ID).remove_Component(entity_ID);
-    comp_Flags &= ~Component<T>::get_Flag();
+    ComponentManager<T>::get_Instance(m_Scene_ID).remove_Component(m_Entity_ID);
+    m_Comp_Flags &= ~Component<T>::get_Flag();
   }
 
   template <class T>
+  /*
+  Gets the component of type T from the entity.
+  @param T the type of the component
+  @return a pointer to the component if it exists, else a null pointer
+  */
   Component<T> *get(void)
   {
-    return ComponentManager<T>::get_Instance(scene_ID).find(entity_ID);
+    return ComponentManager<T>::get_Instance(m_Scene_ID).find(m_Entity_ID);
   }
 
   template<class T>
+  /*
+  Sets the component of type T in the entity. If the component does not exist
+  nothing will be set.
+  @param T the type of the component
+  @param component the data of the component
+  */
   void set(T component) {
-    if(Component<T>::get_Flag() & comp_Flags)
-      ComponentManager<T>::get_Instance(scene_ID).find(entity_ID)->data = component;
+    if(Component<T>::get_Flag() & m_Comp_Flags)
+      ComponentManager<T>::get_Instance(m_Scene_ID).find(m_Entity_ID)->data = component;
   }
 
+  /*
+  Removes all components from the entity.
+  */
   void remove_All(void);
 
+  /*
+  @return the id of the entity
+  */
   unsigned int get_Entity_ID(void) const;
+
+  /*
+  @return the id of the scene
+  */
   uint8_t get_Scene_ID(void) const;
+
+  /*
+  @return the flags, containing the added components
+  */
   uint64_t get_Component_Flags(void) const;
 
 private:

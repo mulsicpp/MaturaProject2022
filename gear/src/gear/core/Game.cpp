@@ -22,11 +22,11 @@ gear::Game::Game(void) {
   char temp_Path[MAX_PATH];
   GetModuleFileNameA(NULL, temp_Path, MAX_PATH);
   std::filesystem::path path = std::filesystem::weakly_canonical(std::filesystem::path(temp_Path).parent_path());
-  strcpy((char*)path_To_App, path.string().c_str());
+  strcpy((char*)m_Path_To_App, path.string().c_str());
 
 #elif defined(GEAR_PLATFORM_LINUX)
   char path[100] = "some/path";
-  strcpy((char*)path_To_App, path);
+  strcpy((char*)m_Path_To_App, path);
 #endif
 }
 
@@ -37,6 +37,8 @@ gear::Game *gear::Game::get_Instance(void) {
 }
 
 void gear::Game::run(void) {
+  std::filesystem::current_path(m_Path_To_App);
+  std::filesystem::current_path(GEAR_ROOT_PATH);
   gear_Init();
   on_Startup();
   while(1){
