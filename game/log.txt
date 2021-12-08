@@ -1,2 +1,0 @@
-[2021-12-02 15:50:49] Opened application
-[2021-12-02 15:50:52] Closed application
