@@ -1,18 +1,89 @@
 #include <stdio.h>
-#include "converter.h"
-#include "global.h"
+#include <stdlib.h>
 #include <filesystem>
 
-int main(int argc, char* argv[])
+#include "global.h"
+#include "converter.h"
+#include "font_converter.h"
+
+static std::vector<ConversionUnit> _conversion_Units;
+
+int main(int argc, char *argv[])
 {
-  if(argc != 3)
+  if (argc != 3)
   {
     error("program has to called like: grcv <source> <target>");
   }
+  std::filesystem::path original_Path = std::filesystem::canonical(".");
+
+  std::filesystem::path source = argv[1], target = argv[2];
+  if (std::filesystem::is_directory(source))
+  {
+    target = std::filesystem::canonical(target);
+    std::filesystem::current_path(source);
+    std::filesystem::recursive_directory_iterator iterator(".");
+    for (auto entry : iterator)
+    {
+      if (entry.path().extension().string() == ".grcv")
+      {
+        _conversion_Units.push_back({std::filesystem::proximate(std::filesystem::canonical(entry.path()), original_Path).string(),
+                                     std::filesystem::proximate(target.string() + entry.path().parent_path().string().substr(1) + "/" + entry.path().stem().string() + ".gear", original_Path).string()});
+      }
+    }
+  }
+  else
+  {
+    _conversion_Units.push_back({source.string(), target.string()});
+  }
+
   Converter *converter;
-  std::filesystem::path source = std::filesystem::canonical(argv[1]), target = std::filesystem::canonical(argv[2]);
-  std::filesystem::current_path(source);
-  std::vector<std::string> convertables;
-  if()
+  for (ConversionUnit &unit : _conversion_Units)
+  {
+    std::filesystem::current_path(original_Path);
+    FILE *file_In = fopen(unit.source.c_str(), "r");
+    std::filesystem::create_directories(std::filesystem::path(target).parent_path());
+    char buffer[512]{0};
+    int argc = 0;
+    char *argv[20];
+    fgets(buffer, 512, file_In);
+
+    cmd_To_Args(buffer, 20, &argc, argv);
+
+    bool force = true;
+    bool needs_Update = false;
+    if (!force && std::filesystem::exists(unit.target))
+    {
+      std::filesystem::file_time_type target_Time = std::filesystem::last_write_time(target);
+      if (target_Time < std::filesystem::last_write_time(unit.source))
+        needs_Update = true;
+
+      std::filesystem::current_path(std::filesystem::path(unit.source).parent_path());
+      for (int i = 1; i < argc; i++)
+        if (target_Time < std::filesystem::last_write_time(argv[i]))
+          needs_Update = true;
+      std::filesystem::current_path(original_Path);
+    }
+    else
+    {
+      std::filesystem::create_directories(std::filesystem::path(unit.target).parent_path());
+      needs_Update = true;
+    }
+
+    if (needs_Update)
+    {
+      if (strcmp("font", argv[0]) == 0)
+      {
+        printf("converting font \'%s\' to \'%s\' ...\n", unit.source.c_str(), unit.target.c_str());
+        gear::FileStream *file_Out = gear::FileStream::open(unit.target.c_str(), "wb");
+        file_Out->puts("GEARFNT");
+        std::filesystem::current_path(std::filesystem::path(unit.source).parent_path());
+        converter = new FontConverter(file_In, file_Out);
+        converter->execute();
+        delete converter;
+      }
+    }
+
+    fclose(file_In);
+  }
   return 0;
 }

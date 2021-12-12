@@ -2,6 +2,7 @@
 
 #include <gear/core/core.h>
 #include <stdint.h>
+#include <errno.h>
 
 _GEAR_START
 
@@ -15,20 +16,12 @@ private:
   int m_Position;
   size_t m_Size;
 
-public:
-  /*
-  Constructs unopened file stream
-  */
-  FileStream(void);
-
-  /*
-  Opens a file stream for the specified file in a certain mode.
-
-  @param filename the path to the file to open
-  @param mode the mode of the stream (for example "r" to read and "w" to write)
-  */
   FileStream(const char *filename, const char *mode);
 
+  FileStream(const FileStream &) = delete;
+  FileStream &operator=(const FileStream &) = delete;
+
+public:
   /*
   Opens a file stream for the specified file in a certain mode.
 
@@ -37,24 +30,29 @@ public:
 
   @return 0 if no error occured, else -1
   */
-  int open(const char *filename, const char *mode);
+  static FileStream *open(const char *filename, const char *mode);
 
   /*
   Closes the file stream.
 
   @return 0 if no error occured, else -1
   */
-  int close(void);
-
-  /*
-  @return true if the stream is open, else false
-  */
-  bool is_Open(void) const;
+  static int close(FileStream *file_Stream);
 
   /*
   @return the size of the opened file or 0 if the file stream is not open.
   */
   size_t size(void) const;
+
+  char *gets(char *buffer, int max_Bytes);
+
+  int puts(const char *buffer);
+
+  template <class... Ts>
+  int printf(const char *const format, Ts... args)
+  {
+    return fprintf(m_File, format, args...);
+  }
 
   /*
   Gets one value of a certain type from the file.
@@ -66,11 +64,18 @@ public:
   int get(T *val)
   {
     int size_Of_Type = sizeof(T);
-    if (m_Position + size_Of_Type > m_Size)
-      return -1;
+    int get_Val = 0;
     for (int i = 0; i < size_Of_Type; i++)
-      ((char *)val)[i] = fgetc(m_File);
-    m_Position += size_Of_Type;
+    {
+      get_Val = fgetc(m_File);
+      if (get_Val != -1){
+        ((char *)val)[i] = get_Val;
+      }
+      else
+      {
+        return -1;
+      }
+    }
     return 0;
   }
 
@@ -84,11 +89,19 @@ public:
   template <class T = uint8_t>
   int get(T *vals, int count)
   {
-    int size_Of_Data = sizeof(T) * count;
-    if (m_Position + size_Of_Data > m_Size)
-      return -1;
+    int size_Of_Data = count * sizeof(T);
+    int get_Val = 0;
     for (int i = 0; i < size_Of_Data; i++)
-      ((char *)vals)[i] = fgetc(m_File);
+    {
+      get_Val = fgetc(m_File);
+      if (get_Val != -1){
+        ((char *)vals)[i] = get_Val;
+      }
+      else
+      {
+        return -1;
+      }
+    }
     m_Position += size_Of_Data;
     return 0;
   }

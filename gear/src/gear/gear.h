@@ -9,3 +9,5 @@
 #include "scene/Entity.h"
 
 #include "data/Grid.h"
+
+#include "resource/Font.h"

@@ -6,7 +6,8 @@
                 ".",
                 "gear/src",
                 "gear/external/glad/include",
-                "gear/external/glfw/include"
+                "gear/external/glfw/include",
+                "gear/src/gear/data"
             ],
             "defines": [
                 "_DEBUG",

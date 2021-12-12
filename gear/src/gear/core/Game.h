@@ -4,7 +4,7 @@
 #include "Window.h"
 
 #if defined(GEAR_DEBUG)
-#define GEAR_ROOT_PATH "../../.."
+#define GEAR_ROOT_PATH "../../../.."
 #endif
 
 #if !defined(GEAR_ROOT_PATH)

@@ -1,18 +1,19 @@
-type font
-dep font1.png
+font font1.png
 
 img font1.png
+border_color 0000ffff
 
 color_count 3
 
 color 0 ffffffff
 color 1 ffff00ff
 color 2 7f7f00ff
-color 3 00000000
+color 3 000000ff
 
-line_height 13
+row_height 13
 
 char_gap -1
 line_gap -1
 
 char_range ! ~
+char_code 0

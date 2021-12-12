@@ -1,3 +1,9 @@
 output app out/$_platform/$_arch/app(grcv)
 
+std c++17
+dependency ../gear --var:conf=release
+
+incpath ../gear/src
+
 src src
+lib ../gear/lib/release/$_platform/$_arch/lib(gear)
