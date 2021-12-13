@@ -34,7 +34,7 @@ private:
 
   Scene(void);
   Scene(const Scene &scene) = delete;
-  gear::Scene &gear::Scene::operator=(const gear::Scene &) = delete;
+  Scene &operator=(const gear::Scene &) = delete;
 
   Entity *find(unsigned int entity_ID);
 
@@ -122,24 +122,6 @@ public:
   void remove_All_Components_On(unsigned int entity_ID);
 
   void add_Manager_Callbacks(ManagerCallbacks callbacks);
-
-  template <class... T>
-  /*
-  Iterates over all entities, that contain the components of the specified types.
-
-  @param T the types of the components
-  @param function the function, that gets called with the components
-  */
-  void for_Each(void (*function)(T &...args))
-  {
-    uint8_t scene_ID = this - scenes;
-    Entity::reset_Iterators(Entity::ComponentManager<T>::get_Instance(scene_ID)...);
-    for (int i = 0; i < entities.count(); i++)
-    {
-      if (entities[i].has<T...>())
-        function(Entity::ComponentManager<T>::get_Instance(scene_ID).iterate_To(entities[i].entity_ID)...);
-    }
-  }
 
   void print(void);
 };

@@ -1,6 +1,4 @@
-#include "Scene.h"
 #include "Entity.h"
-#include <gear/data/WeakVector.h>
 
 #define GEAR_PHYSICAL_COUNT(count, block_Size) (((count / block_Size) + 1) * block_Size)
 
@@ -21,7 +19,7 @@ void gear::Scene::create(void)
 {
   m_Entities.create();
   m_Next_ID = 0;
-  m_Manager_Callbacks = new ManagerCallbacks[GEAR_MAX_COMPONENTS]{nullptr, nullptr};
+  m_Manager_Callbacks = new ManagerCallbacks[GEAR_MAX_COMPONENTS];
   m_Insert_Index = 0;
 }
 

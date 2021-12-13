@@ -1,7 +1,7 @@
 #include "Font.h"
 
 #include <gear/data/FileStream.h>
-#include <filesystem>
+#include <string.h>
 
 gear::Font::Font(void) : m_Atlas(), m_Flags(0) {}
 

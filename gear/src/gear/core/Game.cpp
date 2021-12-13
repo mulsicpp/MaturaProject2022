@@ -2,9 +2,11 @@
 #include "Game.h"
 #include "debug/log.h"
 #include <filesystem>
-#include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
+
+#if defined(GEAR_PLATFORM_LINUX)
+#include <unistd.h>
+#endif
 
 
 #define GLFW_INCLUDE_NONE
@@ -25,8 +27,10 @@ gear::Game::Game(void) {
   strcpy((char*)m_Path_To_App, path.string().c_str());
 
 #elif defined(GEAR_PLATFORM_LINUX)
-  char path[100] = "some/path";
-  strcpy((char*)m_Path_To_App, path);
+  char temp_Path[4092];
+  readlink("/proc/self/exe", temp_Path, 4092);
+  std::filesystem::path path = std::filesystem::weakly_canonical(std::filesystem::path(temp_Path).parent_path());
+  strcpy((char*)m_Path_To_App, path.string().c_str());
 #endif
 }
 

@@ -9,7 +9,7 @@ output app out/$conf/$_platform/$_arch/app(game)
 [$conf = debug ? (define GEAR_DEBUG)]
 
 dependency ../gear --var:conf=$conf
-[$conf = debug ? (dependency ../gear/external/imgui)]
+#[$conf = debug ? (dependency ../gear/external/imgui)]
 
 std c++17
 

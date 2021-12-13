@@ -12,7 +12,7 @@
 #endif
 #elif defined(__linux__)
 #define GEAR_PLATFORM_LINUX
-#error Gear doesn't support Linux yet
+//#error Gear doesn't support Linux yet
 #else
 #error Gear is not supported on your platform
 #endif

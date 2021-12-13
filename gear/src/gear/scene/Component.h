@@ -12,23 +12,6 @@ class Entity;
 unsigned int get_Next_Component_ID(void);
 
 template<class T>
-/*
-@return all the flags of the specified types combined
-*/
-uint64_t component_Flag() {
-  return Component<T>::get_Flag();
-}
-
-template<class T1, class T2, class ...Ts>
-/*
-@return all the flags of the specified types combined
-*/
-uint64_t component_Flag(void) {
-  return component_Flag<T2, Ts...>() | Component<T1>::get_Flag();
-}
-
-
-template<class T>
 /**
 A component, that can be added to an entity.
 Before a component with a certain type can be used, it has to be allowed.
@@ -43,7 +26,7 @@ private:
 
   Component(void) = default;
 
-  Component(uint8_t scene_ID, unsigned int entity_ID, T data) : m_Scene_ID(scene_ID), entity_ID(entity_ID), data(data) {
+  Component(uint8_t scene_ID, unsigned int entity_ID, T data) : m_Scene_ID(scene_ID), m_Entity_ID(entity_ID), data(data) {
     if(id == -1)
       gear::error("Not allowed component used");
   }
@@ -86,6 +69,22 @@ public:
   friend class gear::Entity;
   friend class gear::WeakVector<Component<T>>;
 };
+
+template<class T>
+/*
+@return all the flags of the specified types combined
+*/
+uint64_t component_Flag() {
+  return Component<T>::get_Flag();
+}
+
+template<class T1, class T2, class ...Ts>
+/*
+@return all the flags of the specified types combined
+*/
+uint64_t component_Flag(void) {
+  return component_Flag<T2, Ts...>() | Component<T1>::get_Flag();
+}
 
 template<class T>
 unsigned int Component<T>::id = -1;

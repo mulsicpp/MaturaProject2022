@@ -252,6 +252,24 @@ private:
     iterator.reset_Iterator();
   }
 
+  template <class... T>
+  /*
+  Iterates over all entities, that contain the components of the specified types.
+
+  @param T the types of the components
+  @param function the function, that gets called with the components
+  */
+  void for_Each(uint8_t scene_ID, void (*function)(T &...args))
+  {
+    WeakVector<Entity> entities = Scene::get(scene_ID)->m_Entities;
+    reset_Iterators(ComponentManager<T>::get_Instance(scene_ID)...);
+    for (int i = 0; i < entities.count(); i++)
+    {
+      if (entities[i].has<T...>())
+        function(ComponentManager<T>::get_Instance(scene_ID).iterate_To(entities[i].m_Entity_ID)...);
+    }
+  }
+
   friend class gear::Scene;
   friend class gear::WeakVector<Entity>;
 };
