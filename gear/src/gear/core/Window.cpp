@@ -10,6 +10,11 @@ gear::Window *gear::Window::create_Window(const char *name, int width, int heigh
   if (height <= 0)
     error("Height of a window cannot be less than or equal to 0");
   ret->m_Window = glfwCreateWindow(width, height, name, NULL, NULL);
+  if(ret->m_Window == nullptr){
+    const char* message;
+    glfwGetError(&message);
+    gear::error("%s\n", message);
+  }
   return ret;
 }
 
