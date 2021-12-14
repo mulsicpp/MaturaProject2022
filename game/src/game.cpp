@@ -24,9 +24,7 @@ void gear::Game::on_Startup(void)
   gear::component_Flag<int, double>();
 
   gear::Font font;
-  font.load("assets/fonts/font2.gear");
-
-  font.write();
+  font.load("assets/fonts/font1.gear");
 
   Scene *s = Scene::get(0);
   Scene *s2 = Scene::get(1);
