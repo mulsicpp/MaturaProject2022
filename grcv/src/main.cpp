@@ -5,6 +5,7 @@
 #include "global.h"
 #include "converter.h"
 #include "font_converter.h"
+#include "image_converter.h"
 
 static std::vector<ConversionUnit> _conversion_Units;
 
@@ -51,22 +52,28 @@ int main(int argc, char *argv[])
 
     bool force = true;
     bool needs_Update = false;
-    if (!force && std::filesystem::exists(unit.target))
+    if (std::filesystem::exists(unit.target))
     {
-      std::filesystem::file_time_type target_Time = std::filesystem::last_write_time(target);
-      if (target_Time < std::filesystem::last_write_time(unit.source))
+      std::filesystem::file_time_type target_Time = std::filesystem::last_write_time(unit.target);
+      if (target_Time < std::filesystem::last_write_time(unit.source)){
+
+        printf("needs update because GRCV file %i %i\n", std::filesystem::last_write_time(unit.source), target_Time);
         needs_Update = true;
+      }
 
       std::filesystem::current_path(std::filesystem::path(unit.source).parent_path());
       for (int i = 1; i < argc; i++)
-        if (target_Time < std::filesystem::last_write_time(argv[i]))
+        if (target_Time < std::filesystem::last_write_time(argv[i])){
+          printf("needs update dependency\n");
           needs_Update = true;
+        }
       std::filesystem::current_path(original_Path);
     }
     else
     {
       std::filesystem::create_directories(std::filesystem::path(unit.target).parent_path());
       needs_Update = true;
+      printf("needs update because exists\n");
     }
 
     if (needs_Update)
@@ -80,6 +87,18 @@ int main(int argc, char *argv[])
         converter = new FontConverter(file_In, file_Out);
         converter->execute();
         delete converter;
+        gear::FileStream::close(file_Out);
+      }
+      else if (strcmp("image", argv[0]) == 0)
+      {
+        printf("converting image \'%s\' to \'%s\' ...\n", unit.source.c_str(), unit.target.c_str());
+        gear::FileStream *file_Out = gear::FileStream::open(unit.target.c_str(), "wb");
+        file_Out->puts("GEARIMG");
+        std::filesystem::current_path(std::filesystem::path(unit.source).parent_path());
+        converter = new ImageConverter(file_In, file_Out);
+        converter->execute();
+        delete converter;
+        gear::FileStream::close(file_Out);
       }
     }
 

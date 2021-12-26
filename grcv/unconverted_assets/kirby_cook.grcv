@@ -1,5 +1,6 @@
-image kirby_cook.png
+image kirby_cook.png kirby_cook_palette.png
 
 img kirby_cook.png
+palette kirby_cook_palette.png
 
-auto_generate_palette
+background 00ff00ff

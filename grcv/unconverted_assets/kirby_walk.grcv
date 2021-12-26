@@ -1,0 +1,10 @@
+animation kirby_walk.png
+
+img kirby_walk.png
+palette palette.png
+
+background 00ff00ff
+
+fps 0
+frame_alignment vertical
+frame_count 10
