@@ -76,18 +76,6 @@ void AnimationConverter::convert(void)
       compressed_Data[i] = 0;
   }
 
-  gear::FileStream *test = gear::FileStream::open("test_anim.txt", "w");
-  for (int i = 0; i < m_Image.height(); i++)
-  {
-    for (int j = 0; j < m_Image.width(); j++)
-      if (compressed_Data[i * m_Image.width() + j] == 0)
-        test->printf("  ");
-      else
-        test->printf("%02x", compressed_Data[i * m_Image.width() + j]);
-    test->printf("\n");
-  }
-  gear::FileStream::close(test);
-
   m_File_Out->put<uint16_t>(width);
   m_File_Out->put<uint16_t>(height);
   m_File_Out->put<uint16_t>(m_Frame_Count);
