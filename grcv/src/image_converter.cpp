@@ -13,22 +13,18 @@ void ImageConverter::command(int argc, char **argv)
       uint8_t *data = stbi_load(argv[1], &width, &height, &channels, 4);
       m_Image = gear::Grid<uint32_t>(width, height, (uint32_t *)data);
       stbi_image_free(data);
-      printf("img\n");
     }
     else if (strcmp(argv[0], "palette") == 0 && argc == 2)
     {
       int width, height, channels;
       m_Palette = (uint32_t*)stbi_load(argv[1], &width, &height, &channels, 4);
       m_Palette_Size = width * height;
-      printf("palette\n");
     }
     else if (strcmp(argv[0], "background") == 0 && argc == 2)
     {
-      printf("background begin\n");
       uint8_t *color_Bytes = (uint8_t *)&m_Background;
       for (int i = 0; i < 4; i++)
         color_Bytes[i] = 16 * (argv[1][2 * i] >= 'a' ? (argv[1][2 * i] - 'a' + 10) : (argv[1][2 * i] - '0')) + (argv[1][2 * i + 1] >= 'a' ? (argv[1][2 * i + 1] - 'a' + 10) : (argv[1][2 * i + 1] - '0'));
-      printf("background\n");
     }
   }
 }
@@ -44,6 +40,7 @@ void ImageConverter::convert(void)
     if(data[i] == m_Background)
     {
       m_File_Out->put<uint8_t>(0);
+      continue;
     }
     int j;
     for(j = 0; j < m_Palette_Size; j++)

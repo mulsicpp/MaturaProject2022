@@ -6,6 +6,7 @@
 #include "converter.h"
 #include "font_converter.h"
 #include "image_converter.h"
+#include "animation_converter.h"
 
 static std::vector<ConversionUnit> _conversion_Units;
 
@@ -96,6 +97,17 @@ int main(int argc, char *argv[])
         file_Out->puts("GEARIMG");
         std::filesystem::current_path(std::filesystem::path(unit.source).parent_path());
         converter = new ImageConverter(file_In, file_Out);
+        converter->execute();
+        delete converter;
+        gear::FileStream::close(file_Out);
+      }
+      else if (strcmp("animation", argv[0]) == 0)
+      {
+        printf("converting animation \'%s\' to \'%s\' ...\n", unit.source.c_str(), unit.target.c_str());
+        gear::FileStream *file_Out = gear::FileStream::open(unit.target.c_str(), "wb");
+        file_Out->puts("GEARANM");
+        std::filesystem::current_path(std::filesystem::path(unit.source).parent_path());
+        converter = new AnimationConverter(file_In, file_Out);
         converter->execute();
         delete converter;
         gear::FileStream::close(file_Out);
