@@ -16,3 +16,4 @@ char_gap -1
 line_gap -1
 
 char_range ! ~
+char_code 0
