@@ -6,10 +6,15 @@
 
 _GEAR_START
 
+class Game;
+
 class Window
 {
+  friend class gear::Game;
+
 private:
   GLFWwindow *m_Window;
+  static GLFWwindow *main_OpenGL_Context;
 
   /*
   Default Constructor
@@ -52,6 +57,12 @@ public:
   bool should_Close(void);
 
   /*
+  Make the window visible or invisible.
+  @param visible visibility of window
+  */
+  void set_Visible(bool visible);
+
+  /*
   Sets the window full screen.
   */
   void set_Fullscreen();
@@ -62,6 +73,12 @@ public:
   @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
   */
   void set_Windowed(int width, int height);
+
+  /*
+  Sets the title of the window.
+  @param title title of window
+  */
+  void set_Title(const char *title);
 
   /*
   Sets the size and position of the window. For full screen windows, this function updates the resolution of its desired video mode and switches to the video mode closest to it, without affecting the window's context.

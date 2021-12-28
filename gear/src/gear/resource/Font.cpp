@@ -1,6 +1,7 @@
 #include "Font.h"
 
 #include <gear/data/FileStream.h>
+#include <glad/glad.h>
 #include <string.h>
 
 gear::Font::Font(void) : m_Atlas(), m_Flags(0) {}
@@ -34,9 +35,8 @@ int gear::Font::load(const char *filename)
   stream->get<int16_t>(&m_Line_Gap);
   
 
-  uint16_t width, height;
-  stream->get<uint16_t>(&width);
-  stream->get<uint16_t>(&height);
+  stream->get<uint16_t>(&m_Width);
+  stream->get<uint16_t>(&m_Height);
 
   uint32_t data_Size;
   stream->get<uint32_t>(&data_Size);
@@ -51,17 +51,16 @@ int gear::Font::load(const char *filename)
   {
     stream->get<char>(&character);
     stream->get<uint16_t>(&char_Width);
-    m_Characters[character] = {offset, (uint16_t)(offset + char_Width), 0, height};
+    m_Characters[character] = {offset, (uint16_t)(offset + char_Width), 0, m_Height};
   }
-  m_Atlas = Grid<uint8_t>(width, height);
 
   uint8_t bit_Mask = 0;
   for(int i = 0; i < bits_Per_Pixel; i++)
     bit_Mask |= (1 << i);
   uint8_t pixels_Per_Byte = 8 / bits_Per_Pixel;
 
-  uint8_t* atlas_Data = m_Atlas.data();
-  uint32_t atlas_Count = m_Atlas.count();
+  uint32_t atlas_Count = m_Width * m_Height;
+  uint8_t* atlas_Data = new uint8_t[atlas_Count];
   uint8_t current_Byte;
   for(int i = 0; i < atlas_Count; i++)
   {
@@ -69,20 +68,14 @@ int gear::Font::load(const char *filename)
       stream->get<uint8_t>(&current_Byte);
     atlas_Data[i] = (current_Byte >> ((pixels_Per_Byte - 1 - (i % pixels_Per_Byte)) * bits_Per_Pixel)) & bit_Mask;
   }
-  FileStream::close(stream);
-}
 
-void gear::Font::write(void)
-{
-  FileStream *stream = FileStream::open("font_output.txt", "w");
-  uint8_t pixel;
-  for(int i = 0; i < m_Atlas.height(); i++)
-  {
-    for(int j = 0; j < m_Atlas.width(); j++){
-      pixel = m_Atlas(j, i);
-      stream->puts(pixel == 0 ? "  " : (pixel == 3 ? "MM" : (pixel == 1 ? "--" : "==")));
-    }
-    stream->put<char>('\n');
-  }
+  glGenTextures(1, &m_Atlas);
+  glBindTexture(GL_TEXTURE_2D, m_Atlas);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_Width, m_Height, 0, GL_RED, GL_UNSIGNED_BYTE, atlas_Data);
+
   FileStream::close(stream);
 }

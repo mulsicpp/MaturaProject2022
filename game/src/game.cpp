@@ -25,8 +25,6 @@ void gear::Game::on_Startup(void)
 
   gear::Font font;
   font.load("assets/fonts/font2.gear");
-
-  font.write();
 }
 
 void gear::Game::per_Frame(void)

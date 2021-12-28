@@ -22,6 +22,10 @@ private:
 
   Game(void);
 
+  static void gear_Init(void);
+
+  static void gear_Terminate(void);
+
 public:
   static Game *get_Instance(void);
   void run(void);

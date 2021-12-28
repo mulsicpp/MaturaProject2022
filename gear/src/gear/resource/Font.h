@@ -21,7 +21,8 @@ private:
   uint8_t m_Flags;
   int16_t m_Char_Gap;
   int16_t m_Line_Gap;
-  Grid<uint8_t> m_Atlas;
+  uint16_t m_Width, m_Height;
+  unsigned int m_Atlas;
   std::unordered_map<char, CharacterLocation> m_Characters;
 
 public:
@@ -29,8 +30,6 @@ public:
   Font(const char *filename);
 
   int load(const char *filename);
-
-  void write(void);
 };
 
 _GEAR_END
