@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
   std::filesystem::path source = argv[1], target = argv[2];
   if (std::filesystem::is_directory(source))
   {
+    std::filesystem::create_directories(target);
     target = std::filesystem::canonical(target);
     std::filesystem::current_path(source);
     std::filesystem::recursive_directory_iterator iterator(".");
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
   {
     std::filesystem::current_path(original_Path);
     FILE *file_In = fopen(unit.source.c_str(), "r");
-    std::filesystem::create_directories(std::filesystem::path(target).parent_path());
+    std::filesystem::create_directories(std::filesystem::path(unit.target).parent_path());
     char buffer[512]{0};
     int argc = 0;
     char *argv[20];

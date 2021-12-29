@@ -13,6 +13,7 @@ gear::Font::Font(const char *filename)
 
 int gear::Font::load(const char *filename)
 {
+  GEAR_DEBUG_LOG("loading font ...");
   FileStream *stream = FileStream::open(filename, "rb");
   if(stream == nullptr)
     return -1;
@@ -76,6 +77,8 @@ int gear::Font::load(const char *filename)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_Width, m_Height, 0, GL_RED, GL_UNSIGNED_BYTE, atlas_Data);
+
+  GEAR_DEBUG_LOG("Font atlas id: %i", m_Atlas);
 
   FileStream::close(stream);
 }

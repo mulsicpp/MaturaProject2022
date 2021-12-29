@@ -36,5 +36,5 @@ linklib glfw3
 src src
 lib ../gear/lib/$conf/$_platform/$_arch/lib(gear)
 
-#dependency ../grcv
+dependency ../grcv
 cmd ../grcv/out/$_platform/$_arch/app(grcv) unconverted_assets assets
