@@ -3,6 +3,7 @@
 #include "debug/log.h"
 #include <filesystem>
 #include <string.h>
+#include <gear/renderer/Renderer.h>
 
 #if defined(GEAR_PLATFORM_LINUX)
 #include <unistd.h>
@@ -69,12 +70,8 @@ void gear::Game::gear_Init(void)
     GEAR_DEBUG_LOG("GLFW initialisation failed!\n");
     gear::Game::get_Instance()->close(1);
   }
-  glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-  Window::main_OpenGL_Context = glfwCreateWindow(1, 1, "main_OpenGL_Context", NULL, NULL);
-  glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
-  glfwMakeContextCurrent(Window::main_OpenGL_Context);
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    gear::error("Failed to load OpenGL");
+
+  Renderer::create();
 
 #if defined(GEAR_DEBUG)
   glDebugMessageCallback(openGL_Debug_Callback, nullptr);
@@ -83,5 +80,6 @@ void gear::Game::gear_Init(void)
 
 void gear::Game::gear_Terminate(void)
 {
+  Renderer::destroy();
   glfwTerminate();
 }
