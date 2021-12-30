@@ -22,6 +22,7 @@ A scene, that can contain an array of entites.
 */
 class Scene
 {
+  friend class gear::Entity;
 private:
   WeakVector<Entity> m_Entities;
   unsigned int m_Next_ID;

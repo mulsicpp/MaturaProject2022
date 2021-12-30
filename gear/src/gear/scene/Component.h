@@ -62,7 +62,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& ostream, const Component<T>& component)
   {
-    ostream << "{scene_ID=" << (int)component.m_Scene_ID << ", entity_ID=" << component.m_Entity_ID << ", data=" << component.data << "}";
+    ostream << "{scene_ID=" << (int)component.m_Scene_ID << ", entity_ID=" << component.m_Entity_ID << "}";
     return ostream;
   }
 

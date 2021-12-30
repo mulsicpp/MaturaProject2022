@@ -79,11 +79,11 @@ private:
       while (count > 1)
       {
         index = count / 2;
-        if (data[index].entity_ID == entity_ID)
+        if (data[index].m_Entity_ID == entity_ID)
         {
           return data + index;
         }
-        else if (data[index].entity_ID > entity_ID)
+        else if (data[index].m_Entity_ID > entity_ID)
         {
           count = index;
         }
@@ -93,7 +93,7 @@ private:
           data = data + index + 1;
         }
       }
-      if (data->entity_ID == entity_ID)
+      if (data->m_Entity_ID == entity_ID)
         return data;
       else
         return nullptr;
@@ -130,7 +130,7 @@ private:
 
     T &iterate_To(unsigned int entity_ID)
     {
-      while(m_Components[++m_Next_Elem].entity_ID < entity_ID);
+      while(m_Components[++m_Next_Elem].m_Entity_ID < entity_ID);
       return m_Components[m_Next_Elem].data;
     }
 
@@ -252,6 +252,8 @@ private:
     iterator.reset_Iterator();
   }
 
+
+public:
   template <class... T>
   /*
   Iterates over all entities, that contain the components of the specified types.
@@ -259,7 +261,7 @@ private:
   @param T the types of the components
   @param function the function, that gets called with the components
   */
-  void for_Each(uint8_t scene_ID, void (*function)(T &...args))
+  static void for_Each(uint8_t scene_ID, void (*function)(T &...args))
   {
     WeakVector<Entity> entities = Scene::get(scene_ID)->m_Entities;
     reset_Iterators(ComponentManager<T>::get_Instance(scene_ID)...);
