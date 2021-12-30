@@ -6,4 +6,4 @@ dependency ../gear --var:conf=release
 incpath ../gear/src
 
 src src
-lib ../gear/lib/release/$_platform/$_arch/lib(gear)
+src ../gear/src/gear/data
