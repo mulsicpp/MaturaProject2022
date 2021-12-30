@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gear/core/core.h>
-#include "memory.h"
+#include "memcpy.h"
 #include <string>
 
 _GEAR_START

@@ -2,7 +2,7 @@
 
 #include <gear/core/core.h>
 #include <gear/core/debug/log.h>
-#include "memory.h"
+#include "memcpy.h"
 
 _GEAR_START
 

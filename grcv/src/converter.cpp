@@ -1,6 +1,6 @@
 #include "converter.h"
 #include <string.h>
-#include <gear/data/memory.h>
+#include <gear/data/memcpy.h>
 
 void cmd_To_Args(char *cmd, int max_Args, int *argc, char **argv)
 {
