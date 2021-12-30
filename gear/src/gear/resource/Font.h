@@ -4,10 +4,11 @@
 #include <stdint.h>
 #include <unordered_map>
 #include <gear/data/Grid.h>
+#include "Resource.h"
 
 _GEAR_START
 
-class Font
+class Font : public Resource
 {
 private:
   struct CharacterLocation
@@ -27,9 +28,8 @@ private:
 
 public:
   Font(void);
-  Font(const char *filename);
-
-  int load(const char *filename);
+protected:
+  int load(FileStream *file_Stream) override;
 };
 
 _GEAR_END

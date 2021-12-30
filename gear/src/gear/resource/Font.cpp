@@ -1,57 +1,45 @@
 #include "Font.h"
 
-#include <gear/data/FileStream.h>
 #include <glad/glad.h>
 #include <string.h>
 
 gear::Font::Font(void) : m_Atlas(), m_Flags(0) {}
 
-gear::Font::Font(const char *filename)
-{
-  load(filename);
-}
-
-int gear::Font::load(const char *filename)
+int gear::Font::load(FileStream *file_Stream)
 {
   GEAR_DEBUG_LOG("loading font ...");
-  FileStream *stream = FileStream::open(filename, "rb");
-  if(stream == nullptr)
+  if(file_Stream == nullptr)
     return -1;
-  
-  char signature[7]{0};
-  stream->get<char>(signature, 7);
-  if(memcmp("GEARFNT", signature, 7))
-    return -2;
 
-  stream->get<uint8_t>(&m_Flags);
+  file_Stream->get<uint8_t>(&m_Flags);
   uint8_t color_Count = 0;
-  stream->get<uint8_t>(&color_Count);
+  file_Stream->get<uint8_t>(&color_Count);
   if(color_Count == 0 || color_Count > 255)
     return -2;
 
   uint8_t bits_Per_Pixel = 0;
-  stream->get<uint8_t>(&bits_Per_Pixel);
+  file_Stream->get<uint8_t>(&bits_Per_Pixel);
 
-  stream->get<int16_t>(&m_Char_Gap);
-  stream->get<int16_t>(&m_Line_Gap);
+  file_Stream->get<int16_t>(&m_Char_Gap);
+  file_Stream->get<int16_t>(&m_Line_Gap);
   
 
-  stream->get<uint16_t>(&m_Width);
-  stream->get<uint16_t>(&m_Height);
+  file_Stream->get<uint16_t>(&m_Width);
+  file_Stream->get<uint16_t>(&m_Height);
 
   uint32_t data_Size;
-  stream->get<uint32_t>(&data_Size);
+  file_Stream->get<uint32_t>(&data_Size);
 
   uint8_t char_Count = 0;
-  stream->get<uint8_t>(&char_Count);
+  file_Stream->get<uint8_t>(&char_Count);
 
   uint16_t offset = 0;
   char character;
   uint16_t char_Width;
   for(int i = 0; i < char_Count; i++)
   {
-    stream->get<char>(&character);
-    stream->get<uint16_t>(&char_Width);
+    file_Stream->get<char>(&character);
+    file_Stream->get<uint16_t>(&char_Width);
     m_Characters[character] = {offset, (uint16_t)(offset + char_Width), 0, m_Height};
   }
 
@@ -66,7 +54,7 @@ int gear::Font::load(const char *filename)
   for(int i = 0; i < atlas_Count; i++)
   {
     if(i % pixels_Per_Byte == 0)
-      stream->get<uint8_t>(&current_Byte);
+      file_Stream->get<uint8_t>(&current_Byte);
     atlas_Data[i] = (current_Byte >> ((pixels_Per_Byte - 1 - (i % pixels_Per_Byte)) * bits_Per_Pixel)) & bit_Mask;
   }
 
@@ -79,6 +67,4 @@ int gear::Font::load(const char *filename)
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_Width, m_Height, 0, GL_RED, GL_UNSIGNED_BYTE, atlas_Data);
 
   GEAR_DEBUG_LOG("Font atlas id: %i", m_Atlas);
-
-  FileStream::close(stream);
 }
