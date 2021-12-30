@@ -1,8 +1,6 @@
 #pragma once
 
-#define _GEAR_START \
-  namespace gear    \
-  {
+#define _GEAR_START namespace gear {
 #define _GEAR_END }
 
 #if defined(_WIN32)
@@ -37,8 +35,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <memory>
 
 _GEAR_START
+
+
+template<class T>
+using Ref = std::shared_ptr<T>;
 
 template <class... T>
 void error(const char *str, T... args)
@@ -48,5 +51,6 @@ void error(const char *str, T... args)
   printf("\033[0m\n");
   exit(1);
 }
+
 
 _GEAR_END
