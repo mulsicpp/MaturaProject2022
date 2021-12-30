@@ -1,6 +1,5 @@
 #include "Window.h"
-
-GLFWwindow *gear::Window::main_OpenGL_Context;
+#include <gear/renderer/Renderer.h>
 
 gear::Window::Window() {}
 
@@ -11,7 +10,7 @@ gear::Window *gear::Window::create_Window(const char *name, int width, int heigh
     error("Width of a window cannot be less than or equal to 0");
   if (height <= 0)
     error("Height of a window cannot be less than or equal to 0");
-  ret->m_Window = glfwCreateWindow(width, height, name, NULL, main_OpenGL_Context);
+  ret->m_Window = glfwCreateWindow(width, height, name, NULL, Renderer::main_OpenGL_Context);
   if (ret->m_Window == nullptr)
   {
     const char *message;
@@ -28,7 +27,7 @@ gear::Window *gear::Window::create_Window(const char *name, int x, int y, int wi
     error("Width of a window cannot be less than or equal to 0");
   if (height <= 0)
     error("Height of a window cannot be less than or equal to 0");
-  ret->m_Window = glfwCreateWindow(width, height, name, NULL, main_OpenGL_Context);
+  ret->m_Window = glfwCreateWindow(width, height, name, NULL, Renderer::main_OpenGL_Context);
   glfwSetWindowPos(ret->m_Window, x, y);
   return ret;
 }
@@ -39,7 +38,7 @@ gear::Window *gear::Window::create_Fullscreen_Window(const char *name)
   const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
   int window_width = mode->width;
   int window_height = mode->height;
-  ret->m_Window = glfwCreateWindow(window_width, window_height, name, glfwGetPrimaryMonitor(), main_OpenGL_Context);
+  ret->m_Window = glfwCreateWindow(window_width, window_height, name, glfwGetPrimaryMonitor(), Renderer::main_OpenGL_Context);
   return ret;
 }
 
