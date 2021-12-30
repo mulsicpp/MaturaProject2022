@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Resource.h"
+#include <filesystem>
 
 _GEAR_START
 
@@ -17,7 +18,7 @@ public:
   static Ref<T> get(std::string filename){
     if(m_Resources.find(filename) == m_Resources.end())
     {
-      return std::dynamic_pointer_cast<T, Resource>(m_Resources[filename] = Resource::load_Resource(filename.c_str()));
+      return std::dynamic_pointer_cast<T, Resource>(m_Resources[filename] = Resource::load_Resource(std::filesystem::proximate(filename, std::filesystem::current_path()).string().c_str()));
     }
     return std::dynamic_pointer_cast<T, Resource>(m_Resources[filename]);
   }
