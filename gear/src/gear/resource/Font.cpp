@@ -3,7 +3,11 @@
 #include <glad/glad.h>
 #include <string.h>
 
-gear::Font::Font(void) : m_Atlas(), m_Flags(0) {}
+gear::Font::Font(void) : m_TextureID(0), m_Flags(0), m_Char_Gap(0), m_Line_Gap(0), m_Width(0), m_Height(0) {}
+gear::Font::~Font() {
+  if(m_TextureID != 0)
+    glDeleteTextures(1, &m_TextureID);
+}
 
 int gear::Font::load(FileStream *file_Stream)
 {
@@ -58,13 +62,13 @@ int gear::Font::load(FileStream *file_Stream)
     atlas_Data[i] = (current_Byte >> ((pixels_Per_Byte - 1 - (i % pixels_Per_Byte)) * bits_Per_Pixel)) & bit_Mask;
   }
 
-  glGenTextures(1, &m_Atlas);
-  glBindTexture(GL_TEXTURE_2D, m_Atlas);
+  glGenTextures(1, &m_TextureID);
+  glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_Width, m_Height, 0, GL_RED, GL_UNSIGNED_BYTE, atlas_Data);
 
-  GEAR_DEBUG_LOG("Font atlas id: %i", m_Atlas);
+  GEAR_DEBUG_LOG("Font atlas id: %i", m_TextureID);
 }

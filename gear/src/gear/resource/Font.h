@@ -23,13 +23,18 @@ private:
   int16_t m_Char_Gap;
   int16_t m_Line_Gap;
   uint16_t m_Width, m_Height;
-  unsigned int m_Atlas;
+  unsigned int m_TextureID;
   std::unordered_map<char, CharacterLocation> m_Characters;
+
+protected:
+  int load(FileStream *file_Stream) override;
 
 public:
   Font(void);
-protected:
-  int load(FileStream *file_Stream) override;
+  ~Font();
+
+  Font(const Font &) = delete;
+  Font &operator=(const Font &) = delete;
 };
 
 _GEAR_END
