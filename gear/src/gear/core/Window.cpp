@@ -63,6 +63,14 @@ bool gear::Window::should_Close(void)
 
 void gear::Window::make_Renderable(uint16_t width, uint16_t height)
 {
+  glGenVertexArrays(1, &m_VertexarrayID);
+  glBindVertexArray(m_VertexarrayID);
+
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (const void *)(2 * sizeof(float)));
+  glEnableVertexAttribArray(1);
+
   glGenFramebuffers(1, &m_FramebufferID);
   glBindFramebuffer(GL_FRAMEBUFFER, m_FramebufferID);
 
@@ -84,16 +92,8 @@ void gear::Window::make_Renderable(uint16_t width, uint16_t height)
   unsigned int draw_Buffers[1] = {GL_COLOR_ATTACHMENT0};
   glDrawBuffers(1, draw_Buffers);
 
-  if (glCheckFramebufferStatus(m_FramebufferID) != GL_FRAMEBUFFER_COMPLETE)
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     gear::error("Framebuffer couldn't be completed");
-
-  glGenVertexArrays(1, &m_VertexarrayID);
-  glBindVertexArray(m_VertexarrayID);
-
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (const void *)(2 * sizeof(float)));
-  glEnableVertexAttribArray(1);
 }
 
 void gear::Window::set_Visible(bool visible)
@@ -102,6 +102,11 @@ void gear::Window::set_Visible(bool visible)
     glfwShowWindow(m_Window);
   else
     glfwHideWindow(m_Window);
+}
+
+void gear::Window::set_Resizable(bool resizable)
+{
+  glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, resizable);
 }
 
 void gear::Window::set_Fullscreen()

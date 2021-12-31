@@ -76,6 +76,12 @@ public:
   void set_Visible(bool visible);
 
   /*
+  Make the window resizable or not resizable.
+  @param resizable sets window resizable if true, if false non resizable
+  */
+  void set_Resizable(bool resizable);
+
+  /*
   Sets the window full screen.
   */
   void set_Fullscreen();
