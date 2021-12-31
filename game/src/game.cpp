@@ -7,9 +7,9 @@
 #include <memory>
 
 #include <gear/data/FileStream.h>
-#include <gear/renderer/Renderer.h>
 #include <gear/resource/ResourceManager.h>
-#include <gear/resource/Palette.h>
+
+gear::Ref<gear::Font> font;
 
 #include <filesystem>
 
@@ -19,16 +19,7 @@ void gear::Game::on_Startup(void)
   Window::set_V_Sync(true);
   //  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
-  GEAR_DEBUG_LOG("Opened application ");
-
-  Component<int>::allow();
-  gear::component_Flag<int, double>();
-
-  Scene *scene = Scene::get(0);
-  scene->create();
-
-  Ref<Font> font = ResourceManager::get<Font>("assets/fonts/font1.gear");
-  Ref<Font> font2 = ResourceManager::get<Font>("assets/fonts/font2.gear");
+  GEAR_DEBUG_LOG("Opened application");
 }
 
 void gear::Game::per_Frame(void)
@@ -42,6 +33,7 @@ void gear::Game::per_Frame(void)
 
 void gear::Game::on_Shutdown(void)
 {
+  GEAR_DEBUG_LOG("unloaded resources: %i", ResourceManager::unload());
   main_Window->destroy();
   GEAR_DEBUG_LOG("%i", ResourceManager::unload());
   GEAR_DEBUG_LOG("Closed application");

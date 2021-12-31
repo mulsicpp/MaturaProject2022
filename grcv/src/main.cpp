@@ -92,11 +92,11 @@ int main(int argc, char *argv[])
         delete converter;
         gear::FileStream::close(file_Out);
       }
-      else if (strcmp("image", argv[0]) == 0)
+      else if (strcmp("sprite", argv[0]) == 0)
       {
-        printf("converting image \'%s\' to \'%s\' ...\n", unit.source.c_str(), unit.target.c_str());
+        printf("converting sprite \'%s\' to \'%s\' ...\n", unit.source.c_str(), unit.target.c_str());
         gear::FileStream *file_Out = gear::FileStream::open(unit.target.c_str(), "wb");
-        file_Out->puts("GEARIMG");
+        file_Out->puts("GEARSPT");
         std::filesystem::current_path(std::filesystem::path(unit.source).parent_path());
         converter = new ImageConverter(file_In, file_Out);
         converter->execute();
