@@ -106,12 +106,12 @@ private:
       int i;
       for (i = 0; i < count; i++)
       {
-        if (data[i].entity_ID >= component.entity_ID)
+        if (data[i].m_Entity_ID >= component.m_Entity_ID)
           break;
       }
       if(i == count)
         m_Components.push_Back(component);
-      if(data[i].entity_ID != component.entity_ID)
+      if(data[i].m_Entity_ID != component.m_Entity_ID)
         m_Components.insert(component, i);
       else
         m_Components[i].data = component.data;
