@@ -4,21 +4,23 @@
 #include <string.h>
 
 gear::Font::Font(void) : m_TextureID(0), m_Flags(0), m_Char_Gap(0), m_Line_Gap(0), m_Width(0), m_Height(0) {}
-gear::Font::~Font() {
-  if(m_TextureID != 0)
+gear::Font::~Font()
+{
+  GEAR_DEBUG_LOG("delete font");
+  if (m_TextureID != 0)
     glDeleteTextures(1, &m_TextureID);
 }
 
 int gear::Font::load(FileStream *file_Stream)
 {
   GEAR_DEBUG_LOG("loading font ...");
-  if(file_Stream == nullptr)
+  if (file_Stream == nullptr)
     return -1;
 
   file_Stream->get<uint8_t>(&m_Flags);
   uint8_t color_Count = 0;
   file_Stream->get<uint8_t>(&color_Count);
-  if(color_Count == 0 || color_Count > 255)
+  if (color_Count == 0 || color_Count > 255)
     return -2;
 
   uint8_t bits_Per_Pixel = 0;
@@ -26,7 +28,6 @@ int gear::Font::load(FileStream *file_Stream)
 
   file_Stream->get<int16_t>(&m_Char_Gap);
   file_Stream->get<int16_t>(&m_Line_Gap);
-  
 
   file_Stream->get<uint16_t>(&m_Width);
   file_Stream->get<uint16_t>(&m_Height);
@@ -40,7 +41,7 @@ int gear::Font::load(FileStream *file_Stream)
   uint16_t offset = 0;
   char character;
   uint16_t char_Width;
-  for(int i = 0; i < char_Count; i++)
+  for (int i = 0; i < char_Count; i++)
   {
     file_Stream->get<char>(&character);
     file_Stream->get<uint16_t>(&char_Width);
@@ -48,16 +49,16 @@ int gear::Font::load(FileStream *file_Stream)
   }
 
   uint8_t bit_Mask = 0;
-  for(int i = 0; i < bits_Per_Pixel; i++)
+  for (int i = 0; i < bits_Per_Pixel; i++)
     bit_Mask |= (1 << i);
   uint8_t pixels_Per_Byte = 8 / bits_Per_Pixel;
 
   uint32_t atlas_Count = m_Width * m_Height;
-  uint8_t* atlas_Data = new uint8_t[atlas_Count];
+  uint8_t *atlas_Data = new uint8_t[atlas_Count];
   uint8_t current_Byte;
-  for(int i = 0; i < atlas_Count; i++)
+  for (int i = 0; i < atlas_Count; i++)
   {
-    if(i % pixels_Per_Byte == 0)
+    if (i % pixels_Per_Byte == 0)
       file_Stream->get<uint8_t>(&current_Byte);
     atlas_Data[i] = (current_Byte >> ((pixels_Per_Byte - 1 - (i % pixels_Per_Byte)) * bits_Per_Pixel)) & bit_Mask;
   }

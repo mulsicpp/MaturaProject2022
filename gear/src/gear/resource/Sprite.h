@@ -8,8 +8,8 @@ _GEAR_START
 class Sprite : public Resource
 {
 private:
-  uint16_t m_Width = 0, m_Height = 0;
-  unsigned int m_TextureID = 0;
+  uint16_t m_Width, m_Height;
+  unsigned int m_TextureID;
 
 protected:
   int load(FileStream *file_Stream) override;

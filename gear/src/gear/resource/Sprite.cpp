@@ -6,6 +6,7 @@ gear::Sprite::Sprite(void) : m_TextureID(0), m_Width(0), m_Height(0) {}
 
 gear::Sprite::~Sprite()
 {
+  GEAR_DEBUG_LOG("delete sprite");
   if(m_TextureID != 0)
     glDeleteTextures(1, &m_TextureID);
 }
