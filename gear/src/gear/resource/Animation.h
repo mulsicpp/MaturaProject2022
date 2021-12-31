@@ -21,6 +21,14 @@ public:
 
   Animation(const Animation &) = delete;
   Animation &operator=(const Animation &) = delete;
+
+  uint16_t get_Width(void) const;
+  uint16_t get_Height(void) const;
+  uint16_t get_Frame_Count(void) const;
+
+  float get_Default_Frame_Rate(void) const;
+
+  unsigned int get_TextureID(void) const;
 };
 
 _GEAR_END

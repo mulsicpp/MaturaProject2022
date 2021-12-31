@@ -22,3 +22,6 @@ int gear::Palette::load(gear::FileStream *file_Stream)
 
   return 0;
 }
+
+uint8_t gear::Palette::get_Size(void) const { return m_Size; }
+uint32_t *gear::Palette::get_Colors(void) const { return m_Colors; }

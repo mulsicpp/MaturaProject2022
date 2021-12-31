@@ -6,6 +6,9 @@
 #include <chrono>
 
 #include <gear/data/FileStream.h>
+#include <gear/resource/ResourceManager.h>
+
+gear::Ref<gear::Font> font;
 
 void some_System(double &comp1, short &comp2, char &comp3)
 {
@@ -18,13 +21,7 @@ void gear::Game::on_Startup(void)
   Window::set_V_Sync(true);
   //  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
-  GEAR_DEBUG_LOG("Opened application ");
-
-  Component<int>::allow();
-  gear::component_Flag<int, double>();
-
-  gear::Font font;
-  GEAR_DEBUG_LOG("font ret: %i", font.load("assets/fonts/font2.gear"));
+  GEAR_DEBUG_LOG("Opened application");
 }
 
 void gear::Game::per_Frame(void)
@@ -37,6 +34,7 @@ void gear::Game::per_Frame(void)
 
 void gear::Game::on_Shutdown(void)
 {
+  GEAR_DEBUG_LOG("unloaded resources: %i", ResourceManager::unload());
   main_Window->destroy();
   GEAR_DEBUG_LOG("Closed application");
 }

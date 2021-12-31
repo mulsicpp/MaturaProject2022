@@ -21,6 +21,9 @@ public:
 
   Palette(const Palette &) = delete;
   Palette &operator=(const Palette &) = delete;
+
+  uint8_t get_Size(void) const;
+  uint32_t *get_Colors(void) const;
 };
 
 _GEAR_END

@@ -73,3 +73,16 @@ int gear::Font::load(FileStream *file_Stream)
 
   GEAR_DEBUG_LOG("Font atlas id: %i", m_TextureID);
 }
+
+uint8_t gear::Font::get_Flags(void) const { return m_Flags; }
+uint16_t gear::Font::get_Char_Gap(void) const { return m_Char_Gap; }
+uint16_t gear::Font::get_Line_Gap(void) const { return m_Line_Gap; }
+uint16_t gear::Font::get_Width(void) const { return m_Width; }
+uint16_t gear::Font::get_Height(void) const { return m_Height; }
+unsigned int gear::Font::get_TextureID(void) const { return m_TextureID; }
+const gear::Font::CharacterLocation *gear::Font::get_Char(char character) const
+{
+  if(m_Characters.find(character) == m_Characters.end())
+    return &m_Characters.at(0);
+  return &m_Characters.at(character);
+}

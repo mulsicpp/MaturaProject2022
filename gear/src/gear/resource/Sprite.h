@@ -20,6 +20,11 @@ public:
 
   Sprite(const Sprite &) = delete;
   Sprite &operator=(const Sprite &) = delete;
+
+  uint16_t get_Width(void) const;
+  uint16_t get_Height(void) const;
+
+  unsigned int get_TextureID(void) const;
 };
 
 _GEAR_END

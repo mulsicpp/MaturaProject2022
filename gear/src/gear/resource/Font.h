@@ -35,6 +35,14 @@ public:
 
   Font(const Font &) = delete;
   Font &operator=(const Font &) = delete;
+
+  uint8_t get_Flags(void) const;
+  uint16_t get_Char_Gap(void) const;
+  uint16_t get_Line_Gap(void) const;
+  uint16_t get_Width(void) const;
+  uint16_t get_Height(void) const;
+  unsigned int get_TextureID(void) const;
+  const CharacterLocation *get_Char(char character) const;
 };
 
 _GEAR_END

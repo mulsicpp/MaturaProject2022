@@ -32,3 +32,8 @@ int gear::Sprite::load(gear::FileStream *file_Stream)
 
   return 0;
 }
+
+uint16_t gear::Sprite::get_Width(void) const { return m_Width; }
+uint16_t gear::Sprite::get_Height(void) const { return m_Height; }
+
+unsigned int gear::Sprite::get_TextureID(void) const { return m_TextureID; }

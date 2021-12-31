@@ -7,8 +7,8 @@ gear::Animation::Animation(void) : m_TextureID(0), m_Width(0), m_Height(0), m_Fr
 gear::Animation::~Animation()
 {
   GEAR_DEBUG_LOG("delete animation");
-  if(m_TextureID != 0)
-  	glDeleteTextures(1, &m_TextureID);
+  if (m_TextureID != 0)
+    glDeleteTextures(1, &m_TextureID);
 }
 
 int gear::Animation::load(gear::FileStream *file_Stream)
@@ -35,3 +35,11 @@ int gear::Animation::load(gear::FileStream *file_Stream)
 
   return 0;
 }
+
+uint16_t gear::Animation::get_Width(void) const { return m_Width; }
+uint16_t gear::Animation::get_Height(void) const { return m_Height; }
+uint16_t gear::Animation::get_Frame_Count(void) const { return m_Frame_Count; }
+
+float gear::Animation::get_Default_Frame_Rate(void) const { return m_Default_Frame_Rate; }
+
+unsigned int gear::Animation::get_TextureID(void) const { return m_TextureID; }
