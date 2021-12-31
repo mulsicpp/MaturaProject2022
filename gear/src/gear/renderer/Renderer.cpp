@@ -5,6 +5,7 @@
 
 GLFWwindow *gear::Renderer::m_Main_OpenGL_Context = nullptr;
 unsigned int gear::Renderer::m_Sprite_Nobatch_Shader = 0;
+gear::Window *gear::Renderer::m_Window = nullptr;
 
 void gear::Renderer::create(void)
 {
@@ -80,4 +81,12 @@ unsigned int gear::Renderer::link_Program(unsigned int vertex_Shader, unsigned i
   }
 
   return program;
+}
+
+void gear::Renderer::set_Window(gear::Window *window)
+{
+  if(window->m_DepthbufferID != 0 && window->m_TextureID != 0 && window->m_FramebufferID != 0 && window->m_VertexarrayID != 0)
+    m_Window = window;
+  else
+    gear::error("Window is not renderable");
 }
