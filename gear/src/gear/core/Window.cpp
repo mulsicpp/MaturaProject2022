@@ -1,5 +1,6 @@
 #include "Window.h"
 #include <gear/renderer/Renderer.h>
+#include <glad/glad.h>
 
 gear::Window::Window() {}
 
@@ -44,12 +45,55 @@ gear::Window *gear::Window::create_Fullscreen_Window(const char *name)
 
 void gear::Window::destroy(void)
 {
+  if (m_FramebufferID != 0)
+    glDeleteFramebuffers(1, &m_FramebufferID);
+  if (m_TextureID != 0)
+    glDeleteTextures(1, &m_TextureID);
+  if (m_DepthbufferID != 0)
+    glDeleteTextures(1, &m_DepthbufferID);
+  if (m_FramebufferID != 0)
+    glDeleteVertexArrays(1, &m_VertexarrayID);
   glfwDestroyWindow(m_Window);
 }
 
 bool gear::Window::should_Close(void)
 {
   return glfwWindowShouldClose(m_Window);
+}
+
+void gear::Window::make_Renderable(uint16_t width, uint16_t height)
+{
+  glGenFramebuffers(1, &m_FramebufferID);
+  glBindFramebuffer(GL_FRAMEBUFFER, m_FramebufferID);
+
+  glGenTextures(1, &m_TextureID);
+  glBindTexture(GL_TEXTURE_2D, m_TextureID);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureID, 0);
+
+  glGenRenderbuffers(1, &m_DepthbufferID);
+  glBindRenderbuffer(GL_RENDERBUFFER, m_DepthbufferID);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_DepthbufferID);
+
+  unsigned int draw_Buffers[1] = {GL_COLOR_ATTACHMENT0};
+  glDrawBuffers(1, draw_Buffers);
+
+  if (glCheckFramebufferStatus(m_FramebufferID) != GL_FRAMEBUFFER_COMPLETE)
+    gear::error("Framebuffer couldn't be completed");
+
+  glGenVertexArrays(1, &m_VertexarrayID);
+  glBindVertexArray(m_VertexarrayID);
+
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (const void *)(2 * sizeof(float)));
+  glEnableVertexAttribArray(1);
 }
 
 void gear::Window::set_Visible(bool visible)
@@ -71,7 +115,8 @@ void gear::Window::set_Windowed(int width, int height)
   glfwSetWindowMonitor(m_Window, nullptr, 0, 0, width, height, 0);
 }
 
-void gear::Window::set_Title(const char *title) {
+void gear::Window::set_Title(const char *title)
+{
   glfwSetWindowTitle(m_Window, title);
 }
 
@@ -110,9 +155,4 @@ void gear::Window::swap_Buffers(void)
 void gear::Window::poll_Events(void)
 {
   glfwPollEvents();
-}
-
-void gear::Window::make_Render_Context_Current(void)
-{
-  glfwMakeContextCurrent(m_Window);
 }

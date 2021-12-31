@@ -8,12 +8,19 @@ _GEAR_START
 
 class Game;
 
+class Renderer;
+
 class Window
 {
   friend class gear::Game;
+  friend class gear::Renderer;
 
 private:
-  GLFWwindow *m_Window;
+  GLFWwindow *m_Window = nullptr;
+  unsigned int m_FramebufferID = 0;
+  unsigned int m_TextureID = 0;
+  unsigned int m_DepthbufferID = 0;
+  unsigned int m_VertexarrayID = 0;
 
   /*
   Default Constructor
@@ -22,7 +29,7 @@ private:
 
 public:
   /*
-  Creates a Window 
+  Creates a Window
   @param name name of the Window
   @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
   @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
@@ -30,7 +37,7 @@ public:
   static Window *create_Window(const char *name, int width, int height);
 
   /*
-  Creates a Window 
+  Creates a Window
   @param name name of the Window
   @param x The x-coordinate of the upper-left corner of the content area.
   @param y The y-coordinate of the upper-left corner of the content area.
@@ -40,7 +47,7 @@ public:
   static Window *create_Window(const char *name, int x, int y, int width, int height);
 
   /*
-  Creates a full screen Window 
+  Creates a full screen Window
   @param name name of the Window
   */
   static Window *create_Fullscreen_Window(const char *name);
@@ -54,6 +61,13 @@ public:
   This function returns the value of the close flag of the window.
   */
   bool should_Close(void);
+
+  /*
+  Makes the window renderable.
+  @param width the width of the backbuffer
+  @param height the height of the backbuffer
+  */
+  void make_Renderable(uint16_t width, uint16_t height);
 
   /*
   Make the window visible or invisible.
@@ -102,7 +116,6 @@ public:
   */
   void set_Position(int x, int y);
 
-
   /*
   Enables or disables V-Sync for the window.
 
@@ -119,11 +132,6 @@ public:
   Processes all pending events. This function processes only those events that are already in the event queue.
   */
   void poll_Events(void);
-
-  /*
-  Sets the window as the current render context.
-  */
-  void make_Render_Context_Current(void);
 };
 
 _GEAR_END
