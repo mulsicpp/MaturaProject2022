@@ -17,8 +17,8 @@ class Game
 {
 private:
   static Game *game;
-  gear::Window *main_Window;
   const char m_Path_To_App[512]{0};
+  gear::Window *main_Window;
 
   Game(void);
 
@@ -35,6 +35,8 @@ public:
   void per_Frame(void);
 
   void close(int exit_code);
+
+  const char *get_App_Path(void) const;
 };
 
 _GEAR_END

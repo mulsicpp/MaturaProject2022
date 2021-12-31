@@ -40,6 +40,7 @@ gear::Game *gear::Game::get_Instance(void)
 
 void gear::Game::run(void)
 {
+  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   std::filesystem::current_path(m_Path_To_App);
   std::filesystem::current_path(GEAR_ROOT_PATH);
   gear_Init();
@@ -82,4 +83,9 @@ void gear::Game::gear_Terminate(void)
 {
   Renderer::destroy();
   glfwTerminate();
+}
+
+const char *gear::Game::get_App_Path(void) const
+{
+  return m_Path_To_App;
 }
