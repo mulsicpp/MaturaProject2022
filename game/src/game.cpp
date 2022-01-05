@@ -5,6 +5,7 @@
 #include <vector>
 #include <chrono>
 #include <memory>
+#include <filesystem>
 
 #include <gear/data/FileStream.h>
 #include <gear/resource/ResourceManager.h>
@@ -12,7 +13,7 @@
 #include <gear/renderer/SpriteComponent.h>
 #include <gear/resource/Palette.h>
 #include <gear/resource/Sprite.h>
-#include <filesystem>
+#include <gear/scene/PositionComponent.h>
 
 class A {
 public:
@@ -30,16 +31,10 @@ void gear::Game::on_Startup(void)
   main_Window = gear::Window::create_Window("Game Window", 1280, 720);
   main_Window->set_Resizable(false);
   main_Window->make_Renderable(640, 360);
-  
-  Vector<int, 2> v1;
-  {
-    Vector<int, 2> v2 = {1, 2, 3};
-    GEAR_DEBUG_LOG("vector: %i %i %i", v2[0], v2[1]);
-    v1 = v2;
-  }
 
   Renderer::set_Window(main_Window);
 
+  Component<PositionComponent>::allow();
   Component<SpriteComponent>::allow();
 
   Scene *scene = Scene::get(0);
@@ -56,6 +51,7 @@ void gear::Game::on_Startup(void)
   sprite_Component.palette = ResourceManager::get<Palette>("assets/test_sprites/kirby_cook_palette.gear");
 
   entity->add<SpriteComponent>(sprite_Component);
+  entity->add<PositionComponent>({{0, 0, 0}});
 
   GEAR_DEBUG_LOG("Finished entity");
 }

@@ -5,6 +5,10 @@
 
 GLFWwindow *gear::Renderer::m_Main_OpenGL_Context = nullptr;
 unsigned int gear::Renderer::m_Sprite_Nobatch_Shader = 0;
+unsigned int gear::Renderer::m_Upscale_Shader = 0;
+unsigned int gear::Renderer::m_Upscale_VertexbufferID = 0;
+unsigned int gear::Renderer::m_Upscale_IndexbufferID = 0;
+
 gear::Window *gear::Renderer::m_Window = nullptr;
 
 void gear::Renderer::create(void)
@@ -21,10 +25,39 @@ void gear::Renderer::create(void)
 
   m_Sprite_Nobatch_Shader = link_Program(vertex_Shader, fragment_Shader);
   GEAR_DEBUG_LOG("opengl program: %i", m_Sprite_Nobatch_Shader);
+
+  vertex_Shader = create_Shader("shaders/vs_upscale.glsl", GL_VERTEX_SHADER);
+  fragment_Shader = create_Shader("shaders/fs_upscale.glsl", GL_FRAGMENT_SHADER);
+
+  m_Upscale_Shader = link_Program(vertex_Shader, fragment_Shader);
+  GEAR_DEBUG_LOG("opengl program: %i", m_Upscale_Shader);
+
+  glDeleteShader(vertex_Shader);
+  glDeleteShader(fragment_Shader);
+
+  float upscale_Vertex_Buffer[16] = {
+    -1.0, -1.0, 0.0, 0.0,
+     1.0, -1.0, 1.0, 0.0,
+     1.0,  1.0, 1.0, 1.0,
+    -1.0,  1.0, 0.0, 1.0
+  };
+
+  unsigned int upscale_Index_Buffer[6] = {0, 1, 2, 0, 2, 3};
+
+  glGenBuffers(1, &m_Upscale_VertexbufferID);
+  glBindBuffer(GL_ARRAY_BUFFER, m_Upscale_VertexbufferID);
+  glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(float), upscale_Vertex_Buffer, GL_STATIC_DRAW);
+
+  glGenBuffers(1, &m_Upscale_IndexbufferID);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Upscale_IndexbufferID);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), upscale_Index_Buffer, GL_STATIC_DRAW);
 }
 
 void gear::Renderer::destroy(void)
 {
+  glDeleteBuffers(1, &m_Upscale_VertexbufferID);
+  glDeleteBuffers(1, &m_Upscale_IndexbufferID);
+  glDeleteProgram(m_Sprite_Nobatch_Shader);
   glfwDestroyWindow(m_Main_OpenGL_Context);
 }
 
@@ -86,7 +119,22 @@ unsigned int gear::Renderer::link_Program(unsigned int vertex_Shader, unsigned i
 void gear::Renderer::set_Window(gear::Window *window)
 {
   if(window->m_DepthbufferID != 0 && window->m_TextureID != 0 && window->m_FramebufferID != 0 && window->m_VertexarrayID != 0)
+  {
     m_Window = window;
+    glfwMakeContextCurrent(m_Window->m_Window);
+    glClearColor(0, 0, 0, 1);
+  }
   else
     gear::error("Window is not renderable");
+}
+
+void gear::Renderer::clear_Frame(void)
+{
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void gear::Renderer::show_Frame(void)
+{
+  m_Window->swap_Buffers();
 }

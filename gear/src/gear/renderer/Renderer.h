@@ -11,6 +11,9 @@ class Renderer {
 private:
   static GLFWwindow *m_Main_OpenGL_Context;
   static unsigned int m_Sprite_Nobatch_Shader;
+  static unsigned int m_Upscale_Shader;
+  static unsigned int m_Upscale_VertexbufferID;
+  static unsigned int m_Upscale_IndexbufferID;
   static Window *m_Window;
 
   static unsigned int create_Shader(const char *filename, unsigned int type);
@@ -21,6 +24,9 @@ public:
   static void destroy(void);
 
   static void set_Window(Window *window);
+
+  static void clear_Frame(void);
+  static void show_Frame(void);
 };
 
 _GEAR_END
