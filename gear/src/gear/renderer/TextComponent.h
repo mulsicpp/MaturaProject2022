@@ -6,7 +6,7 @@
 
 _GEAR_START
 
-struct TextRenderComponent {
+struct TextComponent {
   bool raw_Text = true;
   const char* text;
   Font *font;
