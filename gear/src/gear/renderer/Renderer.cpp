@@ -14,6 +14,13 @@ gear::Window *gear::Renderer::m_Window = nullptr;
 
 void gear::Renderer::create(void)
 {
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#if defined(GEAR_DEBUG)
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif
+
   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
   m_Main_OpenGL_Context = glfwCreateWindow(1, 1, "main_OpenGL_Context", NULL, NULL);
   glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
@@ -137,6 +144,11 @@ void gear::Renderer::set_Window(gear::Window *window)
   }
   else
     gear::error("Window is not renderable");
+}
+
+void gear::Renderer::set_V_Sync(bool v_sync)
+{
+  glfwSwapInterval(v_sync ? 1 : 0);
 }
 
 void gear::Renderer::clear_Frame(void)

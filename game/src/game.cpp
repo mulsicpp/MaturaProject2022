@@ -33,7 +33,7 @@ void gear::Game::on_Startup(void)
   main_Window->make_Renderable(640, 360);
 
   Renderer::set_Window(main_Window);
-  Window::set_V_Sync(true);
+  Renderer::set_V_Sync(true);
   Renderer::setup_Test_Frame();
 
   allow_Gear_Components();

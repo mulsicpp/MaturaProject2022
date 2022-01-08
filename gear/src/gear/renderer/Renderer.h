@@ -25,6 +25,13 @@ public:
 
   static void set_Window(Window *window);
 
+  /*
+  Enables or disables V-Sync.
+
+  @param v_sync boolean to turn V-Sync on or off
+  */
+  static void set_V_Sync(bool v_sync);
+
   static void clear_Frame(void);
   static void show_Frame(void);
 

@@ -175,11 +175,6 @@ void gear::Window::set_Position(int x, int y)
   glfwSetWindowPos(m_Window, x, y);
 }
 
-void gear::Window::set_V_Sync(bool v_sync)
-{
-  glfwSwapInterval(v_sync ? 1 : 0);
-}
-
 void gear::Window::swap_Buffers(void)
 {
   glfwSwapBuffers(m_Window);
