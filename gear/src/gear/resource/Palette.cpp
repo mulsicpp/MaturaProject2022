@@ -6,14 +6,14 @@ gear::Palette::Palette(void) : m_Size(0), m_Colors(nullptr) {}
 gear::Palette::~Palette() {
   GEAR_DEBUG_LOG("delete palette");
   if(m_Colors != nullptr)
-    delete m_Colors;
+    delete[] m_Colors;
 }
 
 int gear::Palette::load(gear::FileStream *file_Stream)
 {
   GEAR_DEBUG_LOG("loading palette ...");
   if(m_Colors != nullptr)
-    delete m_Colors;
+    delete[] m_Colors;
   file_Stream->get<uint8_t>(&m_Size);
   m_Colors = new uint32_t[m_Size];
   file_Stream->get<uint32_t>(m_Colors, m_Size);

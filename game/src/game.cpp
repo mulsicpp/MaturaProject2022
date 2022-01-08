@@ -6,6 +6,7 @@
 #include <chrono>
 #include <memory>
 #include <filesystem>
+#include <glad/glad.h>
 
 #include <gear/data/FileStream.h>
 #include <gear/resource/ResourceManager.h>
@@ -27,15 +28,18 @@ void gear::Game::on_Startup(void)
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
 
-  Window::set_V_Sync(true);
   main_Window = gear::Window::create_Window("Game Window", 1280, 720);
   main_Window->set_Resizable(false);
   main_Window->make_Renderable(640, 360);
+  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
 
   Renderer::set_Window(main_Window);
+  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
+  Window::set_V_Sync(true);
+  Renderer::setup_Test_Frame();
+  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
 
-  Component<PositionComponent>::allow();
-  Component<SpriteComponent>::allow();
+  allow_Gear_Components();
 
   Scene *scene = Scene::get(0);
   scene->create();
@@ -54,6 +58,7 @@ void gear::Game::on_Startup(void)
   entity->add<PositionComponent>({{0, 0, 0}});
 
   GEAR_DEBUG_LOG("Finished entity");
+  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
 }
 
 void gear::Game::per_Frame(void)
@@ -61,8 +66,11 @@ void gear::Game::per_Frame(void)
   if (main_Window->should_Close())
     game->close(0);
 
-  main_Window->swap_Buffers();
+  Renderer::clear_Frame();
+  Renderer::render_Test_Frame();
+  Renderer::show_Frame();
   main_Window->poll_Events();
+  //this->close(0);
 }
 
 void gear::Game::on_Shutdown(void)

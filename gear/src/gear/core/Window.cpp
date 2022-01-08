@@ -51,7 +51,7 @@ void gear::Window::destroy(void)
     glDeleteTextures(1, &m_TextureID);
   if (m_DepthbufferID != 0)
     glDeleteTextures(1, &m_DepthbufferID);
-  if (m_FramebufferID != 0)
+  if (m_VertexarrayID != 0)
     glDeleteVertexArrays(1, &m_VertexarrayID);
   glfwDestroyWindow(m_Window);
 }
@@ -61,26 +61,48 @@ bool gear::Window::should_Close(void)
   return glfwWindowShouldClose(m_Window);
 }
 
+void GLAPIENTRY message_Callback(GLenum source,
+                 GLenum type,
+                 GLuint id,
+                 GLenum severity,
+                 GLsizei length,
+                 const GLchar *message,
+                 const void *userParam);
+
 void gear::Window::make_Renderable(uint16_t width, uint16_t height)
 {
+  glfwMakeContextCurrent(m_Window);
+
+#if defined(GEAR_DEBUG)
+  glEnable(GL_DEBUG_OUTPUT);
+  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+  glDebugMessageCallback(message_Callback, nullptr);
+
+  glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+#endif
+
+  glClearColor(0, 0, 0, 1);
+
   glGenVertexArrays(1, &m_VertexarrayID);
   glBindVertexArray(m_VertexarrayID);
 
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+  glVertexAttribFormat(0, 2, GL_FLOAT, GL_FALSE, 0);
+  glVertexAttribBinding(0, 0);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (const void *)(2 * sizeof(float)));
+  glVertexAttribFormat(1, 2, GL_FLOAT, GL_FALSE, (2 * sizeof(float)));
+  glVertexAttribBinding(1, 0);
   glEnableVertexAttribArray(1);
-
-  glGenFramebuffers(1, &m_FramebufferID);
-  glBindFramebuffer(GL_FRAMEBUFFER, m_FramebufferID);
 
   glGenTextures(1, &m_TextureID);
   glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  glGenFramebuffers(1, &m_FramebufferID);
+  glBindFramebuffer(GL_FRAMEBUFFER, m_FramebufferID);
 
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureID, 0);
 
@@ -94,6 +116,8 @@ void gear::Window::make_Renderable(uint16_t width, uint16_t height)
 
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     gear::error("Framebuffer couldn't be completed");
+
+  glfwMakeContextCurrent(Renderer::m_Window == nullptr ? Renderer::m_Main_OpenGL_Context : Renderer::m_Window->m_Window);
 }
 
 void gear::Window::set_Visible(bool visible)

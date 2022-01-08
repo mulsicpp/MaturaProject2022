@@ -2,6 +2,20 @@
 #include <glad/glad.h>
 #include <fstream>
 #include <gear/core/debug/log.h>
+#include <gear/data/FileStream.h>
+
+void clear_GL_Errors(void) {
+  while (glGetError())
+    ;
+}
+
+bool log_GL_Errors(const char *function, const char *file, int line) {
+  while (GLenum error = glGetError()) {
+    GEAR_DEBUG_LOG("OpenGL error: %i/0x%x on function %s on line %i in file %s", error, error, function, file, line);
+    return false;
+  }
+  return true;
+}
 
 GLFWwindow *gear::Renderer::m_Main_OpenGL_Context = nullptr;
 unsigned int gear::Renderer::m_Sprite_Nobatch_Shader = 0;
@@ -47,10 +61,12 @@ void gear::Renderer::create(void)
   glGenBuffers(1, &m_Upscale_VertexbufferID);
   glBindBuffer(GL_ARRAY_BUFFER, m_Upscale_VertexbufferID);
   glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(float), upscale_Vertex_Buffer, GL_STATIC_DRAW);
+  GEAR_DEBUG_LOG("vbo: %i", m_Upscale_VertexbufferID);
 
   glGenBuffers(1, &m_Upscale_IndexbufferID);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Upscale_IndexbufferID);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), upscale_Index_Buffer, GL_STATIC_DRAW);
+  GEAR_DEBUG_LOG("ibo: %i", m_Upscale_IndexbufferID);
 }
 
 void gear::Renderer::destroy(void)
@@ -121,8 +137,9 @@ void gear::Renderer::set_Window(gear::Window *window)
   if(window->m_DepthbufferID != 0 && window->m_TextureID != 0 && window->m_FramebufferID != 0 && window->m_VertexarrayID != 0)
   {
     m_Window = window;
+    GEAR_DEBUG_LOG("GL_ERROR before %i", glGetError());
     glfwMakeContextCurrent(m_Window->m_Window);
-    glClearColor(0, 0, 0, 1);
+    GEAR_DEBUG_LOG("GL_ERROR context %i", glGetError());
   }
   else
     gear::error("Window is not renderable");
@@ -132,9 +149,55 @@ void gear::Renderer::clear_Frame(void)
 {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glClear(GL_COLOR_BUFFER_BIT);
+  //glBindFramebuffer(GL_FRAMEBUFFER, m_Window->m_FramebufferID);
+  //glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void gear::Renderer::show_Frame(void)
 {
   m_Window->swap_Buffers();
+}
+
+void gear::Renderer::setup_Test_Frame(void)
+{
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, m_Window->m_TextureID);
+  if(glGetError() == 0)
+    GEAR_DEBUG_LOG("Texture bound successfully");
+
+  uint32_t *data = new uint32_t[640 * 360];
+  for(int i = 0; i < 640; i++)
+    for(int j = 0; j < 360; j++)
+      if(((i / 40) % 2) ^ ((j / 40) % 2) == 0)
+      {
+        data[i + j * 640] = 0xffff8000;
+      }
+      else
+      {
+        data[i + j * 640] = 0xff804000;
+      }
+
+  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 640, 360, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
+
+  delete[] data;
+
+  glBindVertexArray(m_Window->m_VertexarrayID);
+  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
+  glBindVertexBuffer(0, m_Upscale_VertexbufferID, 0, 4 * sizeof(float));
+  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
+}
+
+void gear::Renderer::render_Test_Frame(void)
+{
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, m_Window->m_TextureID);
+  glUseProgram(m_Upscale_Shader);
+  glUniform1i(glGetUniformLocation(m_Upscale_Shader, "u_Texture"), 0);
+  glBindVertexArray(m_Window->m_VertexarrayID);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Upscale_IndexbufferID);
+
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+  GEAR_DEBUG_LOG("GL_ERROR drawcall %i", glGetError());
 }
