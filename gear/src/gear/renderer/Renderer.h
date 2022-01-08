@@ -4,21 +4,6 @@
 #include <gear/core/Window.h>
 #include <gear/scene/Scene.h>
 
-#if defined(GEAR_DEBUG)
-
-#define GL_CALL(x)                                                             \
-  clear_GL_Errors();                                                           \
-  x;                                                                           \
-  log_GL_Errors(#x, __FILE__, __LINE__)
-
-void clear_GL_Errors(void);
-
-bool log_GL_Errors(const char *function, const char *file, int line);
-
-#else
-#define GL_CALL(x) x
-#endif
-
 _GEAR_START
 
 class Renderer {

@@ -4,6 +4,14 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+void GLAPIENTRY openGL_Message_Callback(unsigned int source,
+                                        unsigned int type,
+                                        unsigned int id,
+                                        unsigned int severity,
+                                        int length,
+                                        const char *message,
+                                        const void *userParam);
+
 _GEAR_START
 
 class Game;

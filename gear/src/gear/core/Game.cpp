@@ -59,19 +59,6 @@ void gear::Game::close(int exit_code)
   exit(exit_code);
 }
 
-void GLAPIENTRY message_Callback(GLenum source,
-                 GLenum type,
-                 GLuint id,
-                 GLenum severity,
-                 GLsizei length,
-                 const GLchar *message,
-                 const void *userParam)
-{
-  fprintf(stdout, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-          (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
-          type, severity, message);
-}
-
 void gear::Game::gear_Init(void)
 {
   if (glfwInit() != GLFW_TRUE)
@@ -84,15 +71,6 @@ void gear::Game::gear_Init(void)
   glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
   Renderer::create();
-
-#if defined(GEAR_DEBUG)
-  glEnable(GL_DEBUG_OUTPUT);
-  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-  glDebugMessageCallback(message_Callback, nullptr);
-
-  glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
-  GEAR_DEBUG_LOG("enabled debug callback");
-#endif
 }
 
 void gear::Game::gear_Terminate(void)

@@ -4,19 +4,6 @@
 #include <gear/core/debug/log.h>
 #include <gear/data/FileStream.h>
 
-void clear_GL_Errors(void) {
-  while (glGetError())
-    ;
-}
-
-bool log_GL_Errors(const char *function, const char *file, int line) {
-  while (GLenum error = glGetError()) {
-    GEAR_DEBUG_LOG("OpenGL error: %i/0x%x on function %s on line %i in file %s", error, error, function, file, line);
-    return false;
-  }
-  return true;
-}
-
 GLFWwindow *gear::Renderer::m_Main_OpenGL_Context = nullptr;
 unsigned int gear::Renderer::m_Sprite_Nobatch_Shader = 0;
 unsigned int gear::Renderer::m_Upscale_Shader = 0;
@@ -33,6 +20,15 @@ void gear::Renderer::create(void)
   glfwMakeContextCurrent(m_Main_OpenGL_Context);
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     gear::error("Failed to load OpenGL");
+
+#if defined(GEAR_DEBUG)
+  glEnable(GL_DEBUG_OUTPUT);
+  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+  glDebugMessageCallback(openGL_Message_Callback, nullptr);
+
+  glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+  GEAR_DEBUG_LOG("enabled debug callback");
+#endif
 
   unsigned int vertex_Shader = create_Shader("shaders/vs_sprite_nobatch.glsl", GL_VERTEX_SHADER);
   unsigned int fragment_Shader = create_Shader("shaders/fs_sprite_nobatch.glsl", GL_FRAGMENT_SHADER);
@@ -137,9 +133,7 @@ void gear::Renderer::set_Window(gear::Window *window)
   if(window->m_DepthbufferID != 0 && window->m_TextureID != 0 && window->m_FramebufferID != 0 && window->m_VertexarrayID != 0)
   {
     m_Window = window;
-    GEAR_DEBUG_LOG("GL_ERROR before %i", glGetError());
     glfwMakeContextCurrent(m_Window->m_Window);
-    GEAR_DEBUG_LOG("GL_ERROR context %i", glGetError());
   }
   else
     gear::error("Window is not renderable");
@@ -162,30 +156,25 @@ void gear::Renderer::setup_Test_Frame(void)
 {
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, m_Window->m_TextureID);
-  if(glGetError() == 0)
-    GEAR_DEBUG_LOG("Texture bound successfully");
 
   uint32_t *data = new uint32_t[640 * 360];
   for(int i = 0; i < 640; i++)
     for(int j = 0; j < 360; j++)
-      if(((i / 40) % 2) ^ ((j / 40) % 2) == 0)
+      if(((i / 32) % 2) ^ ((j / 32) % 2) == 0)
       {
-        data[i + j * 640] = 0xffff8000;
+        data[i + j * 640] = 0xffffbf00;
       }
       else
       {
-        data[i + j * 640] = 0xff804000;
+        data[i + j * 640] = 0xffc09000;
       }
 
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 640, 360, GL_RGBA, GL_UNSIGNED_BYTE, data);
-  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
 
   delete[] data;
 
   glBindVertexArray(m_Window->m_VertexarrayID);
-  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
   glBindVertexBuffer(0, m_Upscale_VertexbufferID, 0, 4 * sizeof(float));
-  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
 }
 
 void gear::Renderer::render_Test_Frame(void)
@@ -199,5 +188,4 @@ void gear::Renderer::render_Test_Frame(void)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Upscale_IndexbufferID);
 
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-  GEAR_DEBUG_LOG("GL_ERROR drawcall %i", glGetError());
 }

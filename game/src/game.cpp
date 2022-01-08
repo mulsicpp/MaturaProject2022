@@ -31,13 +31,10 @@ void gear::Game::on_Startup(void)
   main_Window = gear::Window::create_Window("Game Window", 1280, 720);
   main_Window->set_Resizable(false);
   main_Window->make_Renderable(640, 360);
-  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
 
   Renderer::set_Window(main_Window);
-  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
   Window::set_V_Sync(true);
   Renderer::setup_Test_Frame();
-  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
 
   allow_Gear_Components();
 
@@ -58,7 +55,6 @@ void gear::Game::on_Startup(void)
   entity->add<PositionComponent>({{0, 0, 0}});
 
   GEAR_DEBUG_LOG("Finished entity");
-  GEAR_DEBUG_LOG("GL_ERROR %i", glGetError());
 }
 
 void gear::Game::per_Frame(void)

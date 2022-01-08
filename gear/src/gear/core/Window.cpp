@@ -61,13 +61,17 @@ bool gear::Window::should_Close(void)
   return glfwWindowShouldClose(m_Window);
 }
 
-void GLAPIENTRY message_Callback(GLenum source,
-                 GLenum type,
-                 GLuint id,
-                 GLenum severity,
-                 GLsizei length,
-                 const GLchar *message,
-                 const void *userParam);
+void GLAPIENTRY openGL_Message_Callback(unsigned int source,
+                                        unsigned int type,
+                                        unsigned int id,
+                                        unsigned int severity,
+                                        int length,
+                                        const char *message,
+                                        const void *userParam)
+{
+  if(type == GL_DEBUG_TYPE_ERROR)
+    gear::error("OpenGL error!!!\nsource: %i\nid: %i\nseverity: %i\nmessage: \"%s\"", source, id, severity, message);
+}
 
 void gear::Window::make_Renderable(uint16_t width, uint16_t height)
 {
@@ -76,7 +80,7 @@ void gear::Window::make_Renderable(uint16_t width, uint16_t height)
 #if defined(GEAR_DEBUG)
   glEnable(GL_DEBUG_OUTPUT);
   glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-  glDebugMessageCallback(message_Callback, nullptr);
+  glDebugMessageCallback(openGL_Message_Callback, nullptr);
 
   glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 #endif
