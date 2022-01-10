@@ -10,6 +10,6 @@ out vec2 tex_Position;
 
 void main()
 {
-  gl_Position = vec4((in_Position.x * 2.0f / float(u_Frame_Width)) - 1.0f, (in_Position.y * 2.0f / float(u_Frame_Height)) - 1.0f, 0.0f, 1.0f);
+  gl_Position = vec4((in_Position.x * 2.0f / float(u_Frame_Width)) - 1.0f, 1.0f - (in_Position.y * 2.0f / float(u_Frame_Height)), 0.0f, 1.0f);
   tex_Position = in_Tex_Position;
 }

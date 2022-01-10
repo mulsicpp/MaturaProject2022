@@ -6,7 +6,6 @@
 #include <chrono>
 #include <memory>
 #include <filesystem>
-#include <glad/glad.h>
 
 #include <gear/data/FileStream.h>
 #include <gear/resource/ResourceManager.h>
@@ -38,23 +37,23 @@ void gear::Game::on_Startup(void)
 
   allow_Gear_Components();
 
-  Scene *scene = Scene::get(0);
-  scene->create();
+  //Scene *scene = Scene::get(0);
+  //scene->create();
 
-  GEAR_DEBUG_LOG("Creating entity");
+  //GEAR_DEBUG_LOG("Creating entity");
 
-  Entity *entity = scene->create_Entity();
+  //Entity *entity = scene->create_Entity();
 
-  GEAR_DEBUG_LOG("Adding component");
-  SpriteComponent sprite_Component;
-  sprite_Component.offset = { 0, 0 };
-  sprite_Component.sprite = ResourceManager::get<Sprite>("assets/test_sprites/kirby_cook.gear");
-  sprite_Component.palette = ResourceManager::get<Palette>("assets/test_sprites/kirby_cook_palette.gear");
+  //GEAR_DEBUG_LOG("Adding component");
+  //SpriteComponent sprite_Component;
+  //sprite_Component.offset = { 0, 0 };
+  //sprite_Component.sprite = ResourceManager::get<Sprite>("assets/test_sprites/kirby_cook.gear");
+  //sprite_Component.palette = ResourceManager::get<Palette>("assets/test_sprites/kirby_cook_palette.gear");
 
-  entity->add<SpriteComponent>(sprite_Component);
-  entity->add<PositionComponent>({{0, 0, 0}});
+  //entity->add<SpriteComponent>(sprite_Component);
+  //entity->add<PositionComponent>({{0, 0, 0}});
 
-  GEAR_DEBUG_LOG("Finished entity");
+  //GEAR_DEBUG_LOG("Finished entity");
 }
 
 void gear::Game::per_Frame(void)
@@ -62,8 +61,8 @@ void gear::Game::per_Frame(void)
   if (main_Window->should_Close())
     game->close(0);
 
-  Renderer::clear_Frame();
-  Renderer::render_Test_Frame();
+  Renderer::start_New_Frame();
+  //Renderer::render_Scene(Scene::get(0));
   Renderer::show_Frame();
   main_Window->poll_Events();
   //this->close(0);

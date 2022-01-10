@@ -51,8 +51,8 @@ void gear::Window::destroy(void)
     glDeleteTextures(1, &m_TextureID);
   if (m_DepthbufferID != 0)
     glDeleteTextures(1, &m_DepthbufferID);
-  if (m_VertexarrayID != 0)
-    glDeleteVertexArrays(1, &m_VertexarrayID);
+  if (m_Upscale_VertexarrayID != 0)
+    glDeleteVertexArrays(1, &m_Upscale_VertexarrayID);
   glfwDestroyWindow(m_Window);
 }
 
@@ -87,8 +87,8 @@ void gear::Window::make_Renderable(uint16_t width, uint16_t height)
 
   glClearColor(0, 0, 0, 1);
 
-  glGenVertexArrays(1, &m_VertexarrayID);
-  glBindVertexArray(m_VertexarrayID);
+  glGenVertexArrays(1, &m_Upscale_VertexarrayID);
+  glBindVertexArray(m_Upscale_VertexarrayID);
 
   glVertexAttribFormat(0, 2, GL_FLOAT, GL_FALSE, 0);
   glVertexAttribBinding(0, 0);
@@ -99,6 +99,9 @@ void gear::Window::make_Renderable(uint16_t width, uint16_t height)
 
   glGenTextures(1, &m_TextureID);
   glBindTexture(GL_TEXTURE_2D, m_TextureID);
+
+  m_Framebuffer_Width = width;
+  m_Framebuffer_Height = height;
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 

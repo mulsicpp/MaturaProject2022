@@ -20,7 +20,6 @@ class Renderer;
 
 class Window
 {
-  friend class gear::Game;
   friend class gear::Renderer;
 
 private:
@@ -28,7 +27,9 @@ private:
   unsigned int m_FramebufferID = 0;
   unsigned int m_TextureID = 0;
   unsigned int m_DepthbufferID = 0;
-  unsigned int m_VertexarrayID = 0;
+  unsigned int m_Upscale_VertexarrayID = 0;
+
+  unsigned int m_Framebuffer_Width = 0, m_Framebuffer_Height = 0;
 
   /*
   Default Constructor
