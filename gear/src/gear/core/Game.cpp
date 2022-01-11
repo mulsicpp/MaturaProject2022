@@ -13,8 +13,6 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-gear::Game *gear::Game::game = nullptr;
-
 gear::Game::Game(void)
 {
 #if defined(GEAR_PLATFORM_WINDOWS)
@@ -29,13 +27,6 @@ gear::Game::Game(void)
   std::filesystem::path path = std::filesystem::weakly_canonical(std::filesystem::path(temp_Path).parent_path());
   strcpy((char *)m_Path_To_App, path.string().c_str());
 #endif
-}
-
-gear::Game *gear::Game::get_Instance(void)
-{
-  if (game == nullptr)
-    game = new Game();
-  return game;
 }
 
 void gear::Game::run(void)
@@ -55,7 +46,6 @@ void gear::Game::close(int exit_code)
 {
   on_Shutdown();
   gear_Terminate();
-  delete this;
   exit(exit_code);
 }
 
@@ -63,15 +53,28 @@ void gear::Game::gear_Init(void)
 {
   if (glfwInit() != GLFW_TRUE)
   {
-    gear::error("GLFW initialisation failed!");
+    gear::error("GLFW initialisation failed!\n");
   }
 
-  Renderer::create();
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#if defined(GEAR_DEBUG)
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif
+
+  glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+  
+  m_Window = Window::create_Window("", 1, 1);
+  glfwMakeContextCurrent(m_Window->m_Window);
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    gear::error("Failed to load OpenGL");
 }
 
 void gear::Game::gear_Terminate(void)
 {
-  Renderer::destroy();
+  glfwMakeContextCurrent(nullptr);
+  m_Window->destroy();
   glfwTerminate();
 }
 

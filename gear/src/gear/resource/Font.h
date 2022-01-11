@@ -42,7 +42,7 @@ public:
   uint16_t get_Width(void) const;
   uint16_t get_Height(void) const;
   unsigned int get_TextureID(void) const;
-  const CharacterLocation *get_Char(char character) const;
+  const CharacterLocation *get_Char(unsigned int character) const;
 };
 
 _GEAR_END

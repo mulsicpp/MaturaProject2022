@@ -1,6 +1,4 @@
 #include "Window.h"
-#include <gear/renderer/Renderer.h>
-#include <glad/glad.h>
 
 gear::Window::Window() {}
 
@@ -11,7 +9,7 @@ gear::Window *gear::Window::create_Window(const char *name, int width, int heigh
     error("Width of a window cannot be less than or equal to 0");
   if (height <= 0)
     error("Height of a window cannot be less than or equal to 0");
-  ret->m_Window = glfwCreateWindow(width, height, name, NULL, Renderer::m_Main_OpenGL_Context);
+  ret->m_Window = glfwCreateWindow(width, height, name, NULL, NULL);
   if (ret->m_Window == nullptr)
   {
     const char *message;
@@ -28,7 +26,7 @@ gear::Window *gear::Window::create_Window(const char *name, int x, int y, int wi
     error("Width of a window cannot be less than or equal to 0");
   if (height <= 0)
     error("Height of a window cannot be less than or equal to 0");
-  ret->m_Window = glfwCreateWindow(width, height, name, NULL, Renderer::m_Main_OpenGL_Context);
+  ret->m_Window = glfwCreateWindow(width, height, name, NULL, NULL);
   glfwSetWindowPos(ret->m_Window, x, y);
   return ret;
 }
@@ -39,12 +37,13 @@ gear::Window *gear::Window::create_Fullscreen_Window(const char *name)
   const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
   int window_width = mode->width;
   int window_height = mode->height;
-  ret->m_Window = glfwCreateWindow(window_width, window_height, name, glfwGetPrimaryMonitor(), Renderer::m_Main_OpenGL_Context);
+  ret->m_Window = glfwCreateWindow(window_width, window_height, name, glfwGetPrimaryMonitor(), NULL);
   return ret;
 }
 
 void gear::Window::destroy(void)
 {
+  /*
   if (m_FramebufferID != 0)
     glDeleteFramebuffers(1, &m_FramebufferID);
   if (m_TextureID != 0)
@@ -53,6 +52,7 @@ void gear::Window::destroy(void)
     glDeleteTextures(1, &m_DepthbufferID);
   if (m_Upscale_VertexarrayID != 0)
     glDeleteVertexArrays(1, &m_Upscale_VertexarrayID);
+  */
   glfwDestroyWindow(m_Window);
 }
 
@@ -60,7 +60,7 @@ bool gear::Window::should_Close(void)
 {
   return glfwWindowShouldClose(m_Window);
 }
-
+/*
 void GLAPIENTRY openGL_Message_Callback(unsigned int source,
                                         unsigned int type,
                                         unsigned int id,
@@ -126,7 +126,7 @@ void gear::Window::make_Renderable(uint16_t width, uint16_t height)
 
   glfwMakeContextCurrent(Renderer::m_Window == nullptr ? Renderer::m_Main_OpenGL_Context : Renderer::m_Window->m_Window);
 }
-
+*/
 void gear::Window::set_Visible(bool visible)
 {
   if (visible)

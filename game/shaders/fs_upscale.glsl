@@ -9,5 +9,5 @@ in vec2 tex_Position;
 void main()
 {
   out_Color = texture(u_Texture, tex_Position);
-  //out_Color = vec4(0, 0, 0, 1);
+  //out_Color = vec4(1, 0, 0, 1);
 }

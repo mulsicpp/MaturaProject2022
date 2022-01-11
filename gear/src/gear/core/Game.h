@@ -15,24 +15,22 @@ _GEAR_START
 
 class Game
 {
-private:
-  static Game *game;
+protected:
+  gear::Window *m_Window = nullptr;
   const char m_Path_To_App[512]{0};
   gear::Window *main_Window;
 
-  Game(void);
+  void gear_Init(void);
 
-  static void gear_Init(void);
-
-  static void gear_Terminate(void);
+  void gear_Terminate(void);
 
 public:
-  static Game *get_Instance(void);
+  Game(void);
   void run(void);
 
-  void on_Startup(void);
-  void on_Shutdown(void);
-  void per_Frame(void);
+  virtual void on_Startup(void) = 0;
+  virtual void on_Shutdown(void) = 0;
+  virtual void per_Frame(void) = 0;
 
   void close(int exit_code);
 
