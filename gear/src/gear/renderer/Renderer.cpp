@@ -140,12 +140,13 @@ void gear::Renderer::render_Test_Frame(void)
 
 static void sprite_Render_Callback(gear::PositionComponent &position, gear::SpriteComponent &sprite)
 {
+  GEAR_DEBUG_LOG("rendering sprite entity");
 }
 
 void gear::Renderer::render_Scene(gear::Scene *scene)
 {
   glBindFramebuffer(GL_FRAMEBUFFER, m_Window->m_FramebufferID);
-  glUseProgram(m_Sprite_Nobatch_PL.m_Shader);
+  m_Sprite_Nobatch_PL.bind();
 
   gear::Entity::for_Each(scene->get_ID(), sprite_Render_Callback);
 }
