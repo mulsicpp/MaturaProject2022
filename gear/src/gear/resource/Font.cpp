@@ -80,9 +80,10 @@ uint16_t gear::Font::get_Line_Gap(void) const { return m_Line_Gap; }
 uint16_t gear::Font::get_Width(void) const { return m_Width; }
 uint16_t gear::Font::get_Height(void) const { return m_Height; }
 unsigned int gear::Font::get_TextureID(void) const { return m_TextureID; }
-const gear::Font::CharacterLocation *gear::Font::get_Char(char character) const
+
+const gear::Font::CharacterLocation *gear::Font::get_Char(unsigned int character) const
 {
-  if(m_Characters.find(character) == m_Characters.end())
+  if(character > 255 || m_Characters.find(character) == m_Characters.end())
     return &m_Characters.at(0);
   return &m_Characters.at(character);
 }
