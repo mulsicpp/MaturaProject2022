@@ -24,6 +24,11 @@ GLFWwindow *gear::Renderer::m_Window = nullptr;
 void gear::Renderer::create(int width, int height)
 {
   m_Window = glfwGetCurrentContext();
+  
+  int window_Width, window_Height;
+  glfwGetWindowSize(m_Window, &window_Width, &window_Height);
+  glViewport(0, 0, window_Width, window_Height);
+
   m_Framebuffer.create(width, height);
 
   create_Upscale_PL();
@@ -80,7 +85,6 @@ void gear::Renderer::show_Frame(void)
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
   glfwSwapBuffers(m_Window);
-  GEAR_DEBUG_LOG("swapped buffers");
 }
 
 void gear::Renderer::setup_Test_Frame(void)
