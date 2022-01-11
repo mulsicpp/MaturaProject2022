@@ -14,7 +14,7 @@ void MyGame::on_Startup(void)
   m_Window->set_Resizable(false);
   m_Window->set_Visible(true);
 
-  gear::Renderer::create(640, 360);
+  gear::Renderer::create(320, 180);
   gear::Renderer::set_V_Sync(true);
   gear::Renderer::setup_Test_Frame();
   
@@ -26,16 +26,21 @@ void MyGame::on_Startup(void)
   m_Scene = gear::Scene::get(0);
   m_Scene->create();
 
-  gear::Entity* entity = m_Scene->create_Entity();
+  eis = m_Scene->create_Entity();
+  palettes[0] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_yellow.gear");
+  palettes[1] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_pink.gear");
+  palettes[2] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_green.gear");
 
   gear::SpriteComponent sprite_Comp;
   sprite_Comp.offset = {0, 0};
   sprite_Comp.parallax_Factor = 1;
-  sprite_Comp.sprite = gear::ResourceManager::get<gear::Sprite>("assets/test_sprites/kirby_cook.gear");
-  sprite_Comp.palette = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/kirby_cook_palette.gear");
+  //sprite_Comp.sprite = gear::ResourceManager::get<gear::Sprite>("assets/test_sprites/triangle.gear");
+  //sprite_Comp.palette = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/triangle_palette.gear");
+  sprite_Comp.sprite = gear::ResourceManager::get<gear::Sprite>("assets/test_sprites/eis.gear");
+  sprite_Comp.palette = palettes[0];
 
-  entity->add<gear::SpriteComponent>(sprite_Comp);
-  entity->add<gear::PositionComponent>({{0, 0, 0}});
+  eis->add<gear::SpriteComponent>(sprite_Comp);
+  eis->add<gear::PositionComponent>({{0, 0, 0}});
 
 }
 
@@ -43,8 +48,15 @@ void MyGame::per_Frame(void)
 {
   if (m_Window->should_Close())
     this->close(0);
-  
+  auto &pos = eis->get<gear::PositionComponent>()->data.position;
+  pos[0] -= 1.5;
+  if(pos[0] < -64){
+    pos[0] = 320;
+    palette_Index = (palette_Index + 1) % 3;
+    eis->get<gear::SpriteComponent>()->data.palette = palettes[palette_Index];
+  }
   gear::Renderer::start_New_Frame();
+  gear::Renderer::render_Scene(m_Scene);
   gear::Renderer::show_Frame();
 
   m_Window->poll_Events();

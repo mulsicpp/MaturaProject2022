@@ -17,7 +17,7 @@ void gear::Framebuffer::create(int width, int height)
   glCreateFramebuffers(1, &m_Framebuffer);
   glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer);
 
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Texture, 0);
+  glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_Texture, 0);
 
   glCreateRenderbuffers(1, &m_Depthbuffer);
   glBindRenderbuffer(GL_RENDERBUFFER, m_Depthbuffer);
@@ -51,4 +51,5 @@ void gear::Framebuffer::set_Size(int width, int height)
 void gear::Framebuffer::bind(void)
 {
   glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer);
+  glViewport(0, 0, m_Width, m_Height);
 }
