@@ -14,7 +14,6 @@ class Window
 
 private:
   GLFWwindow *m_Window;
-  static GLFWwindow *main_OpenGL_Context;
 
   /*
   Default Constructor
