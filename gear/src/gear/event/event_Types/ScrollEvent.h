@@ -8,7 +8,10 @@ _GEAR_START
 
 class ScrollEvent : public Event
 {
+    friend class Game;
+
 private:
+    static void scroll_Event_Callback(GLFWwindow *window, double xoffset, double yoffset);
     Vector<double, 2> m_Offset;
     ScrollEvent(double x_Offset, double y_Offset);
 

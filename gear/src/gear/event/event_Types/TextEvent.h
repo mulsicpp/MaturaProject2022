@@ -7,7 +7,10 @@ _GEAR_START
 
 class TextEvent : public Event
 {
+    friend class Game;
+
 private:
+    static void text_Event_Callback(GLFWwindow *window, unsigned int codepoint);
     unsigned int m_Unicode_Value;
     TextEvent(unsigned int unicode_Value);
 

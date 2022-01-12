@@ -63,7 +63,7 @@ enum class Key
     TAB = GLFW_KEY_TAB,
     BACKSPACE = GLFW_KEY_BACKSPACE,
     INSERT = GLFW_KEY_INSERT,
-    DELETE = GLFW_KEY_DELETE,
+    DEL = GLFW_KEY_DELETE,
     RIGHT = GLFW_KEY_RIGHT,
     LEFT = GLFW_KEY_LEFT,
     DOWN = GLFW_KEY_DOWN,
@@ -130,11 +130,12 @@ enum class Key
     MENU = GLFW_KEY_MENU,
 };
 
-void key_Event_Callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
 class KeyEvent : public Event
 {
+    friend class Game;
+
 private:
+    static void key_Event_Callback(GLFWwindow *window, int key, int scancode, int action, int mods);
     Key m_Key;
     Action m_Action;
     KeyEvent(int key, int action);

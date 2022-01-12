@@ -8,7 +8,10 @@ _GEAR_START
 
 class MouseMovedEvent : public Event
 {
+    friend class Game;
+
 private:
+    static void mouse_Moved_Event_Callback(GLFWwindow *window, double xpos, double ypos);
     Vector<double, 2> m_Pos;
     MouseMovedEvent(double x, double y);
 

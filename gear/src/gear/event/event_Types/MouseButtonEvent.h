@@ -19,7 +19,10 @@ enum class MouseButton
 
 class MouseButtonEvent : public Event
 {
+    friend class Game;
+
 private:
+    static void mouse_Button_Event_Callback(GLFWwindow *window, int button, int action, int mods);
     MouseButton m_Button;
     Action m_Action;
     MouseButtonEvent(int mouse_Button, int action);

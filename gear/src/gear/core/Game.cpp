@@ -3,6 +3,14 @@
 #include "debug/log.h"
 #include <filesystem>
 #include <string.h>
+#include "../event/event_Types/ControllerConnectionEvent.h"
+#include "../event/event_Types/KeyEvent.h"
+#include "../event/event_Types/MouseButtonEvent.h"
+#include "../event/event_Types/MouseMovedEvent.h"
+#include "../event/event_Types/ScrollEvent.h"
+#include "../event/event_Types/TextEvent.h"
+#include "../event/event_Types/WindowFocusEvent.h"
+#include "../event/event_Types/WindowIconifyEvent.h"
 
 #if defined(GEAR_PLATFORM_LINUX)
 #include <unistd.h>
@@ -59,7 +67,7 @@ void gear::Game::gear_Init(void)
     gear::error("GLFW initialisation failed!\n");
   }
   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-  
+
   m_Window = Window::create_Window("", 1, 1);
   glfwMakeContextCurrent(m_Window->m_Window);
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -68,6 +76,14 @@ void gear::Game::gear_Init(void)
 #if defined(GEAR_DEBUG)
   glDebugMessageCallback(openGL_Debug_Callback, nullptr);
 #endif
+  glfwSetScrollCallback(m_Window->m_Window, ScrollEvent::scroll_Event_Callback);
+  glfwSetMouseButtonCallback(m_Window->m_Window, MouseButtonEvent::mouse_Button_Event_Callback);
+  glfwSetCursorPosCallback(m_Window->m_Window, MouseMovedEvent::mouse_Moved_Event_Callback);
+  glfwSetCharCallback(m_Window->m_Window, TextEvent::text_Event_Callback);
+  glfwSetKeyCallback(m_Window->m_Window, KeyEvent::key_Event_Callback);
+  glfwSetWindowFocusCallback(m_Window->m_Window, WindowFocusEvent::window_Focus_Event_Callback);
+  glfwSetWindowIconifyCallback(m_Window->m_Window, WindowIconifyEvent::window_Iconify_Event_Callback);
+  glfwSetJoystickCallback(ControllerConnectionEvent::controller_Connection_Event_Callback);
 }
 
 void gear::Game::gear_Terminate(void)

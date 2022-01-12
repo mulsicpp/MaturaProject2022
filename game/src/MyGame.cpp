@@ -3,6 +3,9 @@
 #include <gear/data/FileStream.h>
 #include <gear/resource/ResourceManager.h>
 
+#include <gear/event/event_Types/KeyEvent.h>
+#include <gear/event/EventComponent.h>
+
 void MyGame::on_Startup(void)
 {
   m_Window->set_Size(1280, 720);
@@ -11,6 +14,8 @@ void MyGame::on_Startup(void)
   //  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
+
+  gear::EventComponent<gear::KeyEvent> e = {[](gear::KeyEvent e){}, false};
 }
 
 void MyGame::per_Frame(void)

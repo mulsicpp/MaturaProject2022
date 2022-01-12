@@ -7,8 +7,8 @@ _GEAR_START
 
 enum class EventType
 {
-    KEY_EVENT,
     TEXT_EVENT,
+    KEY_EVENT,
     MOUSE_MOVED_EVENT,
     MOUSE_BUTTON_EVENT,
     SCROLL_EVENT,
@@ -25,6 +25,8 @@ enum class Action
     RELEASED = GLFW_RELEASE,
     REPEATED = GLFW_REPEAT
 };
+
+class Game;
 
 class Event
 {

@@ -1,4 +1,11 @@
 #include "ScrollEvent.h"
+#include "../EventQueue.h"
+
+
+void gear::ScrollEvent::scroll_Event_Callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    gear::EventQueue<ScrollEvent>::push_Event({xoffset, yoffset});
+}
 
 gear::ScrollEvent::ScrollEvent(double x_Offset, double y_Offset) : Event(EventType::SCROLL_EVENT), m_Offset({x_Offset, y_Offset})
 {
