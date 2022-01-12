@@ -3,7 +3,6 @@
 #include <gear/core/debug/log.h>
 #include <gear/data/FileStream.h>
 #include <gear/scene/PositionComponent.h>
-#include "SpriteComponent.h"
 
 #include <gear/scene/Entity.h>
 
@@ -77,29 +76,6 @@ void gear::Renderer::show_Frame(void)
   glfwSwapBuffers(m_Window);
 }
 
-void gear::Renderer::setup_Test_Frame(void)
-{
-  GEAR_DEBUG_LOG("setting up test texture");
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, m_Framebuffer.m_Texture);
-
-  uint32_t *data = new uint32_t[640 * 360];
-  for (int i = 0; i < 640; i++)
-    for (int j = 0; j < 360; j++)
-      if (((i / 24) % 2) ^ ((j / 24) % 2) == 0)
-      {
-        data[i + j * 640] = 0xffffbf00;
-      }
-      else
-      {
-        data[i + j * 640] = 0xffc09000;
-      }
-
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 640, 360, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-  delete[] data;
-}
-
 void gear::Renderer::sprite_Render_Callback(gear::PositionComponent &position, gear::SpriteComponent &sprite)
 {
   memcpy(m_Sprite_Nobatch_Vertexbuffer_Data, m_Default_Vertexbuffer, 16);
@@ -128,6 +104,45 @@ void gear::Renderer::sprite_Render_Callback(gear::PositionComponent &position, g
   //GEAR_DEBUG_LOG("rendering sprite entity");
 }
 
+void gear::Renderer::animation_Render_Callback(gear::PositionComponent &position, gear::AnimationComponent &animation)
+{
+  memcpy(m_Sprite_Nobatch_Vertexbuffer_Data, m_Default_Vertexbuffer, 16);
+
+  m_Sprite_Nobatch_Vertexbuffer_Data[0] = position.position[0] + animation.offset[0];
+  m_Sprite_Nobatch_Vertexbuffer_Data[12] = m_Sprite_Nobatch_Vertexbuffer_Data[0];
+
+  m_Sprite_Nobatch_Vertexbuffer_Data[4] = position.position[0] + animation.offset[0] + animation.animation->get_Width();
+  m_Sprite_Nobatch_Vertexbuffer_Data[8] = m_Sprite_Nobatch_Vertexbuffer_Data[4];
+
+  m_Sprite_Nobatch_Vertexbuffer_Data[1] = position.position[1] + animation.offset[1];
+  m_Sprite_Nobatch_Vertexbuffer_Data[5] = m_Sprite_Nobatch_Vertexbuffer_Data[1];
+
+  m_Sprite_Nobatch_Vertexbuffer_Data[9] = position.position[1] + animation.offset[1] + animation.animation->get_Height();
+  m_Sprite_Nobatch_Vertexbuffer_Data[13] = m_Sprite_Nobatch_Vertexbuffer_Data[9];
+
+  int frame_Index = animation.animation_Offset;
+
+  m_Sprite_Nobatch_Vertexbuffer_Data[3] = float(frame_Index) / animation.animation->get_Frame_Count();
+  m_Sprite_Nobatch_Vertexbuffer_Data[7] = m_Sprite_Nobatch_Vertexbuffer_Data[3];
+
+  m_Sprite_Nobatch_Vertexbuffer_Data[11] = float(frame_Index + 1) / animation.animation->get_Frame_Count();
+  m_Sprite_Nobatch_Vertexbuffer_Data[15] = m_Sprite_Nobatch_Vertexbuffer_Data[11];
+
+  glBindTexture(GL_TEXTURE_2D, animation.animation->get_TextureID());
+
+  glUniform4fv(glGetUniformLocation(m_Sprite_Nobatch_PL.m_Shader, "u_Palette"), animation.palette->get_Size(), (float*)(animation.palette->get_Colors()));
+
+  glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), m_Sprite_Nobatch_Vertexbuffer_Data);
+  //glBindVertexBuffer(0, m_Sprite_Nobatch_PL.m_Vertexbuffer, 0, 4 * sizeof(float));
+
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+  animation.animation_Offset += animation.frame_Rate / 60.0f;
+  animation.animation_Offset = int(animation.animation_Offset) % animation.animation->get_Frame_Count() + animation.animation_Offset - int(animation.animation_Offset);
+
+  GEAR_DEBUG_LOG("rendering animation entity");
+}
+
 void gear::Renderer::render_Scene(gear::Scene *scene)
 {
   m_Framebuffer.bind();
@@ -137,6 +152,7 @@ void gear::Renderer::render_Scene(gear::Scene *scene)
   glActiveTexture(GL_TEXTURE0);
 
   gear::Entity::for_Each(scene->get_ID(), sprite_Render_Callback);
+  gear::Entity::for_Each(scene->get_ID(), animation_Render_Callback);
 }
 
 void gear::Renderer::create_Upscale_PL(void)

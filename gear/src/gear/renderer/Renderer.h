@@ -9,6 +9,7 @@
 
 #include <gear/scene/PositionComponent.h>
 #include "SpriteComponent.h"
+#include "AnimationComponent.h"
 
 _GEAR_START
 
@@ -28,6 +29,7 @@ private:
   static int m_Window_Width, m_Window_Height;
 
   static void sprite_Render_Callback(PositionComponent &position, SpriteComponent &sprite);
+  static void animation_Render_Callback(PositionComponent &position, AnimationComponent &animation);
 
   static void create_Upscale_PL(void);
   static void create_Sprite_Nobatch_PL(void);
@@ -47,9 +49,6 @@ public:
 
   static void start_New_Frame(void);
   static void show_Frame(void);
-
-  static void setup_Test_Frame(void);
-  static void render_Test_Frame(void);
 
   static void render_Scene(Scene *scene);
 };

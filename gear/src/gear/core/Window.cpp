@@ -60,73 +60,7 @@ bool gear::Window::should_Close(void)
 {
   return glfwWindowShouldClose(m_Window);
 }
-/*
-void GLAPIENTRY openGL_Message_Callback(unsigned int source,
-                                        unsigned int type,
-                                        unsigned int id,
-                                        unsigned int severity,
-                                        int length,
-                                        const char *message,
-                                        const void *userParam)
-{
-  if(type == GL_DEBUG_TYPE_ERROR)
-    gear::error("OpenGL error!!!\nsource: %i\nid: %i\nseverity: %i\nmessage: \"%s\"", source, id, severity, message);
-}
 
-void gear::Window::make_Renderable(uint16_t width, uint16_t height)
-{
-  glfwMakeContextCurrent(m_Window);
-
-#if defined(GEAR_DEBUG)
-  glEnable(GL_DEBUG_OUTPUT);
-  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-  glDebugMessageCallback(openGL_Message_Callback, nullptr);
-
-  glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
-#endif
-
-  glClearColor(0, 0, 0, 1);
-
-  glGenVertexArrays(1, &m_Upscale_VertexarrayID);
-  glBindVertexArray(m_Upscale_VertexarrayID);
-
-  glVertexAttribFormat(0, 2, GL_FLOAT, GL_FALSE, 0);
-  glVertexAttribBinding(0, 0);
-  glEnableVertexAttribArray(0);
-  glVertexAttribFormat(1, 2, GL_FLOAT, GL_FALSE, (2 * sizeof(float)));
-  glVertexAttribBinding(1, 0);
-  glEnableVertexAttribArray(1);
-
-  glGenTextures(1, &m_TextureID);
-  glBindTexture(GL_TEXTURE_2D, m_TextureID);
-
-  m_Framebuffer_Width = width;
-  m_Framebuffer_Height = height;
-
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-  glGenFramebuffers(1, &m_FramebufferID);
-  glBindFramebuffer(GL_FRAMEBUFFER, m_FramebufferID);
-
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureID, 0);
-
-  glGenRenderbuffers(1, &m_DepthbufferID);
-  glBindRenderbuffer(GL_RENDERBUFFER, m_DepthbufferID);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_DepthbufferID);
-
-  unsigned int draw_Buffers[1] = {GL_COLOR_ATTACHMENT0};
-  glDrawBuffers(1, draw_Buffers);
-
-  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    gear::error("Framebuffer couldn't be completed");
-
-  glfwMakeContextCurrent(Renderer::m_Window == nullptr ? Renderer::m_Main_OpenGL_Context : Renderer::m_Window->m_Window);
-}
-*/
 void gear::Window::set_Visible(bool visible)
 {
   if (visible)

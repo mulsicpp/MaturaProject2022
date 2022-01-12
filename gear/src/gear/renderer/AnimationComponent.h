@@ -11,6 +11,7 @@ struct AnimationComponent {
   Ref<Animation> animation;
   Ref<Palette> palette;
   float animation_Offset;
+  float frame_Rate;
   float parallax_Factor = 1;
   gear::Vector<float, 2> offset;
 };

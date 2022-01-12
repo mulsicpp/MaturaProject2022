@@ -7,6 +7,7 @@ class MyGame : public gear::Game
 private:
   gear::Scene *m_Scene;
   gear::Entity *eis;
+  gear::Entity *eis_Idle;
   gear::Ref<gear::Palette> palettes[3];
   int palette_Index = 0;
 

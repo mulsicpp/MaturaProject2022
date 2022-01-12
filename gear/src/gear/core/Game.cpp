@@ -49,6 +49,11 @@ void gear::Game::close(int exit_code)
   exit(exit_code);
 }
 
+void window_Moved_Callback(GLFWwindow *window, int x, int y)
+{
+  GEAR_DEBUG_LOG("window moved");
+}
+
 void gear::Game::gear_Init(void)
 {
   if (glfwInit() != GLFW_TRUE)
@@ -69,6 +74,9 @@ void gear::Game::gear_Init(void)
   glfwMakeContextCurrent(m_Window->m_Window);
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     gear::error("Failed to load OpenGL");
+
+  
+  glfwSetWindowPosCallback(m_Window->m_Window, window_Moved_Callback);
 }
 
 void gear::Game::gear_Terminate(void)
