@@ -14,3 +14,7 @@ gear::ControllerStatus gear::ControllerConnectionEvent::get_Controller_Status(vo
 {
     return m_status;
 }
+int gear::ControllerConnectionEvent::get_Controller_Id(void) const
+{
+    return m_Controller_Id;
+}

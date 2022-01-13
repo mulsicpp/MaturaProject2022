@@ -23,5 +23,6 @@ private:
 
 public:
     ControllerStatus get_Controller_Status(void) const;
+    int get_Controller_Id(void) const;
 };
 _GEAR_END
