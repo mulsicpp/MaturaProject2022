@@ -60,7 +60,7 @@ void MyGame::on_Startup(void)
   gear::AnimationComponent animation_Comp;
   animation_Comp.offset = {0, 0};
   animation_Comp.parallax_Factor = 1;
-  animation_Comp.animation = gear::ResourceManager::get<gear::Animation>("assets/test_sprites/eis_idle.gear");
+  animation_Comp.animation = gear::ResourceManager::get<gear::Animation>("assets/test_sprites/eis_jumping_besser.gear");
   animation_Comp.animation_Offset = 1;
   animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
   animation_Comp.palette = palettes[0];
@@ -78,7 +78,7 @@ void MyGame::per_Frame(void)
   auto &pos = eis->get<gear::PositionComponent>()->data.position;
   pos[0] -= 2;
   if(pos[0] < -64){
-    pos[0] =640;
+    pos[0] = 320;
     palette_Index = (palette_Index + 1) % 3;
     eis->get<gear::SpriteComponent>()->data.palette = palettes[palette_Index];
   }

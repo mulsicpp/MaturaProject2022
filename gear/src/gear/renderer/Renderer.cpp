@@ -92,9 +92,10 @@ void gear::Renderer::sprite_Render_Callback(gear::PositionComponent &position, g
   m_Sprite_Nobatch_Vertexbuffer_Data[9] = position.position[1] + sprite.offset[1] + sprite.sprite->get_Height();
   m_Sprite_Nobatch_Vertexbuffer_Data[13] = m_Sprite_Nobatch_Vertexbuffer_Data[9];
 
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, sprite.sprite->get_TextureID());
-
-  glUniform4fv(glGetUniformLocation(m_Sprite_Nobatch_PL.m_Shader, "u_Palette"), sprite.palette->get_Size(), (float*)(sprite.palette->get_Colors()));
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_1D, sprite.palette->get_TextureID());
 
   glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), m_Sprite_Nobatch_Vertexbuffer_Data);
   //glBindVertexBuffer(0, m_Sprite_Nobatch_PL.m_Vertexbuffer, 0, 4 * sizeof(float));
@@ -128,9 +129,10 @@ void gear::Renderer::animation_Render_Callback(gear::PositionComponent &position
   m_Sprite_Nobatch_Vertexbuffer_Data[11] = float(frame_Index + 1) / animation.animation->get_Frame_Count();
   m_Sprite_Nobatch_Vertexbuffer_Data[15] = m_Sprite_Nobatch_Vertexbuffer_Data[11];
 
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, animation.animation->get_TextureID());
-
-  glUniform4fv(glGetUniformLocation(m_Sprite_Nobatch_PL.m_Shader, "u_Palette"), animation.palette->get_Size(), (float*)(animation.palette->get_Colors()));
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_1D, animation.palette->get_TextureID());
 
   glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), m_Sprite_Nobatch_Vertexbuffer_Data);
   //glBindVertexBuffer(0, m_Sprite_Nobatch_PL.m_Vertexbuffer, 0, 4 * sizeof(float));
@@ -192,6 +194,7 @@ void gear::Renderer::create_Sprite_Nobatch_PL(void)
   m_Sprite_Nobatch_PL.create(vertex_Shader, fragment_Shader);
   m_Sprite_Nobatch_PL.bind();
   glUniform1i(glGetUniformLocation(m_Sprite_Nobatch_PL.m_Shader, "u_Texture"), 0);
+  glUniform1i(glGetUniformLocation(m_Sprite_Nobatch_PL.m_Shader, "u_Palette"), 1);
   GEAR_DEBUG_LOG("opengl program: %i", m_Sprite_Nobatch_PL.m_Shader);
 
   glDeleteShader(vertex_Shader);
