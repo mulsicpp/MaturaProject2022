@@ -2,14 +2,12 @@
 
 #include <gear/core/core.h>
 #include <gear/core/Window.h>
-#include <gear/scene/Scene.h>
 
 #include "Framebuffer.h"
 #include "RenderPipeline.h"
-
-#include <gear/scene/PositionComponent.h>
-#include "SpriteComponent.h"
-#include "AnimationComponent.h"
+#include "pipelines/UpscalePipeline.h"
+#include "pipelines/SpriteNobatchPipeline.h"
+#include "pipelines/SpriteBatchPipeline.h"
 
 _GEAR_START
 
@@ -17,22 +15,17 @@ class Renderer {
   friend class gear::Window;
 private:
   static Framebuffer m_Framebuffer;
-  static RenderPipeline m_Upscale_PL;
-  static RenderPipeline m_Sprite_Nobatch_PL;
 
   static float m_Default_Vertexbuffer[16];
   static unsigned int m_Default_Indexbuffer[6];
 
   static float m_Sprite_Nobatch_Vertexbuffer_Data[16];
+  static float *m_Sprite_Batch_Vertexbuffer_Data;
 
   static GLFWwindow *m_Window;
   static int m_Window_Width, m_Window_Height;
 
-  static void sprite_Render_Callback(PositionComponent &position, SpriteComponent &sprite);
-  static void animation_Render_Callback(PositionComponent &position, AnimationComponent &animation);
-
-  static void create_Upscale_PL(void);
-  static void create_Sprite_Nobatch_PL(void);
+  static int m_Max_Texture_Units;
 
 public:
   static void create(int width, int height);
