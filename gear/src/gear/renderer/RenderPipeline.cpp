@@ -60,6 +60,12 @@ unsigned int gear::RenderPipeline::link_Program(unsigned int vertex_Shader, unsi
   glAttachShader(program, vertex_Shader);
   glAttachShader(program, fragment_Shader);
   glLinkProgram(program);
+
+  return program;
+}
+
+bool gear::RenderPipeline::validate_Program(unsigned int program)
+{
   glValidateProgram(program);
 
   int res;
@@ -75,6 +81,4 @@ unsigned int gear::RenderPipeline::link_Program(unsigned int vertex_Shader, unsi
     glDeleteShader(program);
     return 0;
   }
-
-  return program;
 }

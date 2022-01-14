@@ -6,8 +6,7 @@
 #include "Framebuffer.h"
 #include "RenderPipeline.h"
 #include "pipelines/UpscalePipeline.h"
-#include "pipelines/SpriteNobatchPipeline.h"
-#include "pipelines/SpriteBatchPipeline.h"
+#include <gear/scene/Scene.h>
 
 _GEAR_START
 

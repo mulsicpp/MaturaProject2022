@@ -18,13 +18,6 @@ private:
     Vector<float, 2> tex;
   };
 
-  Vertex m_Default_Vertex_Data[4] = {
-    {{-1, -1, 0}, {0, 0}},
-    {{ 1, -1, 0}, {1, 0}},
-    {{ 1,  1, 0}, {1, 1}},
-    {{-1,  1, 0}, {0, 1}}
-  };
-
   Vertex m_Vertex_Data[4];
   unsigned int m_Index_Data[6] = {0, 1, 2, 0, 2, 3};
 

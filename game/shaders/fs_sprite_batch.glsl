@@ -2,21 +2,21 @@
 
 layout(location = 0) out vec4 out_Color;
 
-layout(binding = 0) uniform sampler2D u_Texture[64];
-layout(binding = 1) uniform sampler1D u_Palette[64];
+layout(binding = 0) uniform sampler2D u_Texture[8];
+layout(binding = 1) uniform sampler1D u_Palette[8];
 
 in vec2 tex_Position;
-flat in index;
+in float tex_Index;
 
 void main()
 {
-  int index = int(texture(u_Texture, tex_Position).r * 255.0f + 0.5);
+  int index = int(texture(u_Texture[int(tex_Index)], tex_Position).r * 255.0f + 0.5);
   if(index == 0)
   {
     discard;
   }
   else
   //out_Color = vec4((index & 255u) / 255.0f, 0, 0, 1.0);
-  out_Color = texture(u_Palette, (float(index) - 0.5f) / 255.0f);
+  out_Color = texture(u_Palette[int(tex_Index)], (float(index) - 0.5f) / 255.0f);
   //out_Color = vec4(tex_Position.x, tex_Position.y, 0, 1);
 }

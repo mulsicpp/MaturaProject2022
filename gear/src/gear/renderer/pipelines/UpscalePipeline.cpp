@@ -15,6 +15,7 @@ void gear::UpscalePipeline::init(void)
   unsigned int fragment_Shader = RenderPipeline::load_Shader("shaders/fs_upscale.glsl", GL_FRAGMENT_SHADER);
 
   create(vertex_Shader, fragment_Shader);
+  RenderPipeline::validate_Program(m_Shader);
   bind();
   glUniform1i(glGetUniformLocation(m_Shader, "u_Texture"), 0);
   GEAR_DEBUG_LOG("opengl program: %i", m_Shader);

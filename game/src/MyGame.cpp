@@ -4,6 +4,7 @@
 #include <gear/resource/ResourceManager.h>
 #include <gear/renderer/Renderer.h>
 #include <gear/renderer/SpriteComponent.h>
+#include <gear/renderer/AnimationComponent.h>
 
 #include <gear/scene/PositionComponent.h>
 
@@ -64,8 +65,11 @@ void MyGame::on_Startup(void)
         animation_Comp.animation_Offset = 0;
       new_Eis->add<gear::AnimationComponent>(animation_Comp);
       gear::Vector<float, 3> pos(j * 48.0f, i * 54.0f, 0.0f);
+      GEAR_DEBUG_LOG("create entity %i %i", j, i);
       new_Eis->add<gear::PositionComponent>({pos});
     }
+  
+  GEAR_DEBUG_LOG("finished scene");
 }
 
 void MyGame::per_Frame(void)
@@ -87,8 +91,11 @@ void MyGame::per_Frame(void)
     GEAR_DEBUG_LOG("set palette");
   }
 */
+  GEAR_DEBUG_LOG("start frame");
   gear::Renderer::start_New_Frame();
+  GEAR_DEBUG_LOG("render scene");
   gear::Renderer::render_Scene(m_Scene);
+  GEAR_DEBUG_LOG("show frame");
   gear::Renderer::show_Frame();
 
   m_Window->poll_Events();

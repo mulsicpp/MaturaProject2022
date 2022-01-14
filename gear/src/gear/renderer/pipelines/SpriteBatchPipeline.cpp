@@ -1,35 +1,74 @@
 #include "SpriteBatchPipeline.h"
 
+#include <gear/scene/Entity.h>
+
 #include <glad/glad.h>
 
-gear::SpriteBatchPipeline::~SpriteBatchPipeline() {
+gear::SpriteBatchPipeline gear::SpriteBatchPipeline::instance;
+
+gear::SpriteBatchPipeline &gear::SpriteBatchPipeline::get_Instance(void)
+{
+  return instance;
+}
+
+void gear::SpriteBatchPipeline::destroy(void)
+{
   delete[] m_Vertex_Data;
   delete[] m_Index_Data;
 }
 
 void gear::SpriteBatchPipeline::init(void)
 {
+  glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_Max_Textures);
+  m_Max_Textures /= 2;
+  if (m_Max_Textures > 64)
+    m_Max_Textures = 64;
+  
+  GEAR_DEBUG_LOG("max textures: %i", m_Max_Textures);
+
   unsigned int vertex_Shader = RenderPipeline::load_Shader("shaders/vs_sprite_batch.glsl", GL_VERTEX_SHADER);
   unsigned int fragment_Shader = RenderPipeline::load_Shader("shaders/fs_sprite_batch.glsl", GL_FRAGMENT_SHADER);
 
   create(vertex_Shader, fragment_Shader);
   bind();
+
+  int texture_Bindings[64];
+  int palette_Bindings[64];
+
+  for (int i = 0; i < m_Max_Textures; i++)
+  {
+    texture_Bindings[i] = 2 * i;
+    palette_Bindings[i] = 2 * i + 1;
+  }
+
+  glUniform1iv(glGetUniformLocation(m_Shader, "u_Texture"), m_Max_Textures, texture_Bindings);
+  glUniform1iv(glGetUniformLocation(m_Shader, "u_Palette"), m_Max_Textures, palette_Bindings);
+
+  RenderPipeline::validate_Program(m_Shader);
+
   GEAR_DEBUG_LOG("opengl program: %i", m_Shader);
 
   glDeleteShader(vertex_Shader);
   glDeleteShader(fragment_Shader);
 
-  glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_Max_Textures);
-  m_Max_Textures /= 2;
-
   m_Vertex_Data = new Vertex[4 * m_Max_Textures];
   m_Index_Data = new unsigned int[6 * m_Max_Textures];
+  for (int i = 0; i < m_Max_Textures; i++)
+  {
+    m_Index_Data[i * 6 + 0] = 0 + i * 4;
+    m_Index_Data[i * 6 + 1] = 1 + i * 4;
+    m_Index_Data[i * 6 + 2] = 2 + i * 4;
+    m_Index_Data[i * 6 + 3] = 0 + i * 4;
+    m_Index_Data[i * 6 + 4] = 2 + i * 4;
+    m_Index_Data[i * 6 + 5] = 3 + i * 4;
+  }
 
-  glBufferData(GL_ARRAY_BUFFER, m_Max_Textures * 4 * sizeof(Vertex), m_Default_Vertex_Data, GL_DYNAMIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, m_Max_Textures * 4 * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
   GEAR_DEBUG_LOG("vbo: %i", m_Vertexbuffer);
 
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Max_Textures * 6 * sizeof(unsigned int), m_Index_Data, GL_STATIC_DRAW);
   GEAR_DEBUG_LOG("ibo: %i", m_Indexbuffer);
+
 
   glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
   glVertexAttribBinding(0, 0);
@@ -42,4 +81,90 @@ void gear::SpriteBatchPipeline::init(void)
   glEnableVertexAttribArray(2);
 
   glBindVertexBuffer(0, m_Vertexbuffer, 0, sizeof(Vertex));
+}
+
+void gear::SpriteBatchPipeline::render(gear::Scene *scene)
+{
+  bind();
+  gear::Entity::for_Each(scene->get_ID(), sprite_Render_Callback);
+  gear::Entity::for_Each(scene->get_ID(), animation_Render_Callback);
+  draw_Batch();
+}
+
+void gear::SpriteBatchPipeline::draw_Batch(void)
+{
+  if (m_Batch_Index > 0)
+  {
+    glBufferSubData(GL_ARRAY_BUFFER, 0, m_Batch_Index * 4 * sizeof(Vertex), m_Vertex_Data);
+    glDrawElements(GL_TRIANGLES, 6 * m_Batch_Index, GL_UNSIGNED_INT, nullptr);
+  /*
+    for(int i = 0; i < m_Batch_Index; i++)
+      GEAR_DEBUG_LOG("{%f, %f, %f} {%f, %f} %i", 
+      m_Vertex_Data[i].pos[0], 
+      m_Vertex_Data[i].pos[1], 
+      m_Vertex_Data[i].pos[2],
+      m_Vertex_Data[i].tex[0],
+      m_Vertex_Data[i].tex[1],
+      m_Vertex_Data[i].tex_Index);
+    GEAR_DEBUG_LOG("draw batch %i", m_Batch_Index);
+    */
+    m_Batch_Index = 0;
+  }
+}
+
+void gear::SpriteBatchPipeline::sprite_Render_Callback(gear::PositionComponent &position, gear::SpriteComponent &sprite)
+{
+  float x_Left = position.position[0] + sprite.offset[0];
+  float x_Right = position.position[0] + sprite.offset[0] + sprite.sprite->get_Width();
+  float y_Top = position.position[1] + sprite.offset[1];
+  float y_Bottom = position.position[1] + sprite.offset[1] + sprite.sprite->get_Height();
+
+  instance.m_Temp_Vertex_Data[0] = {{x_Left, y_Top, 0}, {0, 0}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[1] = {{x_Right, y_Top, 0}, {1, 0}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[2] = {{x_Right, y_Bottom, 0}, {1, 1}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[3] = {{x_Left, y_Bottom, 0}, {0, 1}, instance.m_Batch_Index};
+
+  glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
+  glBindTexture(GL_TEXTURE_2D, sprite.sprite->get_TextureID());
+  glActiveTexture(GL_TEXTURE1 + 2 * instance.m_Batch_Index);
+  glBindTexture(GL_TEXTURE_1D, sprite.palette->get_TextureID());
+
+  memcpy(instance.m_Vertex_Data + (4 * instance.m_Batch_Index), instance.m_Temp_Vertex_Data, 4);
+
+  instance.m_Batch_Index++;
+  if (instance.m_Batch_Index == instance.m_Max_Textures)
+  {
+    instance.draw_Batch();
+  }
+}
+
+void gear::SpriteBatchPipeline::animation_Render_Callback(gear::PositionComponent &position, gear::AnimationComponent &animation)
+{
+  float x_Left = position.position[0] + animation.offset[0];
+  float x_Right = position.position[0] + animation.offset[0] + animation.animation->get_Width();
+  float y_Top = position.position[1] + animation.offset[1];
+  float y_Bottom = position.position[1] + animation.offset[1] + animation.animation->get_Height();
+
+  int frame_Index = animation.animation_Offset;
+
+  float tex_Top = float(frame_Index) / animation.animation->get_Frame_Count();
+  float tex_Bottom = float(frame_Index + 1) / animation.animation->get_Frame_Count();
+
+  instance.m_Temp_Vertex_Data[0] = {{x_Left, y_Top, 0}, {0, tex_Top}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[1] = {{x_Right, y_Top, 0}, {1, tex_Top}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[2] = {{x_Right, y_Bottom, 0}, {1, tex_Bottom}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[3] = {{x_Left, y_Bottom, 0}, {0, tex_Bottom}, instance.m_Batch_Index};
+
+  glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
+  glBindTexture(GL_TEXTURE_2D, animation.animation->get_TextureID());
+  glActiveTexture(GL_TEXTURE1 + 2 * instance.m_Batch_Index);
+  glBindTexture(GL_TEXTURE_1D, animation.palette->get_TextureID());
+
+  memcpy(instance.m_Vertex_Data + (4 * instance.m_Batch_Index), instance.m_Temp_Vertex_Data, 4);
+
+  instance.m_Batch_Index++;
+  if (instance.m_Batch_Index == instance.m_Max_Textures)
+  {
+    instance.draw_Batch();
+  }
 }

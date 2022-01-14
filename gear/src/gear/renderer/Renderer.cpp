@@ -4,6 +4,12 @@
 #include <gear/data/FileStream.h>
 
 #include <gear/scene/Entity.h>
+#include "animation_player.h"
+
+#include "pipelines/SpriteNobatchPipeline.h"
+#include "pipelines/SpriteBatchPipeline.h"
+
+using SpritePipeline = gear::SpriteBatchPipeline;
 
 gear::Framebuffer gear::Renderer::m_Framebuffer;
 
@@ -33,7 +39,7 @@ void gear::Renderer::create(int width, int height)
   m_Framebuffer.create(width, height);
 
   UpscalePipeline::get_Instance().init();
-  SpriteNobatchPipeline::get_Instance().init();
+  SpritePipeline::get_Instance().init();
 }
 
 void gear::Renderer::destroy(void)
@@ -41,7 +47,7 @@ void gear::Renderer::destroy(void)
   m_Framebuffer.destroy();
 
   UpscalePipeline::get_Instance().destroy();
-  SpriteNobatchPipeline::get_Instance().destroy();
+  SpritePipeline::get_Instance().destroy();
 
   m_Window = nullptr;
 }
@@ -75,8 +81,9 @@ void gear::Renderer::show_Frame(void)
 void gear::Renderer::render_Scene(gear::Scene *scene)
 {
   m_Framebuffer.bind();
-  SpriteNobatchPipeline::get_Instance().bind();
-  glUniform1i(glGetUniformLocation(SpriteNobatchPipeline::get_Instance().m_Shader, "u_Frame_Width"), m_Framebuffer.m_Width);
-  glUniform1i(glGetUniformLocation(SpriteNobatchPipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
-  SpriteNobatchPipeline::get_Instance().render(scene);
+  SpritePipeline::get_Instance().bind();
+  glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Width"), m_Framebuffer.m_Width);
+  glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
+  SpritePipeline::get_Instance().render(scene);
+  gear::Entity::for_Each(scene->get_ID(), animation_Player_Callback);
 }

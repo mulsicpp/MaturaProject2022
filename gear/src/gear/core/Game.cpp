@@ -58,7 +58,7 @@ void GLAPIENTRY openGL_Debug_Callback(GLenum source,
                                       const void *userParam)
 {
   if(type == GL_DEBUG_TYPE_ERROR)
-    GEAR_DEBUG_LOG("OpenGL error: %s", message);
+    gear::error("OpenGL error: %s", message);
 }
 
 void gear::Game::gear_Init(void)
