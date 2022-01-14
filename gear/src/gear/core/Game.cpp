@@ -11,6 +11,7 @@
 #include "../event/event_Types/TextEvent.h"
 #include "../event/event_Types/WindowFocusEvent.h"
 #include "../event/event_Types/WindowIconifyEvent.h"
+#include "../event/Input.h"
 
 #if defined(GEAR_PLATFORM_LINUX)
 #include <unistd.h>
@@ -76,9 +77,12 @@ void gear::Game::gear_Init(void)
 #if defined(GEAR_DEBUG)
   glDebugMessageCallback(openGL_Debug_Callback, nullptr);
 #endif
+
+  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
+  gear::Input::init();
   glfwSetScrollCallback(m_Window->m_Window, ScrollEvent::scroll_Event_Callback);
   glfwSetMouseButtonCallback(m_Window->m_Window, MouseButtonEvent::mouse_Button_Event_Callback);
-  glfwSetCursorPosCallback(m_Window->m_Window, MouseMovedEvent::mouse_Moved_Event_Callback);
+  //glfwSetCursorPosCallback(m_Window->m_Window, MouseMovedEvent::mouse_Moved_Event_Callback);
   glfwSetCharCallback(m_Window->m_Window, TextEvent::text_Event_Callback);
   glfwSetKeyCallback(m_Window->m_Window, KeyEvent::key_Event_Callback);
   glfwSetWindowFocusCallback(m_Window->m_Window, WindowFocusEvent::window_Focus_Event_Callback);

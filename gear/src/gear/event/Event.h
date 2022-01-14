@@ -8,7 +8,7 @@ _GEAR_START
 enum class EventType
 {
     TEXT_EVENT,
-    KEY_EVENT,
+    KEYBOARD_EVENT,
     MOUSE_MOVED_EVENT,
     MOUSE_BUTTON_EVENT,
     SCROLL_EVENT,
