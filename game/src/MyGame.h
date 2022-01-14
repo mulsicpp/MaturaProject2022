@@ -8,7 +8,7 @@ private:
   gear::Scene *m_Scene;
   gear::Entity *eis;
   gear::Entity *eis_Idle;
-  gear::Ref<gear::Palette> palettes[4];
+  gear::Ref<gear::Palette> palettes[7];
   int palette_Index = 0;
 
 public:

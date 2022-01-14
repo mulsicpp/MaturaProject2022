@@ -40,6 +40,9 @@ void gear::Renderer::destroy(void)
 {
   m_Framebuffer.destroy();
 
+  UpscalePipeline::get_Instance().destroy();
+  SpriteNobatchPipeline::get_Instance().destroy();
+
   m_Window = nullptr;
 }
 

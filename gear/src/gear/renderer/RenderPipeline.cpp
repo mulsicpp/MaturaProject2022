@@ -11,7 +11,7 @@ void gear::RenderPipeline::create(unsigned int vertex_Shader, unsigned int fragm
   glCreateVertexArrays(1, &m_Vertexarray);
 }
 
-gear::RenderPipeline::~RenderPipeline() {
+void gear::RenderPipeline::destroy(void) {
   glDeleteProgram(m_Shader);
   glDeleteBuffers(1, &m_Vertexbuffer);
   glDeleteBuffers(1, &m_Indexbuffer);

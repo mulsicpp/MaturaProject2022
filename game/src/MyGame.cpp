@@ -34,6 +34,9 @@ void MyGame::on_Startup(void)
   palettes[1] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_pink.gear");
   palettes[2] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_green.gear");
   palettes[3] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_dark.gear");
+  palettes[4] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_blue.gear");
+  palettes[5] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_vanillia.gear");
+  palettes[6] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_brown.gear");
 
   gear::SpriteComponent sprite_Comp;
   sprite_Comp.offset = {0, 0};
@@ -55,7 +58,7 @@ void MyGame::on_Startup(void)
     for(int j = 0; j < 13; j++)
     {
       gear::Entity* new_Eis = m_Scene->create_Entity();
-      animation_Comp.palette = palettes[(i + j) % 4];
+      animation_Comp.palette = palettes[(i * 13 + j) % 7];
       animation_Comp.animation_Offset++;
       if(animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
         animation_Comp.animation_Offset = 0;
@@ -94,7 +97,10 @@ void MyGame::per_Frame(void)
 void MyGame::on_Shutdown(void)
 {
   GEAR_DEBUG_LOG("destroy scene");
+  gear::Renderer::destroy();
   m_Scene->destroy();
+  for(int i = 0; i < 7; i++)
+    palettes[i] = nullptr;
   GEAR_DEBUG_LOG("unloaded resources: %i", gear::ResourceManager::unload());
   GEAR_DEBUG_LOG("Closed application");
 }

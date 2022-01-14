@@ -45,17 +45,6 @@ gear::Window *gear::Window::create_Fullscreen_Window(const char *name)
 
 void gear::Window::destroy(void)
 {
-  /*
-  if (m_FramebufferID != 0)
-    glDeleteFramebuffers(1, &m_FramebufferID);
-  if (m_TextureID != 0)
-    glDeleteTextures(1, &m_TextureID);
-  if (m_DepthbufferID != 0)
-    glDeleteTextures(1, &m_DepthbufferID);
-  if (m_Upscale_VertexarrayID != 0)
-    glDeleteVertexArrays(1, &m_Upscale_VertexarrayID);
-  */
-  GEAR_DEBUG_LOG("window: %p", m_Window);
   glfwDestroyWindow(m_Window);
 }
 

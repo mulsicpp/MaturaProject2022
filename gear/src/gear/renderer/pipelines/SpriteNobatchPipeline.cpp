@@ -40,13 +40,13 @@ void gear::SpriteNobatchPipeline::init(void)
 
 void gear::SpriteNobatchPipeline::render(gear::Scene *scene) {
   bind();
-  //gear::Entity::for_Each(scene->get_ID(), sprite_Render_Callback);
+  gear::Entity::for_Each(scene->get_ID(), sprite_Render_Callback);
   gear::Entity::for_Each(scene->get_ID(), animation_Render_Callback);
 }
 
 void gear::SpriteNobatchPipeline::sprite_Render_Callback(gear::PositionComponent &position, gear::SpriteComponent &sprite)
 {
-  memcpy(instance.m_Vertex_Data, instance.m_Default_Vertex_Data, 4 * sizeof(Vertex));
+  memcpy(instance.m_Vertex_Data, instance.m_Default_Vertex_Data, 4);
 
   instance.m_Vertex_Data[0].pos[0] = position.position[0] + sprite.offset[0];
   instance.m_Vertex_Data[3].pos[0] = instance.m_Vertex_Data[0].pos[0];
@@ -72,7 +72,7 @@ void gear::SpriteNobatchPipeline::sprite_Render_Callback(gear::PositionComponent
 
 void gear::SpriteNobatchPipeline::animation_Render_Callback(gear::PositionComponent &position, gear::AnimationComponent &animation)
 {
-  memcpy(instance.m_Vertex_Data, instance.m_Default_Vertex_Data, 4 * sizeof(Vertex));
+  memcpy(instance.m_Vertex_Data, instance.m_Default_Vertex_Data, 4);
 
   instance.m_Vertex_Data[0].pos[0] = position.position[0] + animation.offset[0];
   instance.m_Vertex_Data[3].pos[0] = instance.m_Vertex_Data[0].pos[0];
@@ -102,8 +102,6 @@ void gear::SpriteNobatchPipeline::animation_Render_Callback(gear::PositionCompon
   glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(Vertex), instance.m_Vertex_Data);
 
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-  //GEAR_DEBUG_LOG("rendering animation entity");
 
   animation.animation_Offset += animation.frame_Rate / 60.0f;
   animation.animation_Offset = int(animation.animation_Offset) % animation.animation->get_Frame_Count() + animation.animation_Offset - int(animation.animation_Offset);

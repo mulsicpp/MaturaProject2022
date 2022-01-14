@@ -4,8 +4,6 @@
 #include "memcpy.h"
 #include <string>
 
-#include <gear/core/debug/log.h>
-
 _GEAR_START
 
 /*
@@ -26,17 +24,14 @@ public:
   void create(void)
   {
     m_Data = new T[_min_capacity];
-    GEAR_DEBUG_LOG("create vector %p", m_Data);
     m_Count = 0;
     m_Capacity = _min_capacity;
   }
 
   void destroy(void)
   {
-    GEAR_DEBUG_LOG("deleting weak vector");
     if (m_Data != nullptr)
     {
-      GEAR_DEBUG_LOG("in if %p", m_Data);
       delete[] m_Data;
       m_Data = nullptr;
     }
@@ -75,7 +70,6 @@ public:
     {
       m_Capacity *= 2;
       T *temp = new T[m_Capacity];
-      GEAR_DEBUG_LOG("pushback copying %p to %p", m_Data, temp);
       gear::memcpy(temp, m_Data, m_Count);
       delete[] m_Data;
       m_Data = temp;
@@ -90,7 +84,6 @@ public:
     {
       m_Capacity /= 2;
       T *temp = new T[m_Capacity];
-      GEAR_DEBUG_LOG("popback copying %p to %p", m_Data, temp);
       gear::memcpy(temp, m_Data, m_Count);
       delete[] m_Data;
       m_Data = temp;
@@ -103,7 +96,6 @@ public:
     {
       m_Capacity *= 2;
       T *temp = new T[m_Capacity];
-      GEAR_DEBUG_LOG("insert copying %p to %p", m_Data, temp);
       gear::memcpy(temp, m_Data, index);
       gear::memcpy_reverse(temp + m_Count + 1, m_Data + m_Count, m_Count - index);
       delete[] m_Data;
@@ -126,7 +118,6 @@ public:
     {
       m_Capacity /= 2;
       T *temp = new T[m_Capacity];
-      GEAR_DEBUG_LOG("remove copying %p to %p", m_Data, temp);
       gear::memcpy(temp, m_Data, index * sizeof(T));
       gear::memcpy(temp + index, m_Data + index + 1, m_Count - index);
       delete[] m_Data;
