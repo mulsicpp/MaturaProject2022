@@ -18,7 +18,7 @@ class EventQueue
 
 private:
     static std::vector<T> m_Queue;
-    static std::vector<std::function<void(T)>> m_global_Event_Callbacks;
+    static std::vector<std::function<void(T)>> m_Global_Event_Callbacks;
 
     static void event_Callback(EventComponent<T> &event_Component)
     {
@@ -33,7 +33,7 @@ private:
     {
         for (T &event : m_Queue)
         {
-            for (auto &callback : m_global_Event_Callbacks)
+            for (auto &callback : m_Global_Event_Callbacks)
             {
                 callback(event);
             }
@@ -45,15 +45,13 @@ private:
 public:
     static void push_Event(T event)
     {
-        GEAR_DEBUG_LOG("before push back");
         m_Queue.push_back(event);
-        GEAR_DEBUG_LOG("after push back");
     }
 };
 
 template<class T>
 std::vector<T> gear::EventQueue<T>::m_Queue;
 template<class T>
-std::vector<std::function<void(T)>> gear::EventQueue<T>::m_global_Event_Callbacks;
+std::vector<std::function<void(T)>> gear::EventQueue<T>::m_Global_Event_Callbacks;
 
 _GEAR_END

@@ -2,7 +2,6 @@
 
 #include <gear/core/core.h>
 #include <exception>
-#include <initializer_list>
 #include <iostream>
 #include <stdio.h>
 #include <string.h>

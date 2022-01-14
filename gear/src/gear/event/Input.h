@@ -9,6 +9,7 @@
 #include "event_Types/ControllerAxisEvent.h"
 #include "event_Types/ControllerButtonEvent.h"
 #include <gear/scene/Scene.h>
+#include "EventQueue.h"
 
 _GEAR_START
 
@@ -27,7 +28,7 @@ public:
     template <class T>
     static void add_Global_Callback(std::function<void(T)> callback)
     {
-        EventQueue<T>::global_Event_Callbacks.push_back(callback);
+        EventQueue<T>::m_Global_Event_Callbacks.push_back(callback);
     }
     static void init(void);
     static State get_Key_State(Key key);

@@ -4,10 +4,7 @@
 
 void gear::MouseMovedEvent::mouse_Moved_Event_Callback(GLFWwindow* window, double xpos, double ypos)
 {
-    GEAR_DEBUG_LOG("before push event");
     gear::EventQueue<MouseMovedEvent>::push_Event({xpos, ypos});
-    GEAR_DEBUG_LOG("after push event");
-
 }
 
 gear::MouseMovedEvent::MouseMovedEvent(double x, double y) : Event(EventType::MOUSE_MOVED_EVENT), m_Pos({x, y}) {}

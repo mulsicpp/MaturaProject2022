@@ -81,12 +81,13 @@ void gear::Game::gear_Init(void)
   gear::Input::init();
   glfwSetScrollCallback(m_Window->m_Window, ScrollEvent::scroll_Event_Callback);
   glfwSetMouseButtonCallback(m_Window->m_Window, MouseButtonEvent::mouse_Button_Event_Callback);
-  //glfwSetCursorPosCallback(m_Window->m_Window, MouseMovedEvent::mouse_Moved_Event_Callback);
+  glfwSetCursorPosCallback(m_Window->m_Window, MouseMovedEvent::mouse_Moved_Event_Callback);
   glfwSetCharCallback(m_Window->m_Window, TextEvent::text_Event_Callback);
   glfwSetKeyCallback(m_Window->m_Window, KeyEvent::key_Event_Callback);
   glfwSetWindowFocusCallback(m_Window->m_Window, WindowFocusEvent::window_Focus_Event_Callback);
   glfwSetWindowIconifyCallback(m_Window->m_Window, WindowIconifyEvent::window_Iconify_Event_Callback);
   glfwSetJoystickCallback(ControllerConnectionEvent::controller_Connection_Event_Callback);
+  Input::add_Global_Callback<KeyEvent>([](KeyEvent e) {GEAR_DEBUG_LOG("key event");});
 }
 
 void gear::Game::gear_Terminate(void)

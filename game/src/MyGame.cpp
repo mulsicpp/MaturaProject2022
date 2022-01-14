@@ -5,6 +5,7 @@
 
 #include <gear/event/event_Types/KeyEvent.h>
 #include <gear/event/EventComponent.h>
+#include <gear/event/Input.h>
 
 void MyGame::on_Startup(void)
 {
@@ -22,6 +23,7 @@ void MyGame::per_Frame(void)
 {
   if (m_Window->should_Close())
     this->close(0);
+  gear::Input::dispatch_Events(nullptr);
   m_Window->swap_Buffers();
   m_Window->poll_Events();
 }
