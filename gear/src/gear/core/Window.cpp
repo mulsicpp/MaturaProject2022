@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include <gear/core/debug/log.h>
+
 gear::Window::Window() {}
 
 gear::Window *gear::Window::create_Window(const char *name, int width, int height)
@@ -53,6 +55,7 @@ void gear::Window::destroy(void)
   if (m_Upscale_VertexarrayID != 0)
     glDeleteVertexArrays(1, &m_Upscale_VertexarrayID);
   */
+  GEAR_DEBUG_LOG("window: %p", m_Window);
   glfwDestroyWindow(m_Window);
 }
 

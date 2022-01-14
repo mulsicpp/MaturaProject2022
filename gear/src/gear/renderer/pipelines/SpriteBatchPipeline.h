@@ -24,7 +24,11 @@ private:
   Vertex *m_Vertex_Data = nullptr;
   unsigned int *m_Index_Data = nullptr;
 
+  int m_Max_Textures = 1;
+
 public:
+  ~SpriteBatchPipeline();
+
   void init(void) override;
 };
 

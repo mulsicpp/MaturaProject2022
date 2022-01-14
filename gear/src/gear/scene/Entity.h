@@ -45,6 +45,7 @@ private:
     static void destroy_Instance(uint8_t scene_ID)
     {
       instances[scene_ID].destroy();
+      GEAR_DEBUG_LOG("deleteing instance");
     }
 
     static void remove_Entity(uint8_t scene_ID, unsigned int entity_ID) {

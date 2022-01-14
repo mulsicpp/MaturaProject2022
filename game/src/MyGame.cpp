@@ -33,6 +33,7 @@ void MyGame::on_Startup(void)
   palettes[0] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_yellow.gear");
   palettes[1] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_pink.gear");
   palettes[2] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_green.gear");
+  palettes[3] = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/eis_palette_dark.gear");
 
   gear::SpriteComponent sprite_Comp;
   sprite_Comp.offset = {0, 0};
@@ -44,7 +45,7 @@ void MyGame::on_Startup(void)
   animation_Comp.offset = {0, 0};
   animation_Comp.parallax_Factor = 1;
   animation_Comp.palette = palettes[0];
-  animation_Comp.animation = gear::ResourceManager::get<gear::Animation>("assets/test_sprites/eis_idle.gear");
+  animation_Comp.animation = gear::ResourceManager::get<gear::Animation>("assets/test_sprites/eis_jumping_besser.gear");
   //animation_Comp.palette = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/kirby_walk_palette.gear");
   //animation_Comp.animation = gear::ResourceManager::get<gear::Animation>("assets/test_sprites/kirby_walk.gear");
   animation_Comp.animation_Offset = 0;
@@ -54,7 +55,7 @@ void MyGame::on_Startup(void)
     for(int j = 0; j < 13; j++)
     {
       gear::Entity* new_Eis = m_Scene->create_Entity();
-      animation_Comp.palette = palettes[(i + j) % 3];
+      animation_Comp.palette = palettes[(i + j) % 4];
       animation_Comp.animation_Offset++;
       if(animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
         animation_Comp.animation_Offset = 0;

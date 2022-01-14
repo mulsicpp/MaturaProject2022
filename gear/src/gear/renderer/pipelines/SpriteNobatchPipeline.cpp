@@ -17,20 +17,18 @@ void gear::SpriteNobatchPipeline::init(void)
 
   create(vertex_Shader, fragment_Shader);
   bind();
-  glUniform1i(glGetUniformLocation(m_Shader, "u_Texture"), 0);
-  glUniform1i(glGetUniformLocation(m_Shader, "u_Palette"), 1);
   GEAR_DEBUG_LOG("opengl program: %i", m_Shader);
 
   glDeleteShader(vertex_Shader);
   glDeleteShader(fragment_Shader);
 
-  glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Vertex), m_Default_Vertex_Data, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Vertex), m_Default_Vertex_Data, GL_DYNAMIC_DRAW);
   GEAR_DEBUG_LOG("vbo: %i", m_Vertexbuffer);
 
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), m_Index_Data, GL_STATIC_DRAW);
   GEAR_DEBUG_LOG("ibo: %i", m_Indexbuffer);
 
-  glVertexAttribFormat(0, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
+  glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
   glVertexAttribBinding(0, 0);
   glEnableVertexAttribArray(0);
   glVertexAttribFormat(1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, tex));
@@ -42,7 +40,7 @@ void gear::SpriteNobatchPipeline::init(void)
 
 void gear::SpriteNobatchPipeline::render(gear::Scene *scene) {
   bind();
-  gear::Entity::for_Each(scene->get_ID(), sprite_Render_Callback);
+  //gear::Entity::for_Each(scene->get_ID(), sprite_Render_Callback);
   gear::Entity::for_Each(scene->get_ID(), animation_Render_Callback);
 }
 

@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include <gear/core/debug/log.h>
 
 #define GEAR_PHYSICAL_COUNT(count, block_Size) (((count / block_Size) + 1) * block_Size)
 
@@ -26,11 +27,19 @@ void gear::Scene::create(void)
 void gear::Scene::destroy(void)
 {
   m_Entities.destroy();
+  GEAR_DEBUG_LOG("deleted entities");
   if (m_Manager_Callbacks != nullptr)
   {
+    GEAR_DEBUG_LOG("destruct managers");
     for (int i = 0; i < m_Insert_Index; i++)
+    {
+      GEAR_DEBUG_LOG("manager %p", m_Manager_Callbacks[i].destruct_Manager);
       m_Manager_Callbacks[i].destruct_Manager((uint8_t)(this - scenes));
+    }
+
+    GEAR_DEBUG_LOG("to delete callbacks");
     delete[] m_Manager_Callbacks;
+    GEAR_DEBUG_LOG("deleted callbacks");
     m_Manager_Callbacks = nullptr;
   }
 }

@@ -30,15 +30,6 @@ void gear::Renderer::create(int width, int height)
   glfwGetWindowSize(m_Window, &m_Window_Width, &m_Window_Height);
   glViewport(0, 0, m_Window_Width, m_Window_Height);
 
-  glPixelStorei(GL_PACK_ALIGNMENT, 1);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-  glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &m_Max_Texture_Units);
-  GEAR_DEBUG_LOG("GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS %i", m_Max_Texture_Units);
-
-  glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_Max_Texture_Units);
-  GEAR_DEBUG_LOG("GL_MAX_TEXTURE_IMAGE_UNITS %i", m_Max_Texture_Units);
-
   m_Framebuffer.create(width, height);
 
   UpscalePipeline::get_Instance().init();
@@ -81,6 +72,7 @@ void gear::Renderer::show_Frame(void)
 void gear::Renderer::render_Scene(gear::Scene *scene)
 {
   m_Framebuffer.bind();
+  SpriteNobatchPipeline::get_Instance().bind();
   glUniform1i(glGetUniformLocation(SpriteNobatchPipeline::get_Instance().m_Shader, "u_Frame_Width"), m_Framebuffer.m_Width);
   glUniform1i(glGetUniformLocation(SpriteNobatchPipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
   SpriteNobatchPipeline::get_Instance().render(scene);

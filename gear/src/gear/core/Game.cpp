@@ -49,6 +49,18 @@ void gear::Game::close(int exit_code)
   exit(exit_code);
 }
 
+void GLAPIENTRY openGL_Debug_Callback(GLenum source,
+                                      GLenum type,
+                                      GLuint id,
+                                      GLenum severity,
+                                      GLsizei length,
+                                      const GLchar *message,
+                                      const void *userParam)
+{
+  if(type == GL_DEBUG_TYPE_ERROR)
+    GEAR_DEBUG_LOG("OpenGL error: %s", message);
+}
+
 void gear::Game::gear_Init(void)
 {
   if (glfwInit() != GLFW_TRUE)
@@ -64,17 +76,30 @@ void gear::Game::gear_Init(void)
 #endif
 
   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-  
+
   m_Window = Window::create_Window("", 1, 1);
   glfwMakeContextCurrent(m_Window->m_Window);
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     gear::error("Failed to load OpenGL");
+
+
+#if defined(GEAR_DEBUG)
+  glEnable(GL_DEBUG_OUTPUT);
+  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+  glDebugMessageCallback(openGL_Debug_Callback, 0);
+#endif
+
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
 void gear::Game::gear_Terminate(void)
 {
   glfwMakeContextCurrent(nullptr);
+  GEAR_DEBUG_LOG("before window destruction");
   m_Window->destroy();
+  GEAR_DEBUG_LOG("destroy window");
   glfwTerminate();
 }
 
