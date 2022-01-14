@@ -6,7 +6,6 @@
 #include <functional>
 #include <gear/scene/Entity.h>
 #include "EventComponent.h"
-#include <gear/core/debug/log.h>
 
 _GEAR_START
 

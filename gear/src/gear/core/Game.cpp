@@ -78,7 +78,6 @@ void gear::Game::gear_Init(void)
   glDebugMessageCallback(openGL_Debug_Callback, nullptr);
 #endif
 
-  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   gear::Input::init();
   glfwSetScrollCallback(m_Window->m_Window, ScrollEvent::scroll_Event_Callback);
   glfwSetMouseButtonCallback(m_Window->m_Window, MouseButtonEvent::mouse_Button_Event_Callback);

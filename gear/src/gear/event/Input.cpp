@@ -2,16 +2,11 @@
 #include "Event.h"
 #include "EventQueue.h"
 
-#include <gear/core/debug/log.h>
-
 GLFWwindow *gear::Input::m_Window = nullptr;
 
 void gear::Input::init(void)
 {
-    GEAR_DEBUG_LOG("before current context");
     m_Window = glfwGetCurrentContext();
-    GEAR_DEBUG_LOG("after current context");
-
 }
 
 gear::State gear::Input::get_Key_State(Key key)
