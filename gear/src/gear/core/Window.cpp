@@ -70,7 +70,8 @@ void gear::Window::set_Windowed(int width, int height)
   glfwSetWindowMonitor(m_Window, nullptr, 0, 0, width, height, 0);
 }
 
-void gear::Window::set_Title(const char *title) {
+void gear::Window::set_Title(const char *title)
+{
   glfwSetWindowTitle(m_Window, title);
 }
 
@@ -114,4 +115,16 @@ void gear::Window::poll_Events(void)
 void gear::Window::make_Render_Context_Current(void)
 {
   glfwMakeContextCurrent(m_Window);
+}
+
+bool gear::Window::window_Is_Focused()
+{
+  int focused = glfwGetWindowAttrib(m_Window, GLFW_FOCUSED);
+  return focused;
+}
+
+bool gear::Window::window_Is_Iconified()
+{
+  int iconified = glfwGetWindowAttrib(m_Window, GLFW_ICONIFIED);
+  return iconified;
 }

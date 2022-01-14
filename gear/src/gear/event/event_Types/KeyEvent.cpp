@@ -6,7 +6,7 @@ void gear::KeyEvent::key_Event_Callback(GLFWwindow *window, int key, int scancod
     gear::EventQueue<KeyEvent>::push_Event({key, action});
 }
 
-gear::KeyEvent::KeyEvent(int key, int action) : Event(EventType::KEY_EVENT), m_Key((Key)key), m_Action((Action)action)
+gear::KeyEvent::KeyEvent(int key, int action) : Event(EventType::KEYBOARD_EVENT), m_Key((Key)key), m_Action((Action)action)
 {
 }
 gear::Key gear::KeyEvent::get_Key(void) const
