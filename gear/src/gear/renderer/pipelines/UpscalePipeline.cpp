@@ -1,6 +1,6 @@
 #include "UpscalePipeline.h"
 
-#include <glad/glad.h>
+#include "../shaders.h"
 
 gear::UpscalePipeline gear::UpscalePipeline::instance;
 
@@ -11,11 +11,11 @@ gear::UpscalePipeline &gear::UpscalePipeline::get_Instance(void)
 
 void gear::UpscalePipeline::init(void)
 {
-  unsigned int vertex_Shader = RenderPipeline::load_Shader("shaders/vs_upscale.glsl", GL_VERTEX_SHADER);
-  unsigned int fragment_Shader = RenderPipeline::load_Shader("shaders/fs_upscale.glsl", GL_FRAGMENT_SHADER);
+  unsigned int vertex_Shader = get_Shader(SHADER_UPSCALE_VS, GL_VERTEX_SHADER);
+  unsigned int fragment_Shader = get_Shader(SHADER_UPSCALE_FS, GL_FRAGMENT_SHADER);
 
   create(vertex_Shader, fragment_Shader);
-  RenderPipeline::validate_Program(m_Shader);
+  validate_Program(m_Shader);
   bind();
   glUniform1i(glGetUniformLocation(m_Shader, "u_Texture"), 0);
   GEAR_DEBUG_LOG("opengl program: %i", m_Shader);

@@ -2,7 +2,7 @@
 
 #include <gear/scene/Entity.h>
 
-#include <glad/glad.h>
+#include "../shaders.h"
 
 gear::SpriteBatchPipeline gear::SpriteBatchPipeline::instance;
 
@@ -26,8 +26,8 @@ void gear::SpriteBatchPipeline::init(void)
   
   GEAR_DEBUG_LOG("max textures: %i", m_Max_Textures);
 
-  unsigned int vertex_Shader = RenderPipeline::load_Shader("shaders/vs_sprite_batch.glsl", GL_VERTEX_SHADER);
-  unsigned int fragment_Shader = RenderPipeline::load_Shader("shaders/fs_sprite_batch.glsl", GL_FRAGMENT_SHADER);
+  unsigned int vertex_Shader = get_Shader(SHADER_SPRITE_VS, GL_VERTEX_SHADER);
+  unsigned int fragment_Shader = get_Shader(SHADER_SPRITE_FS, GL_FRAGMENT_SHADER, m_Max_Textures, m_Max_Textures);
 
   create(vertex_Shader, fragment_Shader);
   bind();
@@ -44,7 +44,7 @@ void gear::SpriteBatchPipeline::init(void)
   glUniform1iv(glGetUniformLocation(m_Shader, "u_Texture"), m_Max_Textures, texture_Bindings);
   glUniform1iv(glGetUniformLocation(m_Shader, "u_Palette"), m_Max_Textures, palette_Bindings);
 
-  RenderPipeline::validate_Program(m_Shader);
+  validate_Program(m_Shader);
 
   GEAR_DEBUG_LOG("opengl program: %i", m_Shader);
 

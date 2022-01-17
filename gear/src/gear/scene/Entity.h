@@ -112,7 +112,7 @@ private:
       }
       if(i == count)
         m_Components.push_Back(component);
-      if(data[i].m_Entity_ID != component.m_Entity_ID)
+      else if(data[i].m_Entity_ID != component.m_Entity_ID)
         m_Components.insert(component, i);
       else
         m_Components[i].data = component.data;

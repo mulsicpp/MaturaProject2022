@@ -6,29 +6,16 @@
 #include <gear/scene/Entity.h>
 #include "animation_player.h"
 
-#include "pipelines/SpriteNobatchPipeline.h"
+#include "pipelines/UpscalePipeline.h"
 #include "pipelines/SpriteBatchPipeline.h"
 
 using SpritePipeline = gear::SpriteBatchPipeline;
 
 gear::Framebuffer gear::Renderer::m_Framebuffer;
 
-float gear::Renderer::m_Default_Vertexbuffer[16] = {
-    -1.0, -1.0, 0.0, 0.0,
-    1.0, -1.0, 1.0, 0.0,
-    1.0, 1.0, 1.0, 1.0,
-    -1.0, 1.0, 0.0, 1.0};
-
-unsigned int gear::Renderer::m_Default_Indexbuffer[6] = {0, 1, 2, 0, 2, 3};
-
-float gear::Renderer::m_Sprite_Nobatch_Vertexbuffer_Data[16]{0};
-float *gear::Renderer::m_Sprite_Batch_Vertexbuffer_Data;
-
 GLFWwindow *gear::Renderer::m_Window = nullptr;
 int gear::Renderer::m_Window_Width;
 int gear::Renderer::m_Window_Height;
-
-int gear::Renderer::m_Max_Texture_Units;
 
 void gear::Renderer::create(int width, int height)
 {
