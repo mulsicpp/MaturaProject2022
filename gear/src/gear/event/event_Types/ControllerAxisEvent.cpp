@@ -1,6 +1,9 @@
 #include "ControllerAxisEvent.h"
+#include "../EventQueue.h"
 
-gear::ControllerAxisEvent::ControllerAxisEvent(int controller_Id, int axis, float value) : Event(EventType::CONTROLLER_AXIS_EVENT), m_Controller_Id(controller_Id), m_Axis((ControllerAxis)axis), m_Value(value) {}
+gear::ControllerAxisEvent::ControllerAxisEvent(int controller_Id, int axis, float value) : Event(EventType::CONTROLLER_AXIS_EVENT), m_Controller_Id(controller_Id), m_Axis((ControllerAxis)axis), m_Value(value)
+{
+}
 
 gear::ControllerAxis gear::ControllerAxisEvent::get_Axis(void) const
 {

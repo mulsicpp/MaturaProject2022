@@ -8,8 +8,11 @@
 #include "event_Types/MouseButtonEvent.h"
 #include "event_Types/ControllerAxisEvent.h"
 #include "event_Types/ControllerButtonEvent.h"
+#include "event_Types/ControllerConnectionEvent.h"
 #include <gear/scene/Scene.h>
 #include "EventQueue.h"
+#include <thread>
+#include <unordered_map>
 
 _GEAR_START
 
@@ -23,6 +26,11 @@ class Input
 {
 private:
     static GLFWwindow *m_Window;
+    static bool m_Controller_Thread_Running;
+    static std::thread m_Controller_Thread;
+    static std::unordered_map<int, GLFWgamepadstate> m_Controller_Map;
+    static void controller_Loop(void);
+    static void update_Controllermap(void);
 
 public:
     template <class T>
@@ -37,6 +45,7 @@ public:
     static float get_Axis_Value(int controller_Id, ControllerAxis axis);
     static State get_Controller_Button_State(int controller_Id, ControllerButton controller_Button);
     static void dispatch_Events(Scene *scene);
+    static void destroy(void);
 };
 
 _GEAR_END

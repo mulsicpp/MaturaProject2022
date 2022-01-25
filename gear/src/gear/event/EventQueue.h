@@ -6,6 +6,8 @@
 #include <functional>
 #include <gear/scene/Entity.h>
 #include "EventComponent.h"
+#include <mutex>
+#include <gear/core/debug/log.h>
 
 _GEAR_START
 
@@ -19,6 +21,7 @@ class EventQueue
 private:
     static std::vector<T> m_Queue;
     static std::vector<std::function<void(T)>> m_Global_Event_Callbacks;
+    static std::mutex m_Mutex;
 
     static void event_Callback(EventComponent<T> &event_Component)
     {
@@ -31,6 +34,7 @@ private:
 
     static void dispatch_Events(Scene *scene)
     {
+        m_Mutex.lock();
         for (T &event : m_Queue)
         {
             for (auto &callback : m_Global_Event_Callbacks)
@@ -38,20 +42,26 @@ private:
                 callback(event);
             }
         }
-        gear::Entity::for_Each<EventComponent<T>>(scene->get_ID(), event_Callback);
+        if (scene != nullptr)
+            gear::Entity::for_Each<EventComponent<T>>(scene->get_ID(), event_Callback);
         m_Queue.clear();
+        m_Mutex.unlock();
     }
 
 public:
     static void push_Event(T event)
     {
+        m_Mutex.lock();
         m_Queue.push_back(event);
+        m_Mutex.unlock();
     }
 };
 
-template<class T>
+template <class T>
 std::vector<T> gear::EventQueue<T>::m_Queue;
-template<class T>
+template <class T>
 std::vector<std::function<void(T)>> gear::EventQueue<T>::m_Global_Event_Callbacks;
+template <class T>
+std::mutex gear::EventQueue<T>::m_Mutex;
 
 _GEAR_END

@@ -24,17 +24,22 @@ enum class ControllerButton
     DPAD_LEFT = GLFW_GAMEPAD_BUTTON_DPAD_LEFT,
 };
 
+class Input;
+
 class ControllerButtonEvent : public Event
 {
     friend class Game;
+    friend class Input;
 
 private:
     int m_Controller_Id;
     ControllerButton m_Button;
-    ControllerButtonEvent(int controller_Id, int button);
+    Action m_Action;
+    ControllerButtonEvent(int controller_Id, int button, int action);
 
 public:
     int get_Controller_Id(void) const;
     ControllerButton get_Button(void) const;
+    Action get_Action(void) const;
 };
 _GEAR_END
