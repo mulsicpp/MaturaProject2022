@@ -16,7 +16,7 @@ void MyGame::on_Startup(void)
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
 
-  gear::EventComponent<gear::KeyEvent> e = {[](gear::KeyEvent e){}, false};
+  gear::EventComponent<gear::KeyEvent> e = {[](gear::KeyEvent e) {}, false};
 }
 
 void MyGame::per_Frame(void)
