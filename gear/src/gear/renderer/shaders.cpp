@@ -38,19 +38,23 @@ const char *const SHADER_SPRITE_VS =
 "layout(location = 0) in vec2 in_Position;\n"
 "layout(location = 1) in vec2 in_Tex_Position;\n"
 "layout(location = 2) in float in_Index;\n"
+"layout(location = 3) in float in_Has_Palette;\n"
 
 "uniform int u_Frame_Width;\n"
 "uniform int u_Frame_Height;\n"
 
 "out vec2 tex_Position;\n"
-"out float tex_Index;\n"
+"out flat int tex_Index;\n"
+"out flat int has_Palette;\n"
 
 "void main() {\n"
 "  gl_Position = vec4((in_Position.x * 2.0f / float(u_Frame_Width)) - 1.0f, 1.0f - (in_Position.y * 2.0f / float(u_Frame_Height)), 0.0f, 1.0f);\n"
 "  tex_Position = in_Tex_Position;\n"
-"  tex_Index = in_Index;\n"
+"  tex_Index = int(in_Index);\n"
+"  has_Palette = int(in_Has_Palette);\n"
 "}\n"
 ;
+
 const char *const SHADER_SPRITE_FS = 
 "#version 430 core\n"
 
@@ -60,16 +64,17 @@ const char *const SHADER_SPRITE_FS =
 "layout(binding = 1) uniform sampler1D u_Palette[%i];\n"
 
 "in vec2 tex_Position;\n"
-"in float tex_Index;\n"
+"in flat int tex_Index;\n"
+"in flat int has_Palette;\n"
 
 "void main() {\n"
-"  int index = int(texture(u_Texture[int(tex_Index)], tex_Position).r * 255.0f + 0.5);\n"
+"  int index = int(texture(u_Texture[tex_Index], tex_Position).r * 255.0f + 0.5);\n"
 "  if(index == 0)\n"
 "  {\n"
 "    discard;\n"
 "  }\n"
 "  else\n"
-"  out_Color = texture(u_Palette[int(tex_Index)], (float(index) - 0.5f) / 255.0f);\n"
+"  out_Color = texture(u_Palette[tex_Index], (float(index) - 0.5f) / 255.0f);\n"
 "}\n"
 ;
 

@@ -9,9 +9,9 @@ _GEAR_START
 struct TextComponent {
   bool raw_Text = true;
   const char* text;
-  Font *font;
+  Ref<Font> font;
   int width, height;
-  Vector<float, 2> offset;
+  Vector<float, 3> offset;
 };
 
 _GEAR_END

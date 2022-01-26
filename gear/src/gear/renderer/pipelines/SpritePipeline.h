@@ -4,18 +4,24 @@
 #include "../RenderPipeline.h"
 #include <gear/math/Vector.h>
 #include <gear/scene/Scene.h>
+
 #include <gear/scene/PositionComponent.h>
 #include "../AnimationComponent.h"
 #include "../SpriteComponent.h"
 
+#include <vector>
+
 _GEAR_START
 
-class SpriteBatchPipeline : public RenderPipeline {
+class SpritePipeline : public RenderPipeline
+{
 private:
-  struct Vertex {
-    Vector<float, 3> pos;
+  struct Vertex
+  {
+    Vector<float, 2> pos;
     Vector<float, 2> tex;
     uint8_t tex_Index;
+    bool has_Palette = true;
   };
 
   Vertex m_Temp_Vertex_Data[4];
@@ -26,13 +32,13 @@ private:
   int m_Max_Textures = 1;
   uint8_t m_Batch_Index = 0;
 
-  static SpriteBatchPipeline instance;
+  static SpritePipeline instance;
 
-  static void sprite_Render_Callback(PositionComponent &position, SpriteComponent &sprite);
-  static void animation_Render_Callback(PositionComponent &position, AnimationComponent &animation);
+  static void push_Sprite_Quad(PositionComponent &position, SpriteComponent &sprite);
+  static void push_Animation_Quad(PositionComponent &position, AnimationComponent &animation);
 
 public:
-  static SpriteBatchPipeline &get_Instance(void);
+  static SpritePipeline &get_Instance(void);
 
   void init(void) override;
   void destroy(void) override;

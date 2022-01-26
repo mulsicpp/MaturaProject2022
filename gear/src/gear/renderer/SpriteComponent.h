@@ -11,7 +11,7 @@ struct SpriteComponent {
   Ref<Sprite> sprite;
   Ref<Palette> palette;
   float parallax_Factor = 1;
-  Vector<float, 2> offset = { 0, 0 };
+  Vector<float, 3> offset = { 0, 0 };
 };
 
 _GEAR_END

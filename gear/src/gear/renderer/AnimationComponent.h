@@ -13,7 +13,7 @@ struct AnimationComponent {
   float animation_Offset;
   float frame_Rate;
   float parallax_Factor = 1;
-  gear::Vector<float, 2> offset;
+  gear::Vector<float, 3> offset;
 };
 
 _GEAR_END

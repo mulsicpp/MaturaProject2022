@@ -7,9 +7,9 @@
 #include "animation_player.h"
 
 #include "pipelines/UpscalePipeline.h"
-#include "pipelines/SpriteBatchPipeline.h"
+#include "pipelines/SpritePipeline.h"
 
-using SpritePipeline = gear::SpriteBatchPipeline;
+using SpritePipeline = gear::SpritePipeline;
 
 gear::Framebuffer gear::Renderer::m_Framebuffer;
 

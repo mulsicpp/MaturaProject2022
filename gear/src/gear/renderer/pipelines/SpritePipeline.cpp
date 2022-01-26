@@ -1,23 +1,23 @@
-#include "SpriteBatchPipeline.h"
+#include "SpritePipeline.h"
 
 #include <gear/scene/Entity.h>
 
 #include "../shaders.h"
 
-gear::SpriteBatchPipeline gear::SpriteBatchPipeline::instance;
+gear::SpritePipeline gear::SpritePipeline::instance;
 
-gear::SpriteBatchPipeline &gear::SpriteBatchPipeline::get_Instance(void)
+gear::SpritePipeline &gear::SpritePipeline::get_Instance(void)
 {
   return instance;
 }
 
-void gear::SpriteBatchPipeline::destroy(void)
+void gear::SpritePipeline::destroy(void)
 {
   delete[] m_Vertex_Data;
   delete[] m_Index_Data;
 }
 
-void gear::SpriteBatchPipeline::init(void)
+void gear::SpritePipeline::init(void)
 {
   glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_Max_Textures);
   m_Max_Textures /= 2;
@@ -70,7 +70,7 @@ void gear::SpriteBatchPipeline::init(void)
   GEAR_DEBUG_LOG("ibo: %i", m_Indexbuffer);
 
 
-  glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
+  glVertexAttribFormat(0, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
   glVertexAttribBinding(0, 0);
   glEnableVertexAttribArray(0);
   glVertexAttribFormat(1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, tex));
@@ -79,19 +79,22 @@ void gear::SpriteBatchPipeline::init(void)
   glVertexAttribFormat(2, 1, GL_UNSIGNED_BYTE, GL_FALSE, offsetof(Vertex, tex_Index));
   glVertexAttribBinding(2, 0);
   glEnableVertexAttribArray(2);
+  glVertexAttribFormat(3, 1, GL_UNSIGNED_BYTE, GL_FALSE, offsetof(Vertex, has_Palette));
+  glVertexAttribBinding(3, 0);
+  glEnableVertexAttribArray(3);
 
   glBindVertexBuffer(0, m_Vertexbuffer, 0, sizeof(Vertex));
 }
 
-void gear::SpriteBatchPipeline::render(gear::Scene *scene)
+void gear::SpritePipeline::render(gear::Scene *scene)
 {
   bind();
-  gear::Entity::for_Each(scene->get_ID(), sprite_Render_Callback);
-  gear::Entity::for_Each(scene->get_ID(), animation_Render_Callback);
+  gear::Entity::for_Each(scene->get_ID(), push_Sprite_Quad);
+  gear::Entity::for_Each(scene->get_ID(), push_Animation_Quad);
   draw_Batch();
 }
 
-void gear::SpriteBatchPipeline::draw_Batch(void)
+void gear::SpritePipeline::draw_Batch(void)
 {
   if (m_Batch_Index > 0)
   {
@@ -112,17 +115,17 @@ void gear::SpriteBatchPipeline::draw_Batch(void)
   }
 }
 
-void gear::SpriteBatchPipeline::sprite_Render_Callback(gear::PositionComponent &position, gear::SpriteComponent &sprite)
+void gear::SpritePipeline::push_Sprite_Quad(gear::PositionComponent &position, gear::SpriteComponent &sprite)
 {
   float x_Left = position.position[0] + sprite.offset[0];
   float x_Right = position.position[0] + sprite.offset[0] + sprite.sprite->get_Width();
   float y_Top = position.position[1] + sprite.offset[1];
   float y_Bottom = position.position[1] + sprite.offset[1] + sprite.sprite->get_Height();
 
-  instance.m_Temp_Vertex_Data[0] = {{x_Left, y_Top, 0}, {0, 0}, instance.m_Batch_Index};
-  instance.m_Temp_Vertex_Data[1] = {{x_Right, y_Top, 0}, {1, 0}, instance.m_Batch_Index};
-  instance.m_Temp_Vertex_Data[2] = {{x_Right, y_Bottom, 0}, {1, 1}, instance.m_Batch_Index};
-  instance.m_Temp_Vertex_Data[3] = {{x_Left, y_Bottom, 0}, {0, 1}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[0] = {{x_Left, y_Top},     {0, 0}, instance.m_Batch_Index, true};
+  instance.m_Temp_Vertex_Data[1] = {{x_Right, y_Top},    {1, 0}, instance.m_Batch_Index, true};
+  instance.m_Temp_Vertex_Data[2] = {{x_Right, y_Bottom}, {1, 1}, instance.m_Batch_Index, true};
+  instance.m_Temp_Vertex_Data[3] = {{x_Left, y_Bottom},  {0, 1}, instance.m_Batch_Index, true};
 
   glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
   glBindTexture(GL_TEXTURE_2D, sprite.sprite->get_TextureID());
@@ -138,7 +141,7 @@ void gear::SpriteBatchPipeline::sprite_Render_Callback(gear::PositionComponent &
   }
 }
 
-void gear::SpriteBatchPipeline::animation_Render_Callback(gear::PositionComponent &position, gear::AnimationComponent &animation)
+void gear::SpritePipeline::push_Animation_Quad(gear::PositionComponent &position, gear::AnimationComponent &animation)
 {
   float x_Left = position.position[0] + animation.offset[0];
   float x_Right = position.position[0] + animation.offset[0] + animation.animation->get_Width();
@@ -150,10 +153,10 @@ void gear::SpriteBatchPipeline::animation_Render_Callback(gear::PositionComponen
   float tex_Top = float(frame_Index) / animation.animation->get_Frame_Count();
   float tex_Bottom = float(frame_Index + 1) / animation.animation->get_Frame_Count();
 
-  instance.m_Temp_Vertex_Data[0] = {{x_Left, y_Top, 0}, {0, tex_Top}, instance.m_Batch_Index};
-  instance.m_Temp_Vertex_Data[1] = {{x_Right, y_Top, 0}, {1, tex_Top}, instance.m_Batch_Index};
-  instance.m_Temp_Vertex_Data[2] = {{x_Right, y_Bottom, 0}, {1, tex_Bottom}, instance.m_Batch_Index};
-  instance.m_Temp_Vertex_Data[3] = {{x_Left, y_Bottom, 0}, {0, tex_Bottom}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[0] = {{x_Left, y_Top},     {0, tex_Top},    instance.m_Batch_Index, true};
+  instance.m_Temp_Vertex_Data[1] = {{x_Right, y_Top},    {1, tex_Top},    instance.m_Batch_Index, true};
+  instance.m_Temp_Vertex_Data[2] = {{x_Right, y_Bottom}, {1, tex_Bottom}, instance.m_Batch_Index, true};
+  instance.m_Temp_Vertex_Data[3] = {{x_Left, y_Bottom},  {0, tex_Bottom}, instance.m_Batch_Index, true};
 
   glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
   glBindTexture(GL_TEXTURE_2D, animation.animation->get_TextureID());
