@@ -70,7 +70,7 @@ void gear::SpritePipeline::init(void)
   GEAR_DEBUG_LOG("ibo: %i", m_Indexbuffer);
 
 
-  glVertexAttribFormat(0, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
+  glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
   glVertexAttribBinding(0, 0);
   glEnableVertexAttribArray(0);
   glVertexAttribFormat(1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, tex));
@@ -79,9 +79,6 @@ void gear::SpritePipeline::init(void)
   glVertexAttribFormat(2, 1, GL_UNSIGNED_BYTE, GL_FALSE, offsetof(Vertex, tex_Index));
   glVertexAttribBinding(2, 0);
   glEnableVertexAttribArray(2);
-  glVertexAttribFormat(3, 1, GL_UNSIGNED_BYTE, GL_FALSE, offsetof(Vertex, has_Palette));
-  glVertexAttribBinding(3, 0);
-  glEnableVertexAttribArray(3);
 
   glBindVertexBuffer(0, m_Vertexbuffer, 0, sizeof(Vertex));
 }
@@ -122,10 +119,12 @@ void gear::SpritePipeline::push_Sprite_Quad(gear::PositionComponent &position, g
   float y_Top = position.position[1] + sprite.offset[1];
   float y_Bottom = position.position[1] + sprite.offset[1] + sprite.sprite->get_Height();
 
-  instance.m_Temp_Vertex_Data[0] = {{x_Left, y_Top},     {0, 0}, instance.m_Batch_Index, true};
-  instance.m_Temp_Vertex_Data[1] = {{x_Right, y_Top},    {1, 0}, instance.m_Batch_Index, true};
-  instance.m_Temp_Vertex_Data[2] = {{x_Right, y_Bottom}, {1, 1}, instance.m_Batch_Index, true};
-  instance.m_Temp_Vertex_Data[3] = {{x_Left, y_Bottom},  {0, 1}, instance.m_Batch_Index, true};
+  float depth = sprite.offset[2];
+
+  instance.m_Temp_Vertex_Data[0] = {{x_Left, y_Top, depth},     {0, 0}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[1] = {{x_Right, y_Top, depth},    {1, 0}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[2] = {{x_Right, y_Bottom, depth}, {1, 1}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[3] = {{x_Left, y_Bottom, depth},  {0, 1}, instance.m_Batch_Index};
 
   glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
   glBindTexture(GL_TEXTURE_2D, sprite.sprite->get_TextureID());
@@ -148,15 +147,17 @@ void gear::SpritePipeline::push_Animation_Quad(gear::PositionComponent &position
   float y_Top = position.position[1] + animation.offset[1];
   float y_Bottom = position.position[1] + animation.offset[1] + animation.animation->get_Height();
 
+  float depth = animation.offset[2];
+
   int frame_Index = animation.animation_Offset;
 
   float tex_Top = float(frame_Index) / animation.animation->get_Frame_Count();
   float tex_Bottom = float(frame_Index + 1) / animation.animation->get_Frame_Count();
 
-  instance.m_Temp_Vertex_Data[0] = {{x_Left, y_Top},     {0, tex_Top},    instance.m_Batch_Index, true};
-  instance.m_Temp_Vertex_Data[1] = {{x_Right, y_Top},    {1, tex_Top},    instance.m_Batch_Index, true};
-  instance.m_Temp_Vertex_Data[2] = {{x_Right, y_Bottom}, {1, tex_Bottom}, instance.m_Batch_Index, true};
-  instance.m_Temp_Vertex_Data[3] = {{x_Left, y_Bottom},  {0, tex_Bottom}, instance.m_Batch_Index, true};
+  instance.m_Temp_Vertex_Data[0] = {{x_Left, y_Top, depth},     {0, tex_Top},    instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[1] = {{x_Right, y_Top, depth},    {1, tex_Top},    instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[2] = {{x_Right, y_Bottom, depth}, {1, tex_Bottom}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[3] = {{x_Left, y_Bottom, depth},  {0, tex_Bottom}, instance.m_Batch_Index};
 
   glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
   glBindTexture(GL_TEXTURE_2D, animation.animation->get_TextureID());

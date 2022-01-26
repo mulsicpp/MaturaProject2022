@@ -18,10 +18,9 @@ class SpritePipeline : public RenderPipeline
 private:
   struct Vertex
   {
-    Vector<float, 2> pos;
+    Vector<float, 3> pos;
     Vector<float, 2> tex;
     uint8_t tex_Index;
-    bool has_Palette = true;
   };
 
   Vertex m_Temp_Vertex_Data[4];

@@ -23,6 +23,10 @@ void gear::Renderer::create(int width, int height)
   glfwGetWindowSize(m_Window, &m_Window_Width, &m_Window_Height);
   glViewport(0, 0, m_Window_Width, m_Window_Height);
 
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_GEQUAL);
+  glClearDepth(-1.0);
+
   m_Framebuffer.create(width, height);
 
   UpscalePipeline::get_Instance().init();
@@ -47,9 +51,9 @@ void gear::Renderer::set_V_Sync(bool v_sync)
 void gear::Renderer::start_New_Frame(void)
 {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer.m_Framebuffer);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void gear::Renderer::show_Frame(void)

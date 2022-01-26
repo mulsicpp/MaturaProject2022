@@ -77,7 +77,7 @@ void MyGame::on_Startup(void)
   {
     gear::Entity *new_Eis = m_Scene->create_Entity();
 
-    animation_Comp.offset = {0, 0, 1.0f - i * 0.1f};
+    animation_Comp.offset = {0, 0, 1 - i * 0.14f};
     animation_Comp.palette = palettes[i % 7];
     animation_Comp.animation_Offset++;
     if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
