@@ -14,14 +14,15 @@ void MyGame::on_Startup(void)
   m_Window->set_Title("Game Window!");
   m_Window->set_Resizable(false);
   m_Window->set_Size(1280, 720);
-  // m_Window->set_Fullscreen();
+  //m_Window->set_Fullscreen();
   m_Window->set_Visible(true);
 
-  gear::Renderer::create(320, 180);
+  gear::Renderer::create(640, 360);
   gear::Renderer::set_V_Sync(true);
 
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
+  GEAR_DEBUG_LOG("%s", glfwGetVersionString());
 
   gear::allow_Gear_Components();
 
@@ -43,7 +44,7 @@ void MyGame::on_Startup(void)
   sprite_Comp.palette = palettes[0];
 
   gear::AnimationComponent animation_Comp;
-  animation_Comp.offset = {0, 0};
+  animation_Comp.offset = {0, 0, 0};
   animation_Comp.parallax_Factor = 1;
   animation_Comp.palette = palettes[0];
   animation_Comp.animation = gear::ResourceManager::get<gear::Animation>("assets/test_sprites/eis_jumping_besser.gear");
@@ -52,7 +53,7 @@ void MyGame::on_Startup(void)
   animation_Comp.animation_Offset = 0;
   animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
 
-  /*
+  
     for (int i = 0; i < 6; i++)
       for (int j = 0; j < 13; j++)
       {
@@ -67,28 +68,10 @@ void MyGame::on_Startup(void)
         // GEAR_DEBUG_LOG("about to add animation");
         new_Eis->add<gear::AnimationComponent>(animation_Comp);
         // GEAR_DEBUG_LOG("added animation");
-        gear::Vector<float, 2> pos(j * 48.0f, i * 56.0f, 0.0f);
+        gear::Vector<float, 2> pos(j * 48.0f, i * 56.0f);
         new_Eis->add<gear::PositionComponent>({pos});
         // GEAR_DEBUG_LOG("added position");
       }
-      */
-
-  for (int i = 0; i < 14; i++)
-  {
-    gear::Entity *new_Eis = m_Scene->create_Entity();
-
-    animation_Comp.offset = {0, 0, 1 - i * 0.14f};
-    animation_Comp.palette = palettes[i % 7];
-    animation_Comp.animation_Offset++;
-    if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
-      animation_Comp.animation_Offset = 0;
-    // GEAR_DEBUG_LOG("about to add animation");
-    new_Eis->add<gear::AnimationComponent>(animation_Comp);
-    // GEAR_DEBUG_LOG("added animation");
-    gear::Vector<float, 2> pos(i * 18.0f, 0.0f);
-    new_Eis->add<gear::PositionComponent>({pos});
-    // GEAR_DEBUG_LOG("added position");
-  }
 
   GEAR_DEBUG_LOG("finished scene");
 }

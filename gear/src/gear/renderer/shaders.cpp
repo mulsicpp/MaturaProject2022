@@ -71,7 +71,7 @@ const char *const SHADER_SPRITE_FS =
 "  }\n"
 "  else\n"
 "  out_Color = texture(u_Palette[tex_Index], (float(index) - 0.5f) / 255.0f);\n"
-"  //out_Color = vec4(vec3(1 - gl_FragCoord.z), 1.0);\n"
+"  //out_Color = vec4(vec3(gl_FragCoord.z), 1.0);\n"
 "}\n"
 ;
 
