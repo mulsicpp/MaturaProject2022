@@ -63,6 +63,7 @@ void APIENTRY openGL_Debug_Callback(GLenum source, GLenum type, GLuint id, GLenu
 
 void gear::Game::gear_Init(void)
 {
+  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   if (glfwInit() != GLFW_TRUE)
   {
     gear::error("GLFW initialisation failed!\n");
@@ -87,7 +88,8 @@ void gear::Game::gear_Init(void)
   glfwSetWindowFocusCallback(m_Window->m_Window, WindowFocusEvent::window_Focus_Event_Callback);
   glfwSetWindowIconifyCallback(m_Window->m_Window, WindowIconifyEvent::window_Iconify_Event_Callback);
   glfwSetJoystickCallback(ControllerConnectionEvent::controller_Connection_Event_Callback);
-  Input::add_Global_Callback<KeyEvent>([](KeyEvent e) {GEAR_DEBUG_LOG("key event");});
+  Input::add_Global_Callback<KeyEvent>([](KeyEvent e)
+                                       { GEAR_DEBUG_LOG("key event"); });
 }
 
 void gear::Game::gear_Terminate(void)

@@ -17,6 +17,7 @@ void MyGame::on_Startup(void)
   GEAR_DEBUG_LOG("Opened application");
 
   gear::EventComponent<gear::KeyEvent> e = {[](gear::KeyEvent e){}, false};
+  gear::Input::add_Global_Callback<gear::ControllerButtonEvent>([](gear::ControllerButtonEvent e){GEAR_DEBUG_LOG("gamepad button %s", e.get_Action() == gear::Action::PRESSED ? "pressed" : "released");});
 }
 
 void MyGame::per_Frame(void)
