@@ -112,7 +112,7 @@ void gear::SpritePipeline::draw_Batch(void)
   }
 }
 
-void gear::SpritePipeline::push_Sprite_Quad(gear::PositionComponent &position, gear::SpriteComponent &sprite)
+void gear::SpritePipeline::push_Sprite_Quad(gear::TransformComponent &position, gear::SpriteComponent &sprite)
 {
   float x_Left = position.position[0] + sprite.offset[0];
   float x_Right = position.position[0] + sprite.offset[0] + sprite.sprite->get_Width();
@@ -140,7 +140,7 @@ void gear::SpritePipeline::push_Sprite_Quad(gear::PositionComponent &position, g
   }
 }
 
-void gear::SpritePipeline::push_Animation_Quad(gear::PositionComponent &position, gear::AnimationComponent &animation)
+void gear::SpritePipeline::push_Animation_Quad(gear::TransformComponent &position, gear::AnimationComponent &animation)
 {
   float x_Left = position.position[0] + animation.offset[0];
   float x_Right = position.position[0] + animation.offset[0] + animation.animation->get_Width();

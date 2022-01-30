@@ -6,7 +6,7 @@
 #include <gear/renderer/SpriteComponent.h>
 #include <gear/renderer/AnimationComponent.h>
 
-#include <gear/scene/PositionComponent.h>
+#include <gear/scene/TransformComponent.h>
 #include <exception>
 
 void MyGame::on_Startup(void)
@@ -14,7 +14,7 @@ void MyGame::on_Startup(void)
   m_Window->set_Title("Game Window!");
   m_Window->set_Resizable(false);
   m_Window->set_Size(1280, 720);
-  //m_Window->set_Fullscreen();
+  // m_Window->set_Fullscreen();
   m_Window->set_Visible(true);
 
   gear::Renderer::create(640, 360);
@@ -53,25 +53,24 @@ void MyGame::on_Startup(void)
   animation_Comp.animation_Offset = 0;
   animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
 
-  
-    for (int i = 0; i < 6; i++)
-      for (int j = 0; j < 13; j++)
-      {
-        // GEAR_DEBUG_LOG("creating entity");
-        gear::Entity *new_Eis = m_Scene->create_Entity();
-        GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
+  for (int i = 0; i < 6; i++)
+    for (int j = 0; j < 13; j++)
+    {
+      // GEAR_DEBUG_LOG("creating entity");
+      gear::Entity *new_Eis = m_Scene->create_Entity();
+      GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
 
-        animation_Comp.palette = palettes[(i * 13 + j) % 7];
-        animation_Comp.animation_Offset++;
-        if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
-          animation_Comp.animation_Offset = 0;
-        // GEAR_DEBUG_LOG("about to add animation");
-        new_Eis->add<gear::AnimationComponent>(animation_Comp);
-        // GEAR_DEBUG_LOG("added animation");
-        gear::Vector<float, 2> pos(j * 48.0f, i * 56.0f);
-        new_Eis->add<gear::PositionComponent>({pos});
-        // GEAR_DEBUG_LOG("added position");
-      }
+      animation_Comp.palette = palettes[(i * 13 + j) % 7];
+      animation_Comp.animation_Offset++;
+      if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
+        animation_Comp.animation_Offset = 0;
+      // GEAR_DEBUG_LOG("about to add animation");
+      new_Eis->add<gear::AnimationComponent>(animation_Comp);
+      // GEAR_DEBUG_LOG("added animation");
+      gear::Vector<float, 2> pos(j * 48.0f, i * 56.0f);
+      new_Eis->add<gear::TransformComponent>({pos});
+      // GEAR_DEBUG_LOG("added position");
+    }
 
   GEAR_DEBUG_LOG("finished scene");
 }
@@ -82,7 +81,7 @@ void MyGame::per_Frame(void)
     this->close(0);
   /*
     GEAR_DEBUG_LOG("eis %p", eis);
-    auto *pos_Comp = eis->get<gear::PositionComponent>();
+    auto *pos_Comp = eis->get<gear::TransformComponent>();
     GEAR_DEBUG_LOG("got pos comp %p", pos_Comp);
     auto *pos = &(pos_Comp->data.position);
     GEAR_DEBUG_LOG("got position %p", pos);

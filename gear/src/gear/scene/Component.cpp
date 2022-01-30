@@ -2,12 +2,12 @@
 #include <gear/renderer/SpriteComponent.h>
 #include <gear/renderer/AnimationComponent.h>
 #include <gear/renderer/TextComponent.h>
-#include "PositionComponent.h"
+#include "TransformComponent.h"
 
 static unsigned int type_ID = 0;
 
 void gear::allow_Gear_Components(void) {
-  gear::Component<gear::PositionComponent>::allow();
+  gear::Component<gear::TransformComponent>::allow();
   gear::Component<gear::SpriteComponent>::allow();
   gear::Component<gear::AnimationComponent>::allow();
   gear::Component<gear::TextComponent>::allow();

@@ -5,7 +5,7 @@
 #include <gear/math/Vector.h>
 #include <gear/scene/Scene.h>
 
-#include <gear/scene/PositionComponent.h>
+#include <gear/scene/TransformComponent.h>
 #include "../AnimationComponent.h"
 #include "../SpriteComponent.h"
 
@@ -33,8 +33,8 @@ private:
 
   static SpritePipeline instance;
 
-  static void push_Sprite_Quad(PositionComponent &position, SpriteComponent &sprite);
-  static void push_Animation_Quad(PositionComponent &position, AnimationComponent &animation);
+  static void push_Sprite_Quad(TransformComponent &position, SpriteComponent &sprite);
+  static void push_Animation_Quad(TransformComponent &position, AnimationComponent &animation);
 
 public:
   static SpritePipeline &get_Instance(void);
