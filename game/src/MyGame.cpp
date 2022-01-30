@@ -44,7 +44,7 @@ void MyGame::on_Startup(void)
   sprite_Comp.palette = palettes[0];
 
   gear::AnimationComponent animation_Comp;
-  animation_Comp.offset = {0, 0, 0};
+  animation_Comp.offset = {-32, -32, 0};
   animation_Comp.parallax_Factor = 1;
   animation_Comp.palette = palettes[0];
   animation_Comp.animation = gear::ResourceManager::get<gear::Animation>("assets/test_sprites/eis_jumping_besser.gear");
@@ -53,8 +53,8 @@ void MyGame::on_Startup(void)
   animation_Comp.animation_Offset = 0;
   animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
 
-  for (int i = 0; i < 6; i++)
-    for (int j = 0; j < 13; j++)
+  for (int i = 0; i < 5; i++)
+    for (int j = 0; j < 10; j++)
     {
       // GEAR_DEBUG_LOG("creating entity");
       gear::Entity *new_Eis = m_Scene->create_Entity();
@@ -67,8 +67,8 @@ void MyGame::on_Startup(void)
       // GEAR_DEBUG_LOG("about to add animation");
       new_Eis->add<gear::AnimationComponent>(animation_Comp);
       // GEAR_DEBUG_LOG("added animation");
-      gear::Vector<float, 2> pos(j * 48.0f, i * 56.0f);
-      new_Eis->add<gear::TransformComponent>({pos});
+      gear::Vector<float, 2> pos(32 + j * 64.0f, 32 + i * 64.0f);
+      new_Eis->add<gear::TransformComponent>({pos, {1, 1}, GEAR_MIRROR_X | GEAR_MIRROR_Y});
       // GEAR_DEBUG_LOG("added position");
     }
 
