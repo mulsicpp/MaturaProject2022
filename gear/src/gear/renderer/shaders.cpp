@@ -4,76 +4,81 @@ _GEAR_START
 
 char shader_Buffer[GEAR_MAX_SHADER_CODE_LENGTH];
 
-const char *const SHADER_UPSCALE_VS = 
-"#version 430 core\n"
+const char *const SHADER_UPSCALE_VS = R"(
+#version 430 core
 
-"layout(location = 0) in vec2 in_Position;\n"
-"layout(location = 1) in vec2 in_Tex_Position;\n"
+layout(location = 0) in vec2 in_Position;
+layout(location = 1) in vec2 in_Tex_Position;
 
-"out vec2 tex_Position;\n"
+out vec2 tex_Position;
 
-"void main() {\n"
-"  gl_Position = vec4(in_Position.x, in_Position.y, 0.0f, 1.0f);\n"
-"  tex_Position = in_Tex_Position;\n"
-"}\n";
+void main() {
+  gl_Position = vec4(in_Position.x, in_Position.y, 0.0f, 1.0f);
+  tex_Position = in_Tex_Position;
+}
+)";
 
-const char *const SHADER_UPSCALE_FS = 
-"#version 430 core\n"
+const char *const SHADER_UPSCALE_FS = R"(
+#version 430 core
 
-"layout(location = 0) out vec4 out_Color;\n"
+layout(location = 0) out vec4 out_Color;
 
-"layout(binding = 0) uniform sampler2D u_Texture;\n"
+layout(binding = 0) uniform sampler2D u_Texture;
 
-"in vec2 tex_Position;\n"
+in vec2 tex_Position;
 
-"void main() {\n"
-"  out_Color = texture(u_Texture, tex_Position);\n"
-"}\n";
+void main() {
+  out_Color = texture(u_Texture, tex_Position);
+}
+)";
 
 
 
-const char *const SHADER_SPRITE_VS = 
-"#version 430 core\n"
+const char *const SHADER_SPRITE_VS = R"(
+#version 430 core
 
-"layout(location = 0) in vec3 in_Position;\n"
-"layout(location = 1) in vec2 in_Tex_Position;\n"
-"layout(location = 2) in float in_Index;\n"
+layout(location = 0) in vec3 in_Position;
+layout(location = 1) in vec2 in_Tex_Position;
+layout(location = 2) in float in_Index;
+layout(location = 3) in float in_Parallax;
 
-"uniform int u_Frame_Width;\n"
-"uniform int u_Frame_Height;\n"
+uniform int u_Frame_Width;
+uniform int u_Frame_Height;
 
-"out vec2 tex_Position;\n"
-"out flat int tex_Index;\n"
+uniform vec2 u_Camera_Pos;
 
-"void main() {\n"
-"  gl_Position = vec4((in_Position.x * 2.0f / float(u_Frame_Width)) - 1.0f, 1.0f - (in_Position.y * 2.0f / float(u_Frame_Height)), in_Position.z, 1.0f);\n"
-"  tex_Position = in_Tex_Position;\n"
-"  tex_Index = int(in_Index);\n"
-"}\n"
-;
+out vec2 tex_Position;
+out flat int tex_Index;
 
-const char *const SHADER_SPRITE_FS = 
-"#version 430 core\n"
+void main() {
+  gl_Position = vec4((in_Position.x * 2.0f - u_Camera_Pos.x * in_Parallax) / float(u_Frame_Width), -(in_Position.y * 2.0f - u_Camera_Pos.y * in_Parallax) / float(u_Frame_Height), in_Position.z, 1.0f);
+  tex_Position = in_Tex_Position;
+  tex_Index = int(in_Index);
+}
+)";
 
-"layout(location = 0) out vec4 out_Color;\n"
+const char *const SHADER_SPRITE_FS = R"(
+#version 430 core
 
-"layout(binding = 0) uniform sampler2D u_Texture[%i];\n"
-"layout(binding = 1) uniform sampler1D u_Palette[%i];\n"
+layout(location = 0) out vec4 out_Color;
 
-"in vec2 tex_Position;\n"
-"in flat int tex_Index;\n"
+layout(binding = 0) uniform sampler2D u_Texture[%i];
+layout(binding = 1) uniform sampler1D u_Palette[%i];
 
-"void main() {\n"
-"  int index = int(texture(u_Texture[tex_Index], tex_Position).r * 255.0f + 0.5);\n"
-"  if(index == 0)\n"
-"  {\n"
-"    discard;\n"
-"  }\n"
-"  else\n"
-"  out_Color = texture(u_Palette[tex_Index], (float(index) - 0.5f) / 255.0f);\n"
-"  //out_Color = vec4(vec3(gl_FragCoord.z), 1.0);\n"
-"}\n"
-;
+in vec2 tex_Position;
+in flat int tex_Index;
+
+void main() {
+  int index = int(texture(u_Texture[tex_Index], tex_Position).r * 255.0f + 0.5);
+  if(index == 0)
+  {
+    discard;
+  }
+  else
+  out_Color = texture(u_Palette[tex_Index], (float(index) - 0.5f) / 255.0f);
+  //out_Color = vec4(vec3(gl_FragCoord.z), 1.0);
+}
+)";
 
 unsigned int link_Program(unsigned int vertex_Shader, unsigned int fragment_Shader)
 {
