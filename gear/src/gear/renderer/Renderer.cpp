@@ -13,6 +13,8 @@ using SpritePipeline = gear::SpritePipeline;
 
 gear::Framebuffer gear::Renderer::m_Framebuffer;
 
+gear::Camera *gear::Renderer::m_Camera = nullptr;
+
 GLFWwindow *gear::Renderer::m_Window = nullptr;
 int gear::Renderer::m_Window_Width;
 int gear::Renderer::m_Window_Height;
@@ -41,6 +43,11 @@ void gear::Renderer::destroy(void)
   SpritePipeline::get_Instance().destroy();
 
   m_Window = nullptr;
+}
+
+void gear::Renderer::set_Camera(gear::Camera *camera)
+{
+  m_Camera = camera;
 }
 
 void gear::Renderer::set_V_Sync(bool v_sync)
@@ -75,6 +82,14 @@ void gear::Renderer::render_Scene(gear::Scene *scene)
   SpritePipeline::get_Instance().bind();
   glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Width"), m_Framebuffer.m_Width);
   glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
+
+  
+  if(m_Camera != nullptr)
+    glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), m_Camera->get_Position()[0], m_Camera->get_Position()[1]);
+  else
+    glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), 0, 0);
+
+
   SpritePipeline::get_Instance().render(scene);
   gear::Entity::for_Each(scene->get_ID(), animation_Player_Callback);
 }

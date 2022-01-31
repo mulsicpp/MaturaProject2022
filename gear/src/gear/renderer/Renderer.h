@@ -7,12 +7,16 @@
 #include "RenderPipeline.h"
 #include <gear/scene/Scene.h>
 
+#include "Camera.h"
+
 _GEAR_START
 
 class Renderer {
   friend class gear::Window;
 private:
   static Framebuffer m_Framebuffer;
+
+  static Camera *m_Camera;
 
   static GLFWwindow *m_Window;
   static int m_Window_Width, m_Window_Height;
@@ -21,7 +25,7 @@ public:
   static void create(int width, int height);
   static void destroy(void);
 
-  static void set_Window(Window *window);
+  static void set_Camera(Camera *camera);
 
   /*
   Enables or disables V-Sync.

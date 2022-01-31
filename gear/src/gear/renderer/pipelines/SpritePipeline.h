@@ -21,6 +21,7 @@ private:
     Vector<float, 3> pos;
     Vector<float, 2> tex;
     uint8_t tex_Index;
+    float parallax_Factor;
   };
 
   Vertex m_Temp_Vertex_Data[4];

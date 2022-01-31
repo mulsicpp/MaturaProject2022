@@ -14,10 +14,9 @@ gear::Matrix<float, 3, 3> gear::TransformComponent::get_Matrix(void)
 {
   gear::Matrix<float, 3, 3> ret = GEAR_TRANSLATE_MAT(position[0], position[1]);
   ret = ret * GEAR_SCALE_MAT(scale[0], scale[1]);
-
+  ret = ret * GEAR_MIRROR_MAT(state & GEAR_MIRROR_X ? -1.0f : 1.0f, state & GEAR_MIRROR_Y ? -1.0f : 1.0f);
   if(state & GEAR_FLIP_AXES)
     ret = ret * flip_Axes;
-  ret = ret * GEAR_MIRROR_MAT(state & GEAR_MIRROR_X ? -1.0f : 1.0f, state & GEAR_MIRROR_Y ? -1.0f : 1.0f);
 
   return ret;
 }

@@ -79,6 +79,9 @@ void gear::SpritePipeline::init(void)
   glVertexAttribFormat(2, 1, GL_UNSIGNED_BYTE, GL_FALSE, offsetof(Vertex, tex_Index));
   glVertexAttribBinding(2, 0);
   glEnableVertexAttribArray(2);
+  glVertexAttribFormat(3, 1, GL_FLOAT, GL_FALSE, offsetof(Vertex, parallax_Factor));
+  glVertexAttribBinding(3, 0);
+  glEnableVertexAttribArray(3);
 
   glBindVertexBuffer(0, m_Vertexbuffer, 0, sizeof(Vertex));
 }
@@ -124,13 +127,13 @@ void gear::SpritePipeline::push_Sprite_Quad(gear::TransformComponent &position, 
   auto mat = position.get_Matrix();
 
   Vector<float, 3> pos =mat * Vector<float, 3>{x_Left, y_Top, 1};
-  instance.m_Temp_Vertex_Data[0] = {{pos[0], pos[1], depth}, {0, 0}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[0] = {{pos[0], pos[1], depth}, {0, 0}, instance.m_Batch_Index, sprite.parallax_Factor};
   pos =mat * Vector<float, 3>{x_Right, y_Top, 1};
-  instance.m_Temp_Vertex_Data[1] = {{pos[0], pos[1], depth}, {1, 0}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[1] = {{pos[0], pos[1], depth}, {1, 0}, instance.m_Batch_Index, sprite.parallax_Factor};
   pos =mat * Vector<float, 3>{x_Right, y_Bottom, 1};
-  instance.m_Temp_Vertex_Data[2] = {{pos[0], pos[1], depth}, {1, 1}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[2] = {{pos[0], pos[1], depth}, {1, 1}, instance.m_Batch_Index, sprite.parallax_Factor};
   pos =mat * Vector<float, 3>{x_Left, y_Bottom, 1};
-  instance.m_Temp_Vertex_Data[3] = {{pos[0], pos[1], depth}, {0, 1}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[3] = {{pos[0], pos[1], depth}, {0, 1}, instance.m_Batch_Index, sprite.parallax_Factor};
 
   glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
   glBindTexture(GL_TEXTURE_2D, sprite.sprite->get_TextureID());
@@ -163,13 +166,13 @@ void gear::SpritePipeline::push_Animation_Quad(gear::TransformComponent &positio
   auto mat = position.get_Matrix();
 
   Vector<float, 3> pos =mat * Vector<float, 3>{x_Left, y_Top, 1};
-  instance.m_Temp_Vertex_Data[0] = {{pos[0], pos[1], depth}, {0, tex_Top},    instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[0] = {{pos[0], pos[1], depth}, {0, tex_Top},    instance.m_Batch_Index, animation.parallax_Factor};
   pos =mat * Vector<float, 3>{x_Right, y_Top, 1};
-  instance.m_Temp_Vertex_Data[1] = {{pos[0], pos[1], depth}, {1, tex_Top},    instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[1] = {{pos[0], pos[1], depth}, {1, tex_Top},    instance.m_Batch_Index, animation.parallax_Factor};
   pos =mat * Vector<float, 3>{x_Right, y_Bottom, 1};
-  instance.m_Temp_Vertex_Data[2] = {{pos[0], pos[1], depth}, {1, tex_Bottom}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[2] = {{pos[0], pos[1], depth}, {1, tex_Bottom}, instance.m_Batch_Index, animation.parallax_Factor};
   pos =mat * Vector<float, 3>{x_Left, y_Bottom, 1};
-  instance.m_Temp_Vertex_Data[3] = {{pos[0], pos[1], depth}, {0, tex_Bottom}, instance.m_Batch_Index};
+  instance.m_Temp_Vertex_Data[3] = {{pos[0], pos[1], depth}, {0, tex_Bottom}, instance.m_Batch_Index, animation.parallax_Factor};
 
   glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
   glBindTexture(GL_TEXTURE_2D, animation.animation->get_TextureID());

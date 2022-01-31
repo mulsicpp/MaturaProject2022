@@ -51,7 +51,7 @@ out vec2 tex_Position;
 out flat int tex_Index;
 
 void main() {
-  gl_Position = vec4((in_Position.x * 2.0f - u_Camera_Pos.x * in_Parallax) / float(u_Frame_Width), -(in_Position.y * 2.0f - u_Camera_Pos.y * in_Parallax) / float(u_Frame_Height), in_Position.z, 1.0f);
+  gl_Position = vec4((in_Position.x - u_Camera_Pos.x * in_Parallax) * 2.0f / float(u_Frame_Width), -(in_Position.y - u_Camera_Pos.y * in_Parallax) * 2.0f / float(u_Frame_Height), in_Position.z, 1.0f);
   tex_Position = in_Tex_Position;
   tex_Index = int(in_Index);
 }

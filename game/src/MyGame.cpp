@@ -47,7 +47,7 @@ void MyGame::on_Startup(void)
   animation_Comp.offset = {-32, -32, 0};
   animation_Comp.parallax_Factor = 1;
   animation_Comp.palette = palettes[0];
-  animation_Comp.animation = gear::ResourceManager::get<gear::Animation>("assets/test_sprites/eis_jumping_besser.gear");
+  animation_Comp.animation = gear::ResourceManager::get<gear::Animation>("assets/test_sprites/eis_idle.gear");
   // animation_Comp.palette = gear::ResourceManager::get<gear::Palette>("assets/test_sprites/kirby_walk_palette.gear");
   // animation_Comp.animation = gear::ResourceManager::get<gear::Animation>("assets/test_sprites/kirby_walk.gear");
   animation_Comp.animation_Offset = 0;
@@ -64,15 +64,22 @@ void MyGame::on_Startup(void)
       animation_Comp.animation_Offset++;
       if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
         animation_Comp.animation_Offset = 0;
+
+      animation_Comp.parallax_Factor = 1.0f/(i + 1);
+      animation_Comp.offset = {-32, -32, 1.0f/(i + 1)};
       // GEAR_DEBUG_LOG("about to add animation");
       new_Eis->add<gear::AnimationComponent>(animation_Comp);
       // GEAR_DEBUG_LOG("added animation");
-      gear::Vector<float, 2> pos(32 + j * 64.0f, 32 + i * 64.0f);
-      new_Eis->add<gear::TransformComponent>({pos, {1, 1}, GEAR_MIRROR_X | GEAR_MIRROR_Y});
+      gear::Vector<float, 2> pos(32 - 320 + j * 64.0f, 32 - 180 + i * 64.0f);
+      new_Eis->add<gear::TransformComponent>({pos, {1, 1}, 0});
       // GEAR_DEBUG_LOG("added position");
     }
 
   GEAR_DEBUG_LOG("finished scene");
+
+  cam_Pos = {0, 0};
+
+  gear::Renderer::set_Camera(&cam);
 }
 
 void MyGame::per_Frame(void)
@@ -95,6 +102,11 @@ void MyGame::per_Frame(void)
     }
   */
   // GEAR_DEBUG_LOG("start frame");
+  if(cam_Pos[0] > 320 || cam_Pos[0] < -320)
+    speed = -speed;
+  cam_Pos[0] += speed;
+
+  cam.follow_Target();
   gear::Renderer::start_New_Frame();
   // GEAR_DEBUG_LOG("render scene");
   gear::Renderer::render_Scene(m_Scene);
