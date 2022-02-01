@@ -11,6 +11,8 @@ class Entity;
 
 unsigned int get_Next_Component_ID(void);
 
+void allow_Gear_Components(void);
+
 template<class T>
 /**
 A component, that can be added to an entity.

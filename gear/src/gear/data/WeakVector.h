@@ -14,7 +14,7 @@ template <class T>
 class WeakVector
 {
 private:
-  T *m_Data;
+  T *m_Data = nullptr;
   unsigned int m_Count;
   unsigned int m_Capacity;
 

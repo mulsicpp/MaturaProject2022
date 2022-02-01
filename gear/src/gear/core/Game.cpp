@@ -12,6 +12,7 @@
 #include "../event/event_Types/WindowFocusEvent.h"
 #include "../event/event_Types/WindowIconifyEvent.h"
 #include "../event/Input.h"
+#include <gear/renderer/Renderer.h>
 
 #if defined(GEAR_PLATFORM_LINUX)
 #include <unistd.h>
@@ -39,6 +40,7 @@ gear::Game::Game(void)
 
 void gear::Game::run(void)
 {
+  GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   std::filesystem::current_path(m_Path_To_App);
   std::filesystem::current_path(GEAR_ROOT_PATH);
   gear_Init();
@@ -56,9 +58,16 @@ void gear::Game::close(int exit_code)
   exit(exit_code);
 }
 
-void APIENTRY openGL_Debug_Callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
+void GLAPIENTRY openGL_Debug_Callback(GLenum source,
+                                      GLenum type,
+                                      GLuint id,
+                                      GLenum severity,
+                                      GLsizei length,
+                                      const GLchar *message,
+                                      const void *userParam)
 {
-  gear::error("An OpenGL error has occured: %s\nseverity: %u\ntype:%u\nsource:%u", message, severity, type, source);
+  if(type == GL_DEBUG_TYPE_ERROR)
+    gear::error("OpenGL error: %s", message);
 }
 
 void gear::Game::gear_Init(void)
@@ -68,6 +77,14 @@ void gear::Game::gear_Init(void)
   {
     gear::error("GLFW initialisation failed!\n");
   }
+
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#if defined(GEAR_DEBUG)
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif
+
   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
   m_Window = Window::create_Window("", 1, 1);
@@ -75,9 +92,15 @@ void gear::Game::gear_Init(void)
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     gear::error("Failed to load OpenGL");
 
+
 #if defined(GEAR_DEBUG)
-  glDebugMessageCallback(openGL_Debug_Callback, nullptr);
+  glEnable(GL_DEBUG_OUTPUT);
+  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+  glDebugMessageCallback(openGL_Debug_Callback, 0);
 #endif
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
   gear::Input::init();
   glfwSetScrollCallback(m_Window->m_Window, ScrollEvent::scroll_Event_Callback);
@@ -92,6 +115,12 @@ void gear::Game::gear_Init(void)
 
 void gear::Game::gear_Terminate(void)
 {
+  glfwMakeContextCurrent(nullptr);
   m_Window->destroy();
   glfwTerminate();
+}
+
+const char *gear::Game::get_App_Path(void) const
+{
+  return m_Path_To_App;
 }

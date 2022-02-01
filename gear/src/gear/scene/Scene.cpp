@@ -29,7 +29,9 @@ void gear::Scene::destroy(void)
   if (m_Manager_Callbacks != nullptr)
   {
     for (int i = 0; i < m_Insert_Index; i++)
+    {
       m_Manager_Callbacks[i].destruct_Manager((uint8_t)(this - scenes));
+    }
     delete[] m_Manager_Callbacks;
     m_Manager_Callbacks = nullptr;
   }

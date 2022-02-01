@@ -45,6 +45,7 @@ private:
     static void destroy_Instance(uint8_t scene_ID)
     {
       instances[scene_ID].destroy();
+      GEAR_DEBUG_LOG("deleteing instance");
     }
 
     static void remove_Entity(uint8_t scene_ID, unsigned int entity_ID) {
@@ -111,7 +112,7 @@ private:
       }
       if(i == count)
         m_Components.push_Back(component);
-      if(data[i].m_Entity_ID != component.m_Entity_ID)
+      else if(data[i].m_Entity_ID != component.m_Entity_ID)
         m_Components.insert(component, i);
       else
         m_Components[i].data = component.data;

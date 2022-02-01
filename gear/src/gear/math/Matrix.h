@@ -3,7 +3,6 @@
 #include <gear/core/core.h>
 #include "Vector.h"
 #include <exception>
-#include <initializer_list>
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
@@ -26,12 +25,32 @@ a -= b;
 a *= b;
 a /= b;
 */
-template<class T, int N1, int N2>
-class Matrix{
+template <class T, int N1, int N2>
+class Matrix
+{
 private:
   T data[N1][N2];
-public:
 
+  template<class X1, class X2, class... Xs>
+  void put_Elements(int index, X1 first, X2 second, Xs... rest)
+  {
+    if(index < N1 * N2)
+    {
+      ((T*)data)[index] = (T)first;
+      put_Elements(index + 1, second, rest...);
+    }
+  }
+
+  template<class X, class... Xs>
+  void put_Elements(int index, X first)
+  {
+    if(index < N1 * N2)
+    {
+      ((T*)data)[index] = (T)first;
+    }
+  }
+
+public:
   /*
   Creates a matrix with all elements set to 0.
   */
@@ -42,11 +61,10 @@ public:
 
   @param list a 2D initializer list containing the values
   */
-  Matrix<T, N1, N2>(std::initializer_list<std::initializer_list<T>> list) : data{0} {
-    int size = list.size() > N1 ? N1 : list.size();
-    const std::initializer_list<T> *lists = list.begin();
-    for(int i = 0; i < size; i++)
-      memcpy(data[i], lists[i].begin(), (lists[i].size() > N2 ? N2 : lists[i].size()) * sizeof(T));
+  template <class... Ts>
+  Matrix<T, N1, N2>(T first, Ts... rest) : data{0}
+  {
+    put_Elements(0, first, rest...);
   }
 
   /*
@@ -64,12 +82,18 @@ public:
   @param column the column of the element. It has to be greater or equal to 0 and smaller than column count
   @return a reference to the element in the matrix at the specified row and column.
   */
-  T& operator()(int row, int column){
-    if (row >= N1 || row < 0) {
+  T &operator()(int row, int column)
+  {
+    if (row >= N1 || row < 0)
+    {
       error("Matrix row out of bounds: %i", row);
-    } else if (column >= N2 || column < 0) {
+    }
+    else if (column >= N2 || column < 0)
+    {
       error("Matrix column out of bounds: %i", column);
-    } else {
+    }
+    else
+    {
       return data[row][column];
     }
   }
@@ -79,12 +103,18 @@ public:
   @param column the column of the element. It has to be greater or equal to 0 and smaller than column count
   @return a const reference to the element in the matrix at the specified row and column.
   */
-  const T& operator()(int row, int column) const {
-    if (row >= N1 || row < 0) {
+  const T &operator()(int row, int column) const
+  {
+    if (row >= N1 || row < 0)
+    {
       error("Matrix row out of bounds: %i", row);
-    } else if (column >= N2 || column < 0) {
+    }
+    else if (column >= N2 || column < 0)
+    {
       error("Matrix column out of bounds: %i", column);
-    } else {
+    }
+    else
+    {
       return data[row][column];
     }
   }
@@ -92,17 +122,19 @@ public:
   /*
   @return a copy of the matrix
   */
-  Matrix<T, N1, N2> operator+() const {
+  Matrix<T, N1, N2> operator+() const
+  {
     return *this;
   }
 
   /*
   @return a negated copy of the matrix
   */
-  Matrix<T, N1, N2> operator-() const {
+  Matrix<T, N1, N2> operator-() const
+  {
     Matrix<T, N1, N2> ret;
-    for(int i = 0; i < N1; i++)
-      for(int  j= 0; j < N2; j++)
+    for (int i = 0; i < N1; i++)
+      for (int j = 0; j < N2; j++)
         ret.data[i][j] = -data[i][j];
     return ret;
   }
@@ -113,10 +145,11 @@ public:
   @param matrix the matrix, that gets added to this matrix
   @return the result of the addition
   */
-  Matrix<T, N1, N2> operator+(const Matrix<T, N1, N2> &matrix) const {
+  Matrix<T, N1, N2> operator+(const Matrix<T, N1, N2> &matrix) const
+  {
     Matrix<T, N1, N2> ret;
-    for(int i = 0; i < N1; i++)
-      for(int  j= 0; j < N2; j++)
+    for (int i = 0; i < N1; i++)
+      for (int j = 0; j < N2; j++)
         ret.data[i][j] = data[i][j] + matrix.data[i][j];
     return ret;
   }
@@ -127,10 +160,11 @@ public:
   @param matrix the matrix, that gets subtracted this matrix
   @return the result of the subtraction
   */
-  Matrix<T, N1, N2> operator-(const Matrix<T, N1, N2> &matrix) const {
+  Matrix<T, N1, N2> operator-(const Matrix<T, N1, N2> &matrix) const
+  {
     Matrix<T, N1, N2> ret;
-    for(int i = 0; i < N1; i++)
-      for(int  j= 0; j < N2; j++)
+    for (int i = 0; i < N1; i++)
+      for (int j = 0; j < N2; j++)
         ret.data[i][j] = data[i][j] - matrix.data[i][j];
     return ret;
   }
@@ -141,10 +175,11 @@ public:
   @param k the scalar value
   @return the result of the multiplication
   */
-  Matrix<T, N1, N2> operator*(const T &k) const {
+  Matrix<T, N1, N2> operator*(const T &k) const
+  {
     Matrix<T, N1, N2> ret;
-    for(int i = 0; i < N1; i++)
-      for(int  j= 0; j < N2; j++)
+    for (int i = 0; i < N1; i++)
+      for (int j = 0; j < N2; j++)
         ret.data[i][j] = data[i][j] * k;
     return ret;
   }
@@ -155,24 +190,25 @@ public:
   @param k the scalar value
   @return the result of the division
   */
-  Matrix<T, N1, N2> operator/(const T &k) const {
+  Matrix<T, N1, N2> operator/(const T &k) const
+  {
     Matrix<T, N1, N2> ret;
-    for(int i = 0; i < N1; i++)
-      for(int  j= 0; j < N2; j++)
+    for (int i = 0; i < N1; i++)
+      for (int j = 0; j < N2; j++)
         ret.data[i][j] = data[i][j] / k;
     return ret;
   }
-
 
   /*
   Adds a matrix to the current matrix.
 
   @param matrix the matrix to be added
-  @return a reference to this matrix 
+  @return a reference to this matrix
   */
-  const Matrix<T, N1, N2> &operator+=(const Matrix<T, N1, N2> &matrix) const {
-    for(int i = 0; i < N1; i++)
-      for(int  j= 0; j < N2; j++)
+  const Matrix<T, N1, N2> &operator+=(const Matrix<T, N1, N2> &matrix) const
+  {
+    for (int i = 0; i < N1; i++)
+      for (int j = 0; j < N2; j++)
         data[i][j] += matrix.data[i][j];
     return *this;
   }
@@ -181,11 +217,12 @@ public:
   Subtracts a matrix to the current matrix.
 
   @param matrix the matrix to be subtracted
-  @return a reference to this matrix 
+  @return a reference to this matrix
   */
-  const Matrix<T, N1, N2> &operator-=(const Matrix<T, N1, N2> &matrix) const {
-    for(int i = 0; i < N1; i++)
-      for(int  j= 0; j < N2; j++)
+  const Matrix<T, N1, N2> &operator-=(const Matrix<T, N1, N2> &matrix) const
+  {
+    for (int i = 0; i < N1; i++)
+      for (int j = 0; j < N2; j++)
         data[i][j] += matrix.data[i][j];
     return *this;
   }
@@ -194,11 +231,12 @@ public:
   Multiplies the current matrix with a scalar value.
 
   @param k the scalar value t obe multiplied by
-  @return a reference to this matrix 
+  @return a reference to this matrix
   */
-  const Matrix<T, N1, N2> &operator*=(const T &k) const {
-    for(int i = 0; i < N1; i++)
-      for(int  j= 0; j < N2; j++)
+  const Matrix<T, N1, N2> &operator*=(const T &k) const
+  {
+    for (int i = 0; i < N1; i++)
+      for (int j = 0; j < N2; j++)
         data[i][j] *= k;
     return *this;
   }
@@ -207,15 +245,15 @@ public:
   Divides the current matrix with a scalar value.
 
   @param k the scalar value to be divided by
-  @return a reference to this matrix 
+  @return a reference to this matrix
   */
-  const Matrix<T, N1, N2> &operator/=(const T &k) const {
-    for(int i = 0; i < N1; i++)
-      for(int  j= 0; j < N2; j++)
+  const Matrix<T, N1, N2> &operator/=(const T &k) const
+  {
+    for (int i = 0; i < N1; i++)
+      for (int j = 0; j < N2; j++)
         data[i][j] /= k;
     return *this;
   }
-
 
   /*
   Multiplies the matirx with another matrix.
@@ -223,12 +261,13 @@ public:
   @param matrix the second matrix
   @return the result of the multiplication
   */
-  template<int N3>
-  Matrix<T, N1, N3> operator*(const Matrix<T, N2, N3> &matrix) const {
+  template <int N3>
+  Matrix<T, N1, N3> operator*(const Matrix<T, N2, N3> &matrix) const
+  {
     Matrix<T, N1, N3> ret;
-    for(int i = 0; i < N1; i++)
-      for(int j = 0; j < N3; j++)
-        for(int k = 0; k < N2; k++)
+    for (int i = 0; i < N1; i++)
+      for (int j = 0; j < N3; j++)
+        for (int k = 0; k < N2; k++)
           ret.data[i][j] += data[i][k] * matrix.data[k][j];
     return ret;
   }
@@ -239,12 +278,13 @@ public:
   @param vector the vector
   @return the result of the multiplication
   */
-  Vector<T, N1> operator*(const Vector<T, N2> &vector) const {
+  Vector<T, N1> operator*(const Vector<T, N2> &vector) const
+  {
     Vector<T, N1> ret;
     T *p_ret = GEAR_TYPE_PUN_POINTER(ret, T), *p_vector = GEAR_TYPE_PUN_POINTER(vector, T);
-    for(int i = 0; i < N1; i++)
-      for(int j = 0; j < N2; j++)
-          p_ret[i] += data[i][j] * p_vector[j];
+    for (int i = 0; i < N1; i++)
+      for (int j = 0; j < N2; j++)
+        p_ret[i] += data[i][j] * p_vector[j];
     return ret;
   }
 
@@ -254,22 +294,27 @@ public:
   @param ostream the output stream
   @param the matrix to be printed
   */
-  friend std::ostream &operator<<(std::ostream &ostream, Matrix<T, N1, N2> matrix) {
+  friend std::ostream &operator<<(std::ostream &ostream, Matrix<T, N1, N2> matrix)
+  {
     std::stringstream ss = std::stringstream();
     std::string numbers[N1][N2];
-    for(int i = 0; i < N2; i++){
-      for(int j = 0; j < N1; j++){
+    for (int i = 0; i < N2; i++)
+    {
+      for (int j = 0; j < N1; j++)
+      {
         ss << std::setprecision(log10(matrix(j, i))) << matrix(j, i);
         ss.str("");
         ss.clear();
       }
     }
-    for(int i = 0; i < N1; i++){
+    for (int i = 0; i < N1; i++)
+    {
       ostream << "|";
-      for (int j = 0; j < N2; j++) {
+      for (int j = 0; j < N2; j++)
+      {
         ostream << matrix.data[i][j];
         if (j < N2 - 1)
-         ostream << " ";
+          ostream << " ";
       }
       ostream << "|\n";
     }

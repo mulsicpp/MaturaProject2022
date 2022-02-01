@@ -94,6 +94,6 @@ void AnimationConverter::convert(void)
           m_File_Out->put<uint8_t>(compressed_Data[k + width * i + width * m_Frame_Count * j]);
   }
 
-  delete compressed_Data;
+  delete[] compressed_Data;
   stbi_image_free(m_Palette);
 }

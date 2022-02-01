@@ -10,7 +10,7 @@ class Palette : public Resource
 {
 private:
   uint8_t m_Size;
-  Vector<float, 4> *m_Colors;
+  unsigned int m_TextureID;
 
 protected:
   int load(FileStream *file_Stream) override;
@@ -23,7 +23,7 @@ public:
   Palette &operator=(const Palette &) = delete;
 
   uint8_t get_Size(void) const;
-  Vector<float, 4> *get_Colors(void) const;
+  unsigned int get_TextureID(void) const;
 };
 
 _GEAR_END

@@ -4,13 +4,24 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+void GLAPIENTRY openGL_Message_Callback(unsigned int source,
+                                        unsigned int type,
+                                        unsigned int id,
+                                        unsigned int severity,
+                                        int length,
+                                        const char *message,
+                                        const void *userParam);
+
 _GEAR_START
 
 class Game;
 
+class Renderer;
+
 class Window
 {
   friend class gear::Game;
+  friend class gear::Renderer;
 
 private:
   GLFWwindow *m_Window;
@@ -22,7 +33,7 @@ private:
 
 public:
   /*
-  Creates a Window 
+  Creates a Window
   @param name name of the Window
   @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
   @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
@@ -30,7 +41,7 @@ public:
   static Window *create_Window(const char *name, int width, int height);
 
   /*
-  Creates a Window 
+  Creates a Window
   @param name name of the Window
   @param x The x-coordinate of the upper-left corner of the content area.
   @param y The y-coordinate of the upper-left corner of the content area.
@@ -40,7 +51,7 @@ public:
   static Window *create_Window(const char *name, int x, int y, int width, int height);
 
   /*
-  Creates a full screen Window 
+  Creates a full screen Window
   @param name name of the Window
   */
   static Window *create_Fullscreen_Window(const char *name);
@@ -56,10 +67,23 @@ public:
   bool should_Close(void);
 
   /*
+  Makes the window renderable.
+  @param width the width of the backbuffer
+  @param height the height of the backbuffer
+  */
+  void make_Renderable(uint16_t width, uint16_t height);
+
+  /*
   Make the window visible or invisible.
   @param visible visibility of window
   */
   void set_Visible(bool visible);
+
+  /*
+  Make the window resizable or not resizable.
+  @param resizable sets window resizable if true, if false non resizable
+  */
+  void set_Resizable(bool resizable);
 
   /*
   Sets the window full screen.
@@ -101,13 +125,6 @@ public:
   @param y The y-coordinate of the upper-left corner of the content area.
   */
   void set_Position(int x, int y);
-
-  /*
-  Enables or disables V-Sync for the window.
-
-  @param v_sync boolean to turn V-Sync on or off
-  */
-  static void set_V_Sync(bool v_sync);
 
   /*
   Swaps the front and back buffers of the specified window.

@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include <gear/core/debug/log.h>
+
 gear::Window::Window() {}
 
 gear::Window *gear::Window::create_Window(const char *name, int width, int height)
@@ -59,6 +61,11 @@ void gear::Window::set_Visible(bool visible)
     glfwHideWindow(m_Window);
 }
 
+void gear::Window::set_Resizable(bool resizable)
+{
+  glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, resizable);
+}
+
 void gear::Window::set_Fullscreen()
 {
   GLFWmonitor *monitor = glfwGetPrimaryMonitor();
@@ -95,11 +102,6 @@ void gear::Window::set_Size(int width, int height)
 void gear::Window::set_Position(int x, int y)
 {
   glfwSetWindowPos(m_Window, x, y);
-}
-
-void gear::Window::set_V_Sync(bool v_sync)
-{
-  glfwSwapInterval(v_sync ? 1 : 0);
 }
 
 void gear::Window::swap_Buffers(void)
