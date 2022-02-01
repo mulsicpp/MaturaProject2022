@@ -3,6 +3,7 @@
 #include "Palette.h"
 #include "Sprite.h"
 #include "Animation.h"
+#include <cstring>
 
 gear::Ref<gear::Resource> gear::Resource::load_Resource(const char *filename) {
   gear::FileStream* file_Stream = gear::FileStream::open(filename, "rb");

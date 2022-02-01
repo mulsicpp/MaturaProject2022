@@ -28,9 +28,7 @@ void MyGame::on_Startup(void)
 
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
-
-  EventComponent<KeyEvent> e = [](KeyEvent e){
-  };
+  
   Input::add_Global_Callback<ControllerButtonEvent>([](ControllerButtonEvent e){GEAR_DEBUG_LOG("gamepad button %s", e.get_Action() == Action::PRESSED ? "pressed" : "released");});
   GEAR_DEBUG_LOG("%s", glfwGetVersionString());
 
