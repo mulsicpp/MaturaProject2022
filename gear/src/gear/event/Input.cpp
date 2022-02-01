@@ -98,6 +98,7 @@ gear::State gear::Input::get_Controller_Button_State(int controller_Id, Controll
 
 void gear::Input::dispatch_Events(Scene *scene)
 {
+  glfwPollEvents();
   EventQueue<ControllerAxisEvent>::dispatch_Events(scene);
   EventQueue<ControllerButtonEvent>::dispatch_Events(scene);
   EventQueue<ControllerConnectionEvent>::dispatch_Events(scene);

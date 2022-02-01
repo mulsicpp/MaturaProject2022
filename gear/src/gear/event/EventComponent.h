@@ -11,7 +11,8 @@ struct EventComponent
     std::function<void(T)> callback;
     bool active;
     EventComponent(void) = default;
-    EventComponent(std::function<void(T)> callback, bool active = true) : callback(callback), active(active) {}
+    EventComponent(std::function<void(T)> callback) : callback(callback), active(true) {}
+    EventComponent(std::function<void(T)> callback, bool active) : callback(callback), active(active) {}
 };
 
 _GEAR_END
