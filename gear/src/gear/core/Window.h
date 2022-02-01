@@ -102,7 +102,6 @@ public:
   */
   void set_Position(int x, int y);
 
-
   /*
   Enables or disables V-Sync for the window.
 
@@ -124,6 +123,10 @@ public:
   Sets the window as the current render context.
   */
   void make_Render_Context_Current(void);
+
+  bool window_Is_Focused();
+
+  bool window_Is_Iconified();
 };
 
 _GEAR_END
