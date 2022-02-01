@@ -93,7 +93,7 @@ void MyGame::per_Frame(void)
 {
   if (m_Window->should_Close())
     this->close(0);
-  gear::Input::dispatch_Events(nullptr);
+  //gear::Input::dispatch_Events(nullptr);
   /*
     GEAR_DEBUG_LOG("eis %p", eis);
     auto *pos_Comp = eis->get<gear::TransformComponent>();
@@ -110,9 +110,18 @@ void MyGame::per_Frame(void)
     }
   */
   // GEAR_DEBUG_LOG("start frame");
-  if(cam_Pos[0] > 320 || cam_Pos[0] < -320)
-    speed = -speed;
-  cam_Pos[0] += speed;
+  if(gear::Input::get_Key_State(gear::Key::A) == gear::State::PRESSED)
+    cam_Pos[0] -= 2;
+  
+  if(gear::Input::get_Key_State(gear::Key::D) == gear::State::PRESSED)
+    cam_Pos[0] += 2;
+
+  if(gear::Input::get_Key_State(gear::Key::W) == gear::State::PRESSED)
+    cam_Pos[1] -= 2;
+
+  if(gear::Input::get_Key_State(gear::Key::S) == gear::State::PRESSED)
+    cam_Pos[1] += 2;
+  
 
   cam.follow_Target();
   gear::Renderer::start_New_Frame();

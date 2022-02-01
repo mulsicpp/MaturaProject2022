@@ -115,7 +115,9 @@ void gear::Game::gear_Init(void)
 
 void gear::Game::gear_Terminate(void)
 {
+  gear::Input::destroy();
   glfwMakeContextCurrent(nullptr);
+  GEAR_DEBUG_LOG("Destroying window");
   m_Window->destroy();
   glfwTerminate();
 }
