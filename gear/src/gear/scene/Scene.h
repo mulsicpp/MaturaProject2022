@@ -2,7 +2,7 @@
 
 #include <gear/core/core.h>
 #include <functional>
-#include <gear/data/WeakVector.h>
+#include <unordered_map>
 #include <stdint.h>
 #include "Component.h"
 
@@ -24,7 +24,7 @@ class Scene
 {
   friend class gear::Entity;
 private:
-  WeakVector<Entity> m_Entities;
+  std::unordered_map<unsigned int, uint64_t> m_Comp_Flags;
   unsigned int m_Next_ID;
 
   static Scene scenes[GEAR_MAX_SCENES];
@@ -36,8 +36,6 @@ private:
   Scene(void);
   Scene(const Scene &scene) = delete;
   Scene &operator=(const gear::Scene &) = delete;
-
-  Entity *find(unsigned int entity_ID);
 
 public:
   /*
@@ -66,31 +64,16 @@ public:
   /*
   Creates a new and empty entity.
 
-  @return a pointer to the new entity
+  @return the new entity
   */
-  Entity *create_Entity(void);
-
-  /*
-  Creates a new entity using a constructor.
-
-  @param constructor a pointer to a function, that adds data to the passed entity.
-  @return a pointer to the new entity
-  */
-  Entity *create_Entity(void (*constructor)(Entity *entity));
+  Entity create_Entity(void);
 
   /*
   Removes the entity of the specified pointer.
 
-  @param entity the pointer to the entity to be removed
+  @param entity the entity to be removed
   */
-  void remove_Entity(Entity *entity);
-
-  /*
-  Removes the entity at the specified index in the array of the scene.
-
-  @param index the index of the entity to be removed
-  */
-  void remove_Entity_At(int index);
+  void remove_Entity(Entity entity);
 
   /*
   Removes the entity with the specified id.
@@ -103,17 +86,9 @@ public:
   Returns the entity at the specified index in the array of the scene.
 
   @param index the index of the entity to be removed
-  @return a pointer to the entity
+  @return the entity
   */
-  Entity *get_Entity_At(int index);
-
-  /*
-  Returns the entity with the specified id.
-
-  @param entity_ID the id of the entity to be removed
-  @return a pointer to the entity
-  */
-  Entity *get_Entity_With_ID(unsigned int entity_ID);
+  Entity get_Entity(unsigned int entity_ID);
 
   /*
   Removes all components of the entity with the specified id.

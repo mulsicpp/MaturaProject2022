@@ -17,12 +17,7 @@ class Entity
 {
 private:
   unsigned int m_Entity_ID;
-  uint64_t m_Comp_Flags;
   uint8_t m_Scene_ID;
-
-  Entity(void) = default;
-  Entity(unsigned int entity_ID, const uint8_t scene_ID);
-  Entity(const Entity&) = default;
 
   template <class T>
   class ComponentManager
@@ -149,6 +144,10 @@ private:
   };
 
 public:
+  Entity(void) = default;
+  Entity(unsigned int entity_ID, const uint8_t scene_ID);
+  Entity(const Entity&) = default;
+
   template <class T1, class T2, class ... Ts>
   /*
   Checks if this entity has a component of the specified type.
@@ -157,7 +156,7 @@ public:
   */
   bool has()
   {
-    return component_Flag<T1, T2, Ts...>() == (m_Comp_Flags & component_Flag<T1, T2, Ts...>()) ? true : false;
+    return component_Flag<T1, T2, Ts...>() == (Scene::scenes[m_Scene_ID].m_Comp_Flags[m_Entity_ID] & component_Flag<T1, T2, Ts...>()) ? true : false;
   }
 
   template <class T>
@@ -168,7 +167,7 @@ public:
   */
   bool has()
   {
-    return component_Flag<T>()  & m_Comp_Flags ? true : false;
+    return component_Flag<T>()  & Scene::scenes[m_Scene_ID].m_Comp_Flags[m_Entity_ID] ? true : false;
   }
 
   template <class T>
@@ -181,7 +180,7 @@ public:
   void add(T component)
   {
     ComponentManager<T>::get_Instance(m_Scene_ID).add_Component(Component<T>{m_Scene_ID, m_Entity_ID, component});
-    m_Comp_Flags |= Component<T>::get_Flag();
+    Scene::scenes[m_Scene_ID].m_Comp_Flags[m_Entity_ID] |= Component<T>::get_Flag();
   }
 
   template <class T>
@@ -192,7 +191,7 @@ public:
   void remove(void)
   {
     ComponentManager<T>::get_Instance(m_Scene_ID).remove_Component(m_Entity_ID);
-    m_Comp_Flags &= ~Component<T>::get_Flag();
+    Scene::scenes[m_Scene_ID].m_Comp_Flags[m_Entity_ID] &= ~Component<T>::get_Flag();
   }
 
   template <class T>
@@ -201,9 +200,9 @@ public:
   @param T the type of the component
   @return a pointer to the component if it exists, else a null pointer
   */
-  Component<T> *get(void)
+  T *get(void)
   {
-    return ComponentManager<T>::get_Instance(m_Scene_ID).find(m_Entity_ID);
+    return &(ComponentManager<T>::get_Instance(m_Scene_ID).find(m_Entity_ID)->data);
   }
 
   template<class T>
@@ -214,7 +213,7 @@ public:
   @param component the data of the component
   */
   void set(T component) {
-    if(Component<T>::get_Flag() & m_Comp_Flags)
+    if(Component<T>::get_Flag() & Scene::scenes[m_Scene_ID].m_Comp_Flags[m_Entity_ID])
       ComponentManager<T>::get_Instance(m_Scene_ID).find(m_Entity_ID)->data = component;
   }
 
@@ -232,11 +231,6 @@ public:
   @return the id of the scene
   */
   uint8_t get_Scene_ID(void) const;
-
-  /*
-  @return the flags, containing the added components
-  */
-  uint64_t get_Component_Flags(void) const;
 
 private:
   template<class T1, class T2, class ...Ts>
@@ -263,12 +257,12 @@ public:
   */
   static void for_Each(uint8_t scene_ID, void (*function)(T &...args))
   {
-    WeakVector<Entity> entities = Scene::get(scene_ID)->m_Entities;
+    const std::unordered_map<unsigned int, uint64_t> &comp_Flags = Scene::get(scene_ID)->m_Comp_Flags;
     reset_Iterators(ComponentManager<T>::get_Instance(scene_ID)...);
-    for (int i = 0; i < entities.count(); i++)
+    for (const auto &[id, flags] : comp_Flags)
     {
-      if (entities[i].has<T...>())
-        function(ComponentManager<T>::get_Instance(scene_ID).iterate_To(entities[i].m_Entity_ID)...);
+      if (Entity(id, scene_ID).has<T...>())
+        function(ComponentManager<T>::get_Instance(scene_ID).iterate_To(id)...);
     }
   }
 

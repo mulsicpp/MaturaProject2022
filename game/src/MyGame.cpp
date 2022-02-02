@@ -13,6 +13,8 @@
 #include <gear/event/EventComponent.h>
 #include <gear/event/Input.h>
 
+#include <time.h>
+
 using namespace gear;
 
 void MyGame::on_Startup(void)
@@ -20,7 +22,7 @@ void MyGame::on_Startup(void)
   m_Window->set_Title("Game Window!");
   m_Window->set_Resizable(false);
   m_Window->set_Size(1280, 720);
-  // m_Window->set_Fullscreen();
+  //m_Window->set_Fullscreen();
   m_Window->set_Visible(true);
 
   Renderer::create(640, 360);
@@ -28,8 +30,11 @@ void MyGame::on_Startup(void)
 
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
-  
-  Input::add_Global_Callback<ControllerButtonEvent>([](ControllerButtonEvent e){GEAR_DEBUG_LOG("gamepad button %s", e.get_Action() == Action::PRESSED ? "pressed" : "released");});
+
+  Input::add_Global_Callback<ControllerButtonEvent>([](ControllerButtonEvent e)
+  {
+    GEAR_DEBUG_LOG("gamepad button %s", e.get_Action() == Action::PRESSED ? "pressed" : "released");
+  });
   GEAR_DEBUG_LOG("%s", glfwGetVersionString());
 
   allow_Gear_Components();
@@ -55,7 +60,7 @@ void MyGame::on_Startup(void)
   animation_Comp.offset = {-32, -32, 0};
   animation_Comp.parallax_Factor = 1;
   animation_Comp.palette = palettes[0];
-  animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/eis_idle.gear");
+  animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/eis_jumping_besser.gear");
   // animation_Comp.palette = ResourceManager::get<Palette>("assets/test_sprites/kirby_walk_palette.gear");
   // animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/kirby_walk.gear");
   animation_Comp.animation_Offset = 0;
@@ -65,7 +70,7 @@ void MyGame::on_Startup(void)
     for (int j = 0; j < 10; j++)
     {
       // GEAR_DEBUG_LOG("creating entity");
-      Entity *new_Eis = m_Scene->create_Entity();
+      Entity new_Eis = m_Scene->create_Entity();
       GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
 
       animation_Comp.palette = palettes[(i * 13 + j) % 7];
@@ -73,15 +78,25 @@ void MyGame::on_Startup(void)
       if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
         animation_Comp.animation_Offset = 0;
 
-      animation_Comp.parallax_Factor = 1.0f/(i + 1);
-      animation_Comp.offset = {-32, -32, 1.0f/(i + 1)};
+      animation_Comp.parallax_Factor = 1.0f / (i * 0.5 + 1);
+      animation_Comp.offset = {-32, -32, 1.0f / (i * 0.5 + 1)};
       // GEAR_DEBUG_LOG("about to add animation");
-      new_Eis->add<AnimationComponent>(animation_Comp);
+      new_Eis.add<AnimationComponent>(animation_Comp);
       // GEAR_DEBUG_LOG("added animation");
-      Vector<float, 2> pos(32 - 320 + j * 64.0f, 32 - 180 + i * 64.0f);
-      new_Eis->add<TransformComponent>({pos, {1, 1}, 0});
+      Vector<float, 2> pos(32 - 320 + j * 64.0f, 0);
+      new_Eis.add<TransformComponent>({pos, {1, 1}, GEAR_MIRROR_X});
       // GEAR_DEBUG_LOG("added position");
     }
+
+  // m_Scene->remove_Entity({3, 0});
+  // m_Scene->remove_Entity_With_ID(5);
+
+  Entity entity = m_Scene->get_Entity(7);
+  GEAR_DEBUG_LOG("getting entity %i, %i", entity.get_Entity_ID(), entity.get_Scene_ID());
+  SpriteComponent &sprite_Component = *entity.get<SpriteComponent>();
+  GEAR_DEBUG_LOG("getting component %p", &sprite_Component);
+
+  m_Scene->print();
 
   GEAR_DEBUG_LOG("finished scene");
 
@@ -89,7 +104,6 @@ void MyGame::on_Startup(void)
 
   Renderer::set_Camera(&cam);
 }
-
 
 void MyGame::per_Frame(void)
 {
@@ -111,19 +125,17 @@ void MyGame::per_Frame(void)
       GEAR_DEBUG_LOG("set palette");
     }
   */
-  // GEAR_DEBUG_LOG("start frame");
-  if(Input::get_Key_State(Key::A) == State::PRESSED || Input::get_Key_State(Key::LEFT) == State::PRESSED)
-    cam_Pos[0] -= 2;
-  
-  if(Input::get_Key_State(Key::D) == State::PRESSED || Input::get_Key_State(Key::RIGHT) == State::PRESSED)
-    cam_Pos[0] += 2;
+  if (Input::get_Key_State(Key::A) == State::PRESSED || Input::get_Key_State(Key::LEFT) == State::PRESSED)
+    cam_Pos[0] -= 6;
 
-  if(Input::get_Key_State(Key::W) == State::PRESSED || Input::get_Key_State(Key::UP) == State::PRESSED)
-    cam_Pos[1] -= 2;
+  if (Input::get_Key_State(Key::D) == State::PRESSED || Input::get_Key_State(Key::RIGHT) == State::PRESSED)
+    cam_Pos[0] += 6;
 
-  if(Input::get_Key_State(Key::S) == State::PRESSED || Input::get_Key_State(Key::DOWN) == State::PRESSED)
-    cam_Pos[1] += 2;
-  
+  if (Input::get_Key_State(Key::W) == State::PRESSED || Input::get_Key_State(Key::UP) == State::PRESSED)
+    cam_Pos[1] -= 6;
+
+  if (Input::get_Key_State(Key::S) == State::PRESSED || Input::get_Key_State(Key::DOWN) == State::PRESSED)
+    cam_Pos[1] += 6;
 
   cam.follow_Target();
   Renderer::start_New_Frame();
