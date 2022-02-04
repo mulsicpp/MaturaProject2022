@@ -35,6 +35,10 @@ private:
 
   Component(const Component<T> &) = default;
 
+  static void on_Component_Add(Entity entity, T *component){}
+
+  static void on_Component_Remove(Entity entity, T *component){}
+
 public:
   T data;
 

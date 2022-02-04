@@ -10,7 +10,7 @@
 _GEAR_START
 
 /*
-This class represents an entity your game. 
+This class represents an entity your game.
 It is part of a scene and can have components attached to it.
 */
 class Entity
@@ -33,19 +33,28 @@ private:
       Scene::get(this - instances)->add_Manager_Callbacks({destroy_Instance, remove_Entity, print_Manager});
     }
 
-    void destroy(void) {
+    void destroy(void)
+    {
       m_Components.destroy();
     }
 
     static void destroy_Instance(uint8_t scene_ID)
     {
+      int count = instances[scene_ID].m_Components.count();
+      Component<T> *data = instances[scene_ID].m_Components.data();
+      for (int i = 0; i < count; i++)
+        Component<T>::on_Component_Remove({data[i].m_Entity_ID, data[i].m_Scene_ID}, &(data[i].data));
       instances[scene_ID].destroy();
     }
 
-    static void remove_Entity(uint8_t scene_ID, unsigned int entity_ID) {
+    static void remove_Entity(uint8_t scene_ID, unsigned int entity_ID)
+    {
       Component<T> *comp = instances[scene_ID].find(entity_ID);
-      if(comp != nullptr)
-        instances[scene_ID].m_Components.remove(comp- instances[scene_ID].m_Components.data());
+      if (comp != nullptr)
+      {
+        Component<T>::on_Component_Remove({entity_ID, scene_ID}, &(comp->data));
+        instances[scene_ID].m_Components.remove(comp - instances[scene_ID].m_Components.data());
+      }
     }
 
   public:
@@ -104,10 +113,15 @@ private:
         if (data[i].m_Entity_ID >= component.m_Entity_ID)
           break;
       }
-      if(i == count)
-        m_Components.push_Back(component);
-      else if(data[i].m_Entity_ID != component.m_Entity_ID)
-        m_Components.insert(component, i);
+      if (i == count){
+        auto comp = m_Components.push_Back(component);
+        Component<T>::on_Component_Add({comp->m_Entity_ID, comp->m_Scene_ID}, &(comp->data));
+      }
+      else if (data[i].m_Entity_ID != component.m_Entity_ID)
+      {
+        auto comp = m_Components.insert(component, i);
+        Component<T>::on_Component_Add({comp->m_Entity_ID, comp->m_Scene_ID}, &(comp->data));
+      }
       else
         m_Components[i].data = component.data;
     }
@@ -116,29 +130,36 @@ private:
     {
       Component<T> *comp = find(entity_ID);
       if (comp != nullptr)
+      {
+        Component<T>::on_Component_Remove({comp.m_Entity_ID, comp->m_Scene_ID}, &(comp.data));
         m_Components.remove(comp - m_Components.data());
+      }
     }
 
-    void reset_Iterator(void) {
+    void reset_Iterator(void)
+    {
       m_Next_Elem = -1;
     }
 
     T &iterate_To(unsigned int entity_ID)
     {
-      while(m_Components[++m_Next_Elem].m_Entity_ID < entity_ID);
+      while (m_Components[++m_Next_Elem].m_Entity_ID < entity_ID)
+        ;
       return m_Components[m_Next_Elem].data;
     }
 
-    void print(void) {
+    void print(void)
+    {
       std::cout << "component manager " << Component<T>::get_ID() << ":\n";
       Component<T> *data = m_Components.data();
       int count = m_Components.count();
-      for(int i = 0; i < count; i++)
+      for (int i = 0; i < count; i++)
         std::cout << data[i] << std::endl;
     }
 
   private:
-    static void print_Manager(uint8_t scene_ID) {
+    static void print_Manager(uint8_t scene_ID)
+    {
       instances[scene_ID].print();
     }
   };
@@ -146,9 +167,9 @@ private:
 public:
   Entity(void) = default;
   Entity(unsigned int entity_ID, const uint8_t scene_ID);
-  Entity(const Entity&) = default;
+  Entity(const Entity &) = default;
 
-  template <class T1, class T2, class ... Ts>
+  template <class T1, class T2, class... Ts>
   /*
   Checks if this entity has a component of the specified type.
   @param T the type of the component
@@ -167,7 +188,7 @@ public:
   */
   bool has()
   {
-    return component_Flag<T>()  & Scene::scenes[m_Scene_ID].m_Comp_Flags[m_Entity_ID] ? true : false;
+    return component_Flag<T>() & Scene::scenes[m_Scene_ID].m_Comp_Flags[m_Entity_ID] ? true : false;
   }
 
   template <class T>
@@ -205,15 +226,16 @@ public:
     return &(ComponentManager<T>::get_Instance(m_Scene_ID).find(m_Entity_ID)->data);
   }
 
-  template<class T>
+  template <class T>
   /*
   Sets the component of type T in the entity. If the component does not exist
   nothing will be set.
   @param T the type of the component
   @param component the data of the component
   */
-  void set(T component) {
-    if(Component<T>::get_Flag() & Scene::scenes[m_Scene_ID].m_Comp_Flags[m_Entity_ID])
+  void set(T component)
+  {
+    if (Component<T>::get_Flag() & Scene::scenes[m_Scene_ID].m_Comp_Flags[m_Entity_ID])
       ComponentManager<T>::get_Instance(m_Scene_ID).find(m_Entity_ID)->data = component;
   }
 
@@ -233,19 +255,18 @@ public:
   uint8_t get_Scene_ID(void) const;
 
 private:
-  template<class T1, class T2, class ...Ts>
-  static void reset_Iterators(ComponentManager<T1> &iterator1, ComponentManager<T2> &iterator2, ComponentManager<Ts>& ...iterators)
+  template <class T1, class T2, class... Ts>
+  static void reset_Iterators(ComponentManager<T1> &iterator1, ComponentManager<T2> &iterator2, ComponentManager<Ts> &...iterators)
   {
     iterator1.reset_Iterator();
     reset_Iterators(iterator2, iterators...);
   }
 
-  template<class T>
+  template <class T>
   static void reset_Iterators(ComponentManager<T> &iterator)
   {
     iterator.reset_Iterator();
   }
-
 
 public:
   template <class... T>

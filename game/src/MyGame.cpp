@@ -13,7 +13,11 @@
 #include <gear/event/EventComponent.h>
 #include <gear/event/Input.h>
 
+#include <gear/scripting/ScriptComponent.h>
+
 #include <time.h>
+
+#include "scripts/EisScript.h"
 
 using namespace gear;
 
@@ -92,11 +96,15 @@ void MyGame::on_Startup(void)
   // m_Scene->remove_Entity_With_ID(5);
 
   Entity entity = m_Scene->get_Entity(7);
-  GEAR_DEBUG_LOG("getting entity %i, %i", entity.get_Entity_ID(), entity.get_Scene_ID());
-  SpriteComponent &sprite_Component = *entity.get<SpriteComponent>();
-  GEAR_DEBUG_LOG("getting component %p", &sprite_Component);
+  entity.add<EventComponent<KeyEvent>>({[](KeyEvent e) {
+    GEAR_DEBUG_LOG("key pressed");
+  }});
 
-  m_Scene->print();
+  ScriptComponent script_Comp;
+  script_Comp.bind<EisScript>();
+  entity.add<ScriptComponent>(script_Comp);
+
+  //m_Scene->print();
 
   GEAR_DEBUG_LOG("finished scene");
 
@@ -109,7 +117,8 @@ void MyGame::per_Frame(void)
 {
   if (m_Window->should_Close())
     this->close(0);
-  Input::dispatch_Events(nullptr);
+  Input::dispatch_Events(m_Scene);
+  
   /*
     GEAR_DEBUG_LOG("eis %p", eis);
     auto *pos_Comp = eis->get<TransformComponent>();
@@ -147,8 +156,8 @@ void MyGame::per_Frame(void)
 
 void MyGame::on_Shutdown(void)
 {
-  GEAR_DEBUG_LOG("destroy scene");
   Renderer::destroy();
+  GEAR_DEBUG_LOG("destroy scene");
   m_Scene->destroy();
   for (int i = 0; i < 7; i++)
     palettes[i] = nullptr;
