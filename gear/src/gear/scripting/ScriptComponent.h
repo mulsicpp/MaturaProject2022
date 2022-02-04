@@ -55,4 +55,6 @@ void Component<ScriptComponent>::on_Component_Remove(Entity entity, ScriptCompon
   GEAR_DEBUG_LOG("destructed script %p", component->script);
 }
 
+void call_Script_Update(Scene *scene);
+
 _GEAR_END

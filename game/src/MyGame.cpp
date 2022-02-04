@@ -118,6 +118,8 @@ void MyGame::per_Frame(void)
   if (m_Window->should_Close())
     this->close(0);
   Input::dispatch_Events(m_Scene);
+
+  call_Script_Update(m_Scene);
   
   /*
     GEAR_DEBUG_LOG("eis %p", eis);
