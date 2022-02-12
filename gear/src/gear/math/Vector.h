@@ -231,6 +231,20 @@ public:
     return ret;
   }
 
+  bool operator==(const Vector<T, N> &vector) const {
+    for(int i = 0; i < N; i++)
+      if(this->data[i] != vector->data[i])
+        return false;
+    return true;
+  }
+
+  bool operator!=(const Vector<T, N> &vector) const {
+    for(int i = 0; i < N; i++)
+      if(this->data[i] != vector->data[i])
+        return true;
+    return false;
+  }
+
   /*
   Cast the vector to a new vector with a different element type and count.
   For this to be possible, there has to be defined a cast from the current to
