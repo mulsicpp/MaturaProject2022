@@ -233,14 +233,14 @@ public:
 
   bool operator==(const Vector<T, N> &vector) const {
     for(int i = 0; i < N; i++)
-      if(this->data[i] != vector->data[i])
+      if(this->data[i] != vector.data[i])
         return false;
     return true;
   }
 
   bool operator!=(const Vector<T, N> &vector) const {
     for(int i = 0; i < N; i++)
-      if(this->data[i] != vector->data[i])
+      if(this->data[i] != vector.data[i])
         return true;
     return false;
   }
