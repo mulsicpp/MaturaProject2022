@@ -17,6 +17,10 @@
 
 #include <time.h>
 
+#include <gear/collision/shapes/Rect.h>
+#include <gear/collision/shapes/Circle.h>
+#include <gear/collision/shapes/Point.h>
+
 #include "scripts/EisScript.h"
 
 using namespace gear;
@@ -32,8 +36,14 @@ void MyGame::on_Startup(void)
   Renderer::create(640, 360);
   Renderer::set_V_Sync(true);
 
+
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
+
+  Ref<Shape> s1 = Ref<Shape>(new Circle({0, 0}, 2));
+  Ref<Shape> s2 = Ref<Shape>(new Point({1, 1}));
+  GEAR_DEBUG_LOG("intersect %i", s1->intersects(s2.get()));
+
 
   Input::add_Global_Callback<ControllerButtonEvent>([](ControllerButtonEvent e)
   {
@@ -65,17 +75,25 @@ void MyGame::on_Startup(void)
   animation_Comp.parallax_Factor = 1;
   animation_Comp.palette = palettes[0];
   animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/eis_jumping_besser.gear");
-  // animation_Comp.palette = ResourceManager::get<Palette>("assets/test_sprites/kirby_walk_palette.gear");
-  // animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/kirby_walk.gear");
   animation_Comp.animation_Offset = 0;
   animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
+
+  int *i = new int;
+
+  delete i;
+
+  struct {
+    int x;
+    int y;
+  } a;
+
+  auto [x, y] = a;
 
   for (int i = 0; i < 5; i++)
     for (int j = 0; j < 10; j++)
     {
-      // GEAR_DEBUG_LOG("creating entity");
       Entity new_Eis = m_Scene->create_Entity();
-      GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
+      //GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
 
       animation_Comp.palette = palettes[(i * 13 + j) % 7];
       animation_Comp.animation_Offset++;
@@ -84,25 +102,14 @@ void MyGame::on_Startup(void)
 
       animation_Comp.parallax_Factor = 1.0f / (i * 0.5 + 1);
       animation_Comp.offset = {-32, -32, 1.0f / (i * 0.5 + 1)};
-      // GEAR_DEBUG_LOG("about to add animation");
       new_Eis.add<AnimationComponent>(animation_Comp);
-      // GEAR_DEBUG_LOG("added animation");
       Vector<float, 2> pos(32 - 320 + j * 64.0f, 0);
       new_Eis.add<TransformComponent>({pos, {1, 1}, GEAR_MIRROR_X});
-      // GEAR_DEBUG_LOG("added position");
     }
-
-  // m_Scene->remove_Entity({3, 0});
-  // m_Scene->remove_Entity_With_ID(5);
-
   Entity entity = m_Scene->get_Entity(7);
   entity.add<EventComponent<KeyEvent>>({[](KeyEvent e) {
     GEAR_DEBUG_LOG("key pressed");
   }});
-
-  ScriptComponent script_Comp;
-  script_Comp.bind<EisScript>();
-  entity.add<ScriptComponent>(script_Comp);
 
   //m_Scene->print();
 
@@ -120,22 +127,6 @@ void MyGame::per_Frame(void)
   Input::dispatch_Events(m_Scene);
 
   call_Script_Update(m_Scene);
-  
-  /*
-    GEAR_DEBUG_LOG("eis %p", eis);
-    auto *pos_Comp = eis->get<TransformComponent>();
-    GEAR_DEBUG_LOG("got pos comp %p", pos_Comp);
-    auto *pos = &(pos_Comp->data.position);
-    GEAR_DEBUG_LOG("got position %p", pos);
-    (*pos)[0] -= 2;
-    if((*pos)[0] < -64){
-      GEAR_DEBUG_LOG("if statement");
-      (*pos)[0] = 640;
-      palette_Index = (palette_Index + 1) % 3;
-      eis->get<SpriteComponent>()->data.palette = palettes[palette_Index];
-      GEAR_DEBUG_LOG("set palette");
-    }
-  */
   if (Input::get_Key_State(Key::A) == State::PRESSED || Input::get_Key_State(Key::LEFT) == State::PRESSED)
     cam_Pos[0] -= 6;
 
@@ -150,9 +141,7 @@ void MyGame::per_Frame(void)
 
   cam.follow_Target();
   Renderer::start_New_Frame();
-  // GEAR_DEBUG_LOG("render scene");
   Renderer::render_Scene(m_Scene);
-  // GEAR_DEBUG_LOG("show frame");
   Renderer::show_Frame();
 }
 

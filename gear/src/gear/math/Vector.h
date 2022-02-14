@@ -31,24 +31,25 @@ a *= b;
 a /= b;
 */
 template <class T, int N>
-class Vector {
+class Vector
+{
 private:
   T data[N];
 
-  template<class X1, class X2, class... Xs>
+  template <class X1, class X2, class... Xs>
   void put_Elements(int index, X1 first, X2 second, Xs... rest)
   {
-    if(index < N)
+    if (index < N)
     {
       data[index] = (T)first;
       put_Elements(index + 1, second, rest...);
     }
   }
 
-  template<class X, class... Xs>
+  template <class X, class... Xs>
   void put_Elements(int index, X first)
   {
-    if(index < N)
+    if (index < N)
     {
       data[index] = (T)first;
     }
@@ -70,8 +71,9 @@ public:
   }
   */
 
-  template<class... Ts>
-  Vector<T, N>(T first, Ts... rest) {
+  template <class... Ts>
+  Vector<T, N>(T first, Ts... rest)
+  {
     put_Elements(0, first, rest...);
   }
 
@@ -84,10 +86,14 @@ public:
   @param index the index of the element. It has to be greater or equal to 0 and smaller than element count.
   @return a reference to the element in the vector at the specified index.
   */
-  T &operator[](int index) {
-    if (index >= N || index < 0) {
+  T &operator[](int index)
+  {
+    if (index >= N || index < 0)
+    {
       error("Vector index out of bounds: %i", index);
-    } else {
+    }
+    else
+    {
       return data[index];
     }
   }
@@ -96,10 +102,14 @@ public:
   @param index the index of the element. It has to be greater than 0 and smaller or equal to element count.
   @return a const reference to the element in the vector at the specified index.
   */
-  const T &operator[](int index) const {
-    if (index >= N || index < 0) {
+  const T &operator[](int index) const
+  {
+    if (index >= N || index < 0)
+    {
       error("Vector index out of bounds: %i", index);
-    } else {
+    }
+    else
+    {
       return data[index];
     }
   }
@@ -112,7 +122,8 @@ public:
   /*
   @return a negated copy of the vector
   */
-  Vector<T, N> operator-() const {
+  Vector<T, N> operator-() const
+  {
     Vector<T, N> ret;
     for (int i = 0; i < N; i++)
       ret.data[i] = -data[i];
@@ -125,7 +136,8 @@ public:
   @param vector the vector, that gets added to this vector
   @return the result of the addition
   */
-  Vector<T, N> operator+(const Vector<T, N> &vector) const {
+  Vector<T, N> operator+(const Vector<T, N> &vector) const
+  {
     Vector<T, N> ret;
     for (int i = 0; i < N; i++)
       ret.data[i] = data[i] + vector.data[i];
@@ -138,7 +150,8 @@ public:
   @param vector the vector, that gets subtracted from this vector
   @return the result of the subtraction
   */
-  Vector<T, N> operator-(const Vector<T, N> &vector) const {
+  Vector<T, N> operator-(const Vector<T, N> &vector) const
+  {
     Vector<T, N> ret;
     for (int i = 0; i < N; i++)
       ret.data[i] = data[i] - vector.data[i];
@@ -151,7 +164,8 @@ public:
   @param k the scalar value
   @return the result of the multiplication
   */
-  Vector<T, N> operator*(const T &k) const {
+  Vector<T, N> operator*(const T &k) const
+  {
     Vector<T, N> ret;
     for (int i = 0; i < N; i++)
       ret.data[i] = data[i] * k;
@@ -164,7 +178,8 @@ public:
   @param k the scalar value
   @return the result of the division
   */
-  Vector<T, N> operator/(const T &k) const {
+  Vector<T, N> operator/(const T &k) const
+  {
     Vector<T, N> ret;
     for (int i = 0; i < N; i++)
       ret.data[i] = data[i] / k;
@@ -175,9 +190,10 @@ public:
   Adds a vector to the current vector.
 
   @param vector the vector to be added
-  @return a reference to this vector 
+  @return a reference to this vector
   */
-  const Vector<T, N> &operator+=(const Vector<T, N> &vector) const {
+  const Vector<T, N> &operator+=(const Vector<T, N> &vector) const
+  {
     for (int i = 0; i < N; i++)
       data[i] += vector.data[i];
     return *this;
@@ -187,9 +203,10 @@ public:
   Subtracts a vector from the current vector.
 
   @param vector the vector to be subtracted
-  @return a reference to this vector 
+  @return a reference to this vector
   */
-  const Vector<T, N> &operator-=(const Vector<T, N> &vector) const {
+  const Vector<T, N> &operator-=(const Vector<T, N> &vector) const
+  {
     for (int i = 0; i < N; i++)
       data[i] -= vector.data[i];
     return *this;
@@ -199,9 +216,10 @@ public:
   Multiplies the current vector with a scalar value.
 
   @param k the scalar value to be multiplied with
-  @return a reference to this vector 
+  @return a reference to this vector
   */
-  const Vector<T, N> &operator*=(const T &k) const {
+  const Vector<T, N> &operator*=(const T &k) const
+  {
     for (int i = 0; i < N; i++)
       data[i] *= k;
     return *this;
@@ -211,9 +229,10 @@ public:
   Divides the current vector by a scalar value.
 
   @param k the scalar value to be divided by
-  @return a reference to this vector 
+  @return a reference to this vector
   */
-  const Vector<T, N> &operator/=(const T &k) const {
+  const Vector<T, N> &operator/=(const T &k) const
+  {
     for (int i = 0; i < N; i++)
       data[i] /= k;
     return *this;
@@ -224,25 +243,45 @@ public:
   @param vector the second vector for the dot product
   @return the result of the dot product
   */
-  T operator*(const Vector<T, N> &vector) const {
+  T operator*(const Vector<T, N> &vector) const
+  {
     T ret = 0;
     for (int i = 0; i < N; i++)
       ret += data[i] * vector.data[i];
     return ret;
   }
 
-  bool operator==(const Vector<T, N> &vector) const {
-    for(int i = 0; i < N; i++)
-      if(this->data[i] != vector.data[i])
+  /*
+  @return true, if the vectors have the same value
+  */
+  bool operator==(const Vector<T, N> &vector) const
+  {
+    for (int i = 0; i < N; i++)
+      if (this->data[i] != vector.data[i])
         return false;
     return true;
   }
 
-  bool operator!=(const Vector<T, N> &vector) const {
-    for(int i = 0; i < N; i++)
-      if(this->data[i] != vector.data[i])
+  /*
+  @return true, if the vectors don't have the same value
+  */
+  bool operator!=(const Vector<T, N> &vector) const
+  {
+    for (int i = 0; i < N; i++)
+      if (this->data[i] != vector.data[i])
         return true;
     return false;
+  }
+
+  /*
+  @return the magnitude of the vector
+  */
+  double mag(void) const
+  {
+    T ret = 0;
+    for(int i = 0; i < N; i++)
+      ret += data[i] * data[i];
+    return sqrt((double)ret);
   }
 
   /*
@@ -255,7 +294,8 @@ public:
   @return the new vector with the new size and/or type
   */
   template <class T2, int N2>
-  Vector<T2, N2> cast_To() const {
+  Vector<T2, N2> cast_To() const
+  {
     Vector<T2, N2> ret;
     size_t size = N < N2 ? N : N2;
     for (int i = 0; i < size; i++)
@@ -271,10 +311,13 @@ public:
   @return a reference to this vector, with the new "virtual" element count
   */
   template <int N2>
-  Vector<T, N2> &use_As() const {
-    if (N2 > N) {
+  Vector<T, N2> &use_As() const
+  {
+    if (N2 > N)
+    {
       error("Vector element count to big: %i", N2);
-    } else
+    }
+    else
       return *(Vector<T, N2> *)this;
   }
 
@@ -285,9 +328,11 @@ public:
   @param vector the vector to be printed
   */
   friend std::ostream &operator<<(std::ostream &ostream,
-                                  gear::Vector<T, N> vector) {
+                                  gear::Vector<T, N> vector)
+  {
     ostream << "[";
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < N; i++)
+    {
       ostream << vector.data[i];
       if (i < N - 1)
         ostream << ", ";
@@ -305,7 +350,8 @@ Calculates the cross product of two three-dimensional vectors.
 @return the result of the cross product
 */
 template <class T>
-Vector<T, 3> crossProduct(const Vector<T, 3> &vector1, const Vector<T, 3> &vector2) {
+Vector<T, 3> cross_Product(const Vector<T, 3> &vector1, const Vector<T, 3> &vector2)
+{
   Vector<T, 3> ret;
   float *p_ret = (float *)ret, *p_v1 = (float *)vector1, *p_v2 = (float *)vector2;
 
