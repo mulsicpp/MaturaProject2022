@@ -3,6 +3,7 @@
 #include <string>
 #include <filesystem>
 #include <gear/data/FileStream.h>
+#include <cstring>
 
 std::vector<std::string> find_Convertables(const char* folder);
 

@@ -11,6 +11,8 @@ class Entity;
 
 unsigned int get_Next_Component_ID(void);
 
+void allow_Gear_Components(void);
+
 template<class T>
 /**
 A component, that can be added to an entity.
@@ -32,6 +34,10 @@ private:
   }
 
   Component(const Component<T> &) = default;
+
+  static void on_Component_Add(Entity entity, T *component){}
+
+  static void on_Component_Remove(Entity entity, T *component){}
 
 public:
   T data;

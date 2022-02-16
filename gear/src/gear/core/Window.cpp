@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include <gear/core/debug/log.h>
+
 gear::Window::Window() {}
 
 gear::Window *gear::Window::create_Window(const char *name, int width, int height)
@@ -59,6 +61,11 @@ void gear::Window::set_Visible(bool visible)
     glfwHideWindow(m_Window);
 }
 
+void gear::Window::set_Resizable(bool resizable)
+{
+  glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, resizable);
+}
+
 void gear::Window::set_Fullscreen()
 {
   GLFWmonitor *monitor = glfwGetPrimaryMonitor();
@@ -70,7 +77,8 @@ void gear::Window::set_Windowed(int width, int height)
   glfwSetWindowMonitor(m_Window, nullptr, 0, 0, width, height, 0);
 }
 
-void gear::Window::set_Title(const char *title) {
+void gear::Window::set_Title(const char *title)
+{
   glfwSetWindowTitle(m_Window, title);
 }
 
@@ -96,11 +104,6 @@ void gear::Window::set_Position(int x, int y)
   glfwSetWindowPos(m_Window, x, y);
 }
 
-void gear::Window::set_V_Sync(bool v_sync)
-{
-  glfwSwapInterval(v_sync ? 1 : 0);
-}
-
 void gear::Window::swap_Buffers(void)
 {
   glfwSwapBuffers(m_Window);
@@ -114,4 +117,16 @@ void gear::Window::poll_Events(void)
 void gear::Window::make_Render_Context_Current(void)
 {
   glfwMakeContextCurrent(m_Window);
+}
+
+bool gear::Window::window_Is_Focused()
+{
+  int focused = glfwGetWindowAttrib(m_Window, GLFW_FOCUSED);
+  return focused;
+}
+
+bool gear::Window::window_Is_Iconified()
+{
+  int iconified = glfwGetWindowAttrib(m_Window, GLFW_ICONIFIED);
+  return iconified;
 }

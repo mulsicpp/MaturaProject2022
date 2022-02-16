@@ -18,6 +18,7 @@ class Game
 protected:
   gear::Window *m_Window = nullptr;
   const char m_Path_To_App[512]{0};
+  gear::Window *main_Window;
 
   void gear_Init(void);
 
@@ -32,6 +33,8 @@ public:
   virtual void per_Frame(void) = 0;
 
   void close(int exit_code);
+
+  const char *get_App_Path(void) const;
 };
 
 _GEAR_END

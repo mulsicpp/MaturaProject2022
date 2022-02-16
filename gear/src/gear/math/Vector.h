@@ -2,7 +2,6 @@
 
 #include <gear/core/core.h>
 #include <exception>
-#include <initializer_list>
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
@@ -36,6 +35,25 @@ class Vector {
 private:
   T data[N];
 
+  template<class X1, class X2, class... Xs>
+  void put_Elements(int index, X1 first, X2 second, Xs... rest)
+  {
+    if(index < N)
+    {
+      data[index] = (T)first;
+      put_Elements(index + 1, second, rest...);
+    }
+  }
+
+  template<class X, class... Xs>
+  void put_Elements(int index, X first)
+  {
+    if(index < N)
+    {
+      data[index] = (T)first;
+    }
+  }
+
 public:
   /*
   Constructs a vector with all elements as 0.
@@ -46,8 +64,15 @@ public:
   Constructs a vector with the values.
   @param list a initializer list containing the values
   */
+  /*
   Vector<T, N>(std::initializer_list<T> list) : data{0} {
     memcpy(data, list.begin(), (list.size() > N ? N : list.size()) * sizeof(T));
+  }
+  */
+
+  template<class... Ts>
+  Vector<T, N>(T first, Ts... rest) {
+    put_Elements(0, first, rest...);
   }
 
   /*
