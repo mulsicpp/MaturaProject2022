@@ -8,14 +8,14 @@
 _GEAR_START
 
 template <class T1, class T2>
-bool shapes_Intersect(const T1 *hitbox1, const T2 *hitbox2)
+bool shapes_Intersect(const T1 *hitbox1, const T2 *hitbox2, Vector<float, 2> *separation_Vector)
 {
   gear::error("A parameter is not a shape");
   return false;
 }
 
 template <>
-bool shapes_Intersect<Rect, Rect>(const Rect *hitbox1, const Rect *hitbox2)
+bool shapes_Intersect<Rect, Rect>(const Rect *hitbox1, const Rect *hitbox2, Vector<float, 2> *separation_Vector)
 {
   return !(hitbox2->top_Left[0] > hitbox1->bottom_Right[0] ||
            hitbox2->bottom_Right[0] < hitbox1->top_Left[0] ||
@@ -23,9 +23,15 @@ bool shapes_Intersect<Rect, Rect>(const Rect *hitbox1, const Rect *hitbox2)
            hitbox2->bottom_Right[1] < hitbox1->top_Left[1]);
 }
 
+struct A {
+  int x;
+  float y;
+};
+
 template <>
-bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2)
+bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, Vector<float, 2> *separation_Vector)
 {
+
   float r_Left = hitbox1->top_Left[0],
         r_Right = hitbox1->bottom_Right[0],
         r_Top = hitbox1->top_Left[1],
@@ -52,7 +58,7 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2)
 }
 
 template <>
-bool shapes_Intersect<Rect, Point>(const Rect *hitbox1, const Point *hitbox2)
+bool shapes_Intersect<Rect, Point>(const Rect *hitbox1, const Point *hitbox2, Vector<float, 2> *separation_Vector)
 {
   return (hitbox1->top_Left[0] <= hitbox2->position[0] &&
           hitbox1->bottom_Right[0] >= hitbox2->position[0] &&
@@ -61,19 +67,21 @@ bool shapes_Intersect<Rect, Point>(const Rect *hitbox1, const Point *hitbox2)
 }
 
 template <>
-bool shapes_Intersect<Circle, Circle>(const Circle *hitbox1, const Circle *hitbox2)
+bool shapes_Intersect<Circle, Circle>(const Circle *hitbox1, const Circle *hitbox2, Vector<float, 2> *separation_Vector)
 {
   return (hitbox1->position - hitbox2->position).mag() <= (hitbox1->radius + hitbox2->radius);
 }
 
 template <>
-bool shapes_Intersect<Circle, Point>(const Circle *hitbox1, const Point *hitbox2)
+bool shapes_Intersect<Circle, Point>(const Circle *hitbox1, const Point *hitbox2, Vector<float, 2> *separation_Vector)
 {
-  return (hitbox1->position - hitbox2->position).mag() <= hitbox1->radius;
+  auto vec = hitbox1->position - hitbox2->position;
+  double dist = vec.mag();
+  return dist <= hitbox1->radius;
 }
 
 template <>
-bool shapes_Intersect<Point, Point>(const Point *hitbox1, const Point *hitbox2)
+bool shapes_Intersect<Point, Point>(const Point *hitbox1, const Point *hitbox2, Vector<float, 2> *separation_Vector)
 {
   return hitbox1->position == hitbox2->position;
 }

@@ -2,6 +2,7 @@
 
 #include <gear/resource/Palette.h>
 #include <gear/renderer/Camera.h>
+#include <gear/collision/shapes/Shape.h>
 
 class MyGame : public gear::Game
 {
@@ -11,6 +12,10 @@ private:
   gear::Entity *eis_Idle;
   gear::Ref<gear::Palette> palettes[7];
   int palette_Index = 0;
+
+  gear::Ref<gear::Shape> rect;
+  gear::Ref<gear::Shape> circle;
+  gear::Ref<gear::Shape> point;
 
   gear::Vector<float, 2> cam_Pos;
 

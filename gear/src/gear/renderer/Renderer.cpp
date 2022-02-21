@@ -8,6 +8,7 @@
 
 #include "pipelines/UpscalePipeline.h"
 #include "pipelines/SpritePipeline.h"
+#include "pipelines/ShapePipeline.h"
 
 using SpritePipeline = gear::SpritePipeline;
 
@@ -33,6 +34,7 @@ void gear::Renderer::create(int width, int height)
 
   UpscalePipeline::get_Instance().init();
   SpritePipeline::get_Instance().init();
+  ShapePipeline::get_Instance().init();
 }
 
 void gear::Renderer::destroy(void)
@@ -41,6 +43,7 @@ void gear::Renderer::destroy(void)
 
   UpscalePipeline::get_Instance().destroy();
   SpritePipeline::get_Instance().destroy();
+  ShapePipeline::get_Instance().destroy();
 
   m_Window = nullptr;
 }
@@ -92,4 +95,19 @@ void gear::Renderer::render_Scene(gear::Scene *scene)
 
   SpritePipeline::get_Instance().render(scene);
   gear::Entity::for_Each(scene->get_ID(), animation_Player_Callback);
+}
+
+void gear::Renderer::render_Shape(const gear::Shape* shape, const Vector<float, 4> &color)
+{
+  m_Framebuffer.bind();
+  ShapePipeline::get_Instance().bind(shape->get_Type());
+  glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Width"), m_Framebuffer.m_Width);
+  glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
+
+  
+  if(m_Camera != nullptr)
+    glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), m_Camera->get_Position()[0], m_Camera->get_Position()[1]);
+  else
+    glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), 0, 0);
+  ShapePipeline::get_Instance().render_Shape(shape, color);
 }

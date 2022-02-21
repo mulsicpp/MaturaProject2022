@@ -6,22 +6,22 @@ gear::Shape::Shape(ShapeType type) : m_Type(type) {}
 gear::ShapeType gear::Shape::get_Type(void) const { return m_Type; }
 
 template <class T>
-static bool intersection_First_Type(const T *hitbox1, const gear::Shape *hitbox2)
+static bool intersection_First_Type(const T *hitbox1, const gear::Shape *hitbox2, gear::Vector<float, 2> *separation_Vector)
 {
   switch (hitbox2->get_Type())
   {
   case gear::ShapeType::RECT:
-    return gear::shapes_Intersect(hitbox1, (gear::Rect *)hitbox2);
+    return gear::shapes_Intersect(hitbox1, (gear::Rect *)hitbox2, separation_Vector);
   case gear::ShapeType::CIRCLE:
-    return gear::shapes_Intersect(hitbox1, (gear::Circle *)hitbox2);
+    return gear::shapes_Intersect(hitbox1, (gear::Circle *)hitbox2, separation_Vector);
   case gear::ShapeType::POINT:
-    return gear::shapes_Intersect(hitbox1, (gear::Point *)hitbox2);
+    return gear::shapes_Intersect(hitbox1, (gear::Point *)hitbox2, separation_Vector);
   default:
     return false;
   }
 }
 
-bool gear::Shape::intersects(const gear::Shape *shape) const
+bool gear::Shape::intersects(const gear::Shape *shape, gear::Vector<float, 2> *separation_Vector) const
 {
   const Shape *hitbox1, *hitbox2;
   if (this->m_Type > shape->m_Type)
@@ -36,12 +36,12 @@ bool gear::Shape::intersects(const gear::Shape *shape) const
   }
   switch (hitbox1->m_Type)
   {
-  case ShapeType::RECT:
-    return intersection_First_Type((Rect *)hitbox1, hitbox2);
-  case ShapeType::CIRCLE:
-    return intersection_First_Type((Circle *)hitbox1, hitbox2);
-  case ShapeType::POINT:
-    return intersection_First_Type((Point *)hitbox1, hitbox2);
+  case gear::ShapeType::RECT:
+    return intersection_First_Type((gear::Rect *)hitbox1, hitbox2, separation_Vector);
+  case gear::ShapeType::CIRCLE:
+    return intersection_First_Type((gear::Circle *)hitbox1, hitbox2, separation_Vector);
+  case gear::ShapeType::POINT:
+    return intersection_First_Type((gear::Point *)hitbox1, hitbox2, separation_Vector);
   default:
     return false;
   }

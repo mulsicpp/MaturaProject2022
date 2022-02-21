@@ -80,6 +80,35 @@ void main() {
 }
 )";
 
+
+
+const char *const SHADER_SHAPE_VS = R"(
+#version 430 core
+
+layout(location = 0) in vec2 in_Position;
+
+uniform int u_Frame_Width;
+uniform int u_Frame_Height;
+
+uniform vec2 u_Camera_Pos;
+
+void main() {
+  gl_Position = vec4((in_Position.x - u_Camera_Pos.x) * 2.0f / float(u_Frame_Width), -(in_Position.y - u_Camera_Pos.y) * 2.0f / float(u_Frame_Height), 1.0, 1.0);
+}
+)";
+
+const char *const SHADER_SHAPE_FS = R"(
+#version 430 core
+
+layout(location = 0) out vec4 out_Color;
+
+uniform vec4 u_Color;
+
+void main() {
+  out_Color = u_Color;
+}
+)";
+
 unsigned int link_Program(unsigned int vertex_Shader, unsigned int fragment_Shader)
 {
   unsigned int program = glCreateProgram();

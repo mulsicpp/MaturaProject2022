@@ -40,9 +40,9 @@ void MyGame::on_Startup(void)
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
 
-  Ref<Shape> s1 = Ref<Shape>(new Circle({0, 0}, 2));
-  Ref<Shape> s2 = Ref<Shape>(new Point({1, 1}));
-  GEAR_DEBUG_LOG("intersect %i", s1->intersects(s2.get()));
+  rect = Ref<Shape>(new Rect({0, 0}, {50, 40}));
+  circle = Ref<Shape>(new Circle({0, 0}, 12));
+  point = Ref<Shape>(new Point({0, 0}));
 
 
   Input::add_Global_Callback<ControllerButtonEvent>([](ControllerButtonEvent e)
@@ -142,6 +142,9 @@ void MyGame::per_Frame(void)
   cam.follow_Target();
   Renderer::start_New_Frame();
   Renderer::render_Scene(m_Scene);
+  ((Circle *)circle.get())->position = Input::get_Cursor_Position().cast_To<float, 2>() / 2 - Vector<float, 2>{320, 180};
+  Renderer::render_Shape(rect.get(), circle->intersects(rect.get()) ? Vector<float,4>{1, 0, 0, 1} : Vector<float,4>{0, 0, 1, 1});
+  Renderer::render_Shape(circle.get(), {0, 0, 1, 1});
   Renderer::show_Frame();
 }
 
