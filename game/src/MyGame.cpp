@@ -40,8 +40,8 @@ void MyGame::on_Startup(void)
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
 
-  s1 = Ref<Shape>(new Point({0, 0}));
-  s2 = Ref<Shape>(new Rect({-40, -20}, {40, 20}));
+  s1 = Ref<Shape>(new Circle({0, 0}, 20));
+  s2 = Ref<Shape>(new Rect({-50, -30}, {50, 30}));
 
 
   Input::add_Global_Callback<ControllerButtonEvent>([](ControllerButtonEvent e)
@@ -130,14 +130,14 @@ void MyGame::per_Frame(void)
   cam.follow_Target();
   Renderer::start_New_Frame();
   Renderer::render_Scene(m_Scene);
-  ((Point *)s1.get())->position = Input::get_Cursor_Position().cast_To<double, 2>() / 2 - Vector<double, 2>{320, 180};
+  ((Circle *)s1.get())->position = Input::get_Cursor_Position().cast_To<double, 2>() / 2 - Vector<double, 2>{320, 180};
   //((Rect *)s1.get())->bottom_Right = ((Rect *)s1.get())->top_Left + Vector<double, 2>{50, 30};
   //((Circle *)s1.get())->position += {0, 0.7};
   Vector<double, 2> sep_Vec(0, 0);
   bool intersects = s2->intersects(s1.get(), &sep_Vec);
   if(intersects)
   {
-    ((Point *)s1.get())->position += sep_Vec;
+    ((Circle *)s1.get())->position += sep_Vec;
   }
   Renderer::render_Shape(s2.get(), intersects ? Vector<float, 4>{1, 0, 0, 1} : Vector<float, 4>{0, 0, 1, 1});
   Renderer::render_Shape(s1.get(), {0, 1, 0, 1});

@@ -91,19 +91,116 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, 
          c_Y = hitbox2->position[1],
          c_Rad = hitbox2->radius;
 
+  bool ret = false;
+
   if (c_X > r_Left - c_Rad && c_X < r_Right + c_Rad && c_Y > r_Top && c_Y < r_Bottom)
-    return true;
+    ret = true;
   if (c_X > r_Left && c_X < r_Right && c_Y > r_Top - c_Rad && c_Y < r_Bottom + c_Rad)
+    ret = true;
+
+  if (ret && separation_Vector)
+  {
+    double distance = 0;
+    double min_Dist = INFINITY;
+    short direction = 0;
+
+    distance = r_Right - c_X + c_Rad;
+    if (distance > 0 && distance < min_Dist)
+    {
+      min_Dist = distance;
+      direction = 1;
+    }
+
+    distance = c_X - r_Left + c_Rad;
+    if (distance > 0 && distance < min_Dist)
+    {
+      min_Dist = distance;
+      direction = 2;
+    }
+
+    distance = r_Bottom - c_Y + c_Rad;
+    if (distance > 0 && distance < min_Dist)
+    {
+      min_Dist = distance;
+      direction = 3;
+    }
+
+    distance = c_Y - r_Top + c_Rad;
+    if (distance > 0 && distance < min_Dist)
+    {
+      min_Dist = distance;
+      direction = 4;
+    }
+
+    switch (direction)
+    {
+    case 0:
+      *separation_Vector = {0, 0};
+      break;
+    case 1:
+      *separation_Vector = {min_Dist, 0};
+      break;
+    case 2:
+      *separation_Vector = {-min_Dist, 0};
+      break;
+    case 3:
+      *separation_Vector = {0, min_Dist};
+      break;
+    case 4:
+      *separation_Vector = {0, -min_Dist};
+      break;
+    }
+  }
+
+  if (ret)
     return true;
 
-  if ((hitbox2->position - hitbox1->top_Left).mag() < c_Rad)
+  Vector<double, 2> vec;
+  double dist;
+
+  vec = hitbox2->position - hitbox1->top_Left;
+  dist = vec.mag();
+  if (dist < c_Rad)
+  {
+    if (separation_Vector)
+    {
+      *separation_Vector = vec * (c_Rad / dist) - vec;
+    }
     return true;
-  if ((hitbox2->position - hitbox1->bottom_Right).mag() < c_Rad)
+  }
+
+  vec = hitbox2->position - hitbox1->bottom_Right;
+  dist = vec.mag();
+  if (dist < c_Rad)
+  {
+    if (separation_Vector)
+    {
+      *separation_Vector = vec * (c_Rad / dist) - vec;
+    }
     return true;
-  if ((hitbox2->position - Vector<double, 2>{r_Right, r_Top}).mag() < c_Rad)
+  }
+
+  vec = hitbox2->position - Vector<double, 2>{r_Right, r_Top};
+  dist = vec.mag();
+  if (dist < c_Rad)
+  {
+    if (separation_Vector)
+    {
+      *separation_Vector = vec * (c_Rad / dist) - vec;
+    }
     return true;
-  if ((hitbox2->position - Vector<double, 2>{r_Left, r_Bottom}).mag() < c_Rad)
+  }
+
+  vec = hitbox2->position - Vector<double, 2>{r_Left, r_Bottom};
+  dist = vec.mag();
+  if (dist < c_Rad)
+  {
+    if (separation_Vector)
+    {
+      *separation_Vector = vec * (c_Rad / dist) - vec;
+    }
     return true;
+  }
 
   return false;
 }
