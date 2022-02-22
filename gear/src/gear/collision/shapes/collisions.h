@@ -34,7 +34,6 @@ bool shapes_Intersect<Rect, Rect>(const Rect *hitbox1, const Rect *hitbox2, Vect
       min_Dist = distance;
       direction = 1;
     }
-    GEAR_DEBUG_LOG("1 -> %lf", distance);
 
     distance = hitbox2->bottom_Right[0] - hitbox1->top_Left[0];
     if (distance > 0 && distance < min_Dist)
@@ -42,7 +41,6 @@ bool shapes_Intersect<Rect, Rect>(const Rect *hitbox1, const Rect *hitbox2, Vect
       min_Dist = distance;
       direction = 2;
     }
-    GEAR_DEBUG_LOG("2 -> %lf", distance);
 
     distance = hitbox1->bottom_Right[1] - hitbox2->top_Left[1];
     if (distance > 0 && distance < min_Dist)
@@ -50,7 +48,6 @@ bool shapes_Intersect<Rect, Rect>(const Rect *hitbox1, const Rect *hitbox2, Vect
       min_Dist = distance;
       direction = 3;
     }
-    GEAR_DEBUG_LOG("3 -> %lf", distance);
 
     distance = hitbox2->bottom_Right[1] - hitbox1->top_Left[1];
     if (distance > 0 && distance < min_Dist)
@@ -58,7 +55,6 @@ bool shapes_Intersect<Rect, Rect>(const Rect *hitbox1, const Rect *hitbox2, Vect
       min_Dist = distance;
       direction = 4;
     }
-    GEAR_DEBUG_LOG("4 -> %lf", distance);
 
     switch (direction)
     {
@@ -115,10 +111,66 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, 
 template <>
 bool shapes_Intersect<Rect, Point>(const Rect *hitbox1, const Point *hitbox2, Vector<double, 2> *separation_Vector)
 {
-  return (hitbox1->top_Left[0] < hitbox2->position[0] &&
-          hitbox1->bottom_Right[0] > hitbox2->position[0] &&
-          hitbox1->top_Left[1] < hitbox2->position[1] &&
-          hitbox1->bottom_Right[1] > hitbox2->position[1]);
+  bool ret = (hitbox1->top_Left[0] < hitbox2->position[0] &&
+              hitbox1->bottom_Right[0] > hitbox2->position[0] &&
+              hitbox1->top_Left[1] < hitbox2->position[1] &&
+              hitbox1->bottom_Right[1] > hitbox2->position[1]);
+
+  if (ret && separation_Vector)
+  {
+    double distance = 0;
+    double min_Dist = INFINITY;
+    short direction = 0;
+
+    distance = hitbox1->bottom_Right[0] - hitbox2->position[0];
+    if (distance > 0 && distance < min_Dist)
+    {
+      min_Dist = distance;
+      direction = 1;
+    }
+
+    distance = hitbox2->position[0] - hitbox1->top_Left[0];
+    if (distance > 0 && distance < min_Dist)
+    {
+      min_Dist = distance;
+      direction = 2;
+    }
+
+    distance = hitbox1->bottom_Right[1] - hitbox2->position[1];
+    if (distance > 0 && distance < min_Dist)
+    {
+      min_Dist = distance;
+      direction = 3;
+    }
+
+    distance = hitbox2->position[1] - hitbox1->top_Left[1];
+    if (distance > 0 && distance < min_Dist)
+    {
+      min_Dist = distance;
+      direction = 4;
+    }
+
+    switch (direction)
+    {
+    case 0:
+      *separation_Vector = {0, 0};
+      break;
+    case 1:
+      *separation_Vector = {min_Dist, 0};
+      break;
+    case 2:
+      *separation_Vector = {-min_Dist, 0};
+      break;
+    case 3:
+      *separation_Vector = {0, min_Dist};
+      break;
+    case 4:
+      *separation_Vector = {0, -min_Dist};
+      break;
+    }
+  }
+
+  return ret;
 }
 
 template <>
