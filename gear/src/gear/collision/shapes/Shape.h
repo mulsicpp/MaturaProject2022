@@ -26,7 +26,7 @@ public:
 
   ShapeType get_Type(void) const;
 
-  bool intersects(const Shape *other, Vector<float, 2> *separation_Vector = nullptr) const;
+  bool intersects(const Shape *other, Vector<double, 2> *separation_Vector = nullptr) const;
 
   // virtual void transform(TransformComponent *transform, Shape *transformed_Shape) const = 0;
 };

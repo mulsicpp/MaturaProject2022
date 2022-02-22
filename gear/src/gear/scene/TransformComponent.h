@@ -10,11 +10,11 @@
 _GEAR_START
 
 struct TransformComponent {
-  gear::Vector<float, 2> position = {0, 0};
-  gear::Vector<float, 2> scale = {1, 1};
+  gear::Vector<double, 2> position = {0, 0};
+  gear::Vector<double, 2> scale = {1, 1};
   uint8_t state = 0;
 
-  gear::Matrix<float, 3, 3> get_Matrix(void);
+  gear::Matrix<double, 3, 3> get_Matrix(void);
 };
 
 _GEAR_END

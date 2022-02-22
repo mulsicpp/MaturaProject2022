@@ -13,14 +13,13 @@ private:
   gear::Ref<gear::Palette> palettes[7];
   int palette_Index = 0;
 
-  gear::Ref<gear::Shape> rect;
-  gear::Ref<gear::Shape> circle;
-  gear::Ref<gear::Shape> point;
+  gear::Ref<gear::Shape> s1;
+  gear::Ref<gear::Shape> s2;
 
-  gear::Vector<float, 2> cam_Pos;
+  gear::Vector<double, 2> cam_Pos;
 
   gear::Camera cam = &cam_Pos;
-  float speed = 1;
+  double speed = 1;
 
 public:
   void on_Startup(void) override;

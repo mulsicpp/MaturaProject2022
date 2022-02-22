@@ -40,9 +40,8 @@ void MyGame::on_Startup(void)
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
 
-  rect = Ref<Shape>(new Rect({0, 0}, {50, 40}));
-  circle = Ref<Shape>(new Circle({0, 0}, 12));
-  point = Ref<Shape>(new Point({0, 0}));
+  s2 = Ref<Shape>(new Rect({-40, -20}, {40, 20}));
+  s1 = Ref<Shape>(new Rect({0, 0}, {50, 30}));
 
 
   Input::add_Global_Callback<ControllerButtonEvent>([](ControllerButtonEvent e)
@@ -78,17 +77,6 @@ void MyGame::on_Startup(void)
   animation_Comp.animation_Offset = 0;
   animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
 
-  int *i = new int;
-
-  delete i;
-
-  struct {
-    int x;
-    int y;
-  } a;
-
-  auto [x, y] = a;
-
   for (int i = 0; i < 5; i++)
     for (int j = 0; j < 10; j++)
     {
@@ -103,7 +91,7 @@ void MyGame::on_Startup(void)
       animation_Comp.parallax_Factor = 1.0f / (i * 0.5 + 1);
       animation_Comp.offset = {-32, -32, 1.0f / (i * 0.5 + 1)};
       new_Eis.add<AnimationComponent>(animation_Comp);
-      Vector<float, 2> pos(32 - 320 + j * 64.0f, 0);
+      Vector<double, 2> pos(32 - 320 + j * 64.0f, 0);
       new_Eis.add<TransformComponent>({pos, {1, 1}, GEAR_MIRROR_X});
     }
   Entity entity = m_Scene->get_Entity(7);
@@ -142,9 +130,17 @@ void MyGame::per_Frame(void)
   cam.follow_Target();
   Renderer::start_New_Frame();
   Renderer::render_Scene(m_Scene);
-  ((Circle *)circle.get())->position = Input::get_Cursor_Position().cast_To<float, 2>() / 2 - Vector<float, 2>{320, 180};
-  Renderer::render_Shape(rect.get(), circle->intersects(rect.get()) ? Vector<float,4>{1, 0, 0, 1} : Vector<float,4>{0, 0, 1, 1});
-  Renderer::render_Shape(circle.get(), {0, 0, 1, 1});
+  ((Rect *)s1.get())->top_Left = Input::get_Cursor_Position().cast_To<double, 2>() / 2 - Vector<double, 2>{320, 180};
+  ((Rect *)s1.get())->bottom_Right = ((Rect *)s1.get())->top_Left + Vector<double, 2>{50, 30};
+  //((Circle *)s1.get())->position += {0, 0.7};
+  Vector<double, 2> sep_Vec(0, 0);
+  bool intersects = s2->intersects(s1.get(), &sep_Vec);
+  if(intersects){
+    ((Rect *)s1.get())->top_Left += sep_Vec;
+    ((Rect *)s1.get())->bottom_Right += sep_Vec;
+  }
+  Renderer::render_Shape(s2.get(), intersects ? Vector<float, 4>{1, 0, 0, 1} : Vector<float, 4>{0, 0, 1, 1});
+  Renderer::render_Shape(s1.get(), intersects ? Vector<float, 4>{1, 0, 0, 1} : Vector<float, 4>{0, 0, 1, 1});
   Renderer::show_Frame();
 }
 

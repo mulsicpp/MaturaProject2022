@@ -8,10 +8,10 @@ _GEAR_START
 class Circle : public Shape
 {
 public:
-  Vector<float, 2> position;
-  float radius;
+  Vector<double, 2> position;
+  double radius;
   
-  Circle(const Vector<float, 2> &position, float radius);
+  Circle(const Vector<double, 2> &position, double radius);
 };
 
 _GEAR_END

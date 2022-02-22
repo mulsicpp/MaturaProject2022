@@ -117,22 +117,22 @@ void gear::SpritePipeline::draw_Batch(void)
 
 void gear::SpritePipeline::push_Sprite_Quad(gear::TransformComponent &position, gear::SpriteComponent &sprite)
 {
-  float x_Left = sprite.offset[0];
-  float x_Right = sprite.offset[0] + sprite.sprite->get_Width();
-  float y_Top = sprite.offset[1];
-  float y_Bottom = sprite.offset[1] + sprite.sprite->get_Height();
+  double x_Left = sprite.offset[0];
+  double x_Right = sprite.offset[0] + sprite.sprite->get_Width();
+  double y_Top = sprite.offset[1];
+  double y_Bottom = sprite.offset[1] + sprite.sprite->get_Height();
 
-  float depth = sprite.offset[2];
+  double depth = sprite.offset[2];
 
   auto mat = position.get_Matrix();
 
-  Vector<float, 3> pos =mat * Vector<float, 3>{x_Left, y_Top, 1};
+  Vector<float, 3> pos = (mat * Vector<double, 3>{x_Left, y_Top, 1}).cast_To<float, 3>();
   instance.m_Temp_Vertex_Data[0] = {{pos[0], pos[1], depth}, {0, 0}, instance.m_Batch_Index, sprite.parallax_Factor};
-  pos =mat * Vector<float, 3>{x_Right, y_Top, 1};
+  pos = (mat * Vector<double, 3>{x_Right, y_Top, 1}).cast_To<float, 3>();
   instance.m_Temp_Vertex_Data[1] = {{pos[0], pos[1], depth}, {1, 0}, instance.m_Batch_Index, sprite.parallax_Factor};
-  pos =mat * Vector<float, 3>{x_Right, y_Bottom, 1};
+  pos = (mat * Vector<double, 3>{x_Right, y_Bottom, 1}).cast_To<float, 3>();
   instance.m_Temp_Vertex_Data[2] = {{pos[0], pos[1], depth}, {1, 1}, instance.m_Batch_Index, sprite.parallax_Factor};
-  pos =mat * Vector<float, 3>{x_Left, y_Bottom, 1};
+  pos = (mat * Vector<double, 3>{x_Left, y_Bottom, 1}).cast_To<float, 3>();
   instance.m_Temp_Vertex_Data[3] = {{pos[0], pos[1], depth}, {0, 1}, instance.m_Batch_Index, sprite.parallax_Factor};
 
   glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
@@ -165,13 +165,13 @@ void gear::SpritePipeline::push_Animation_Quad(gear::TransformComponent &positio
 
   auto mat = position.get_Matrix();
 
-  Vector<float, 3> pos =mat * Vector<float, 3>{x_Left, y_Top, 1};
-  instance.m_Temp_Vertex_Data[0] = {{pos[0], pos[1], depth}, {0, tex_Top},    instance.m_Batch_Index, animation.parallax_Factor};
-  pos =mat * Vector<float, 3>{x_Right, y_Top, 1};
-  instance.m_Temp_Vertex_Data[1] = {{pos[0], pos[1], depth}, {1, tex_Top},    instance.m_Batch_Index, animation.parallax_Factor};
-  pos =mat * Vector<float, 3>{x_Right, y_Bottom, 1};
+  Vector<float, 3> pos = (mat * Vector<double, 3>{x_Left, y_Top, 1}).cast_To<float, 3>();
+  instance.m_Temp_Vertex_Data[0] = {{pos[0], pos[1], depth}, {0, tex_Top}, instance.m_Batch_Index, animation.parallax_Factor};
+  pos = (mat * Vector<double, 3>{x_Right, y_Top, 1}).cast_To<float, 3>();
+  instance.m_Temp_Vertex_Data[1] = {{pos[0], pos[1], depth}, {1, tex_Top}, instance.m_Batch_Index, animation.parallax_Factor};
+  pos = (mat * Vector<double, 3>{x_Right, y_Bottom, 1}).cast_To<float, 3>();
   instance.m_Temp_Vertex_Data[2] = {{pos[0], pos[1], depth}, {1, tex_Bottom}, instance.m_Batch_Index, animation.parallax_Factor};
-  pos =mat * Vector<float, 3>{x_Left, y_Bottom, 1};
+  pos = (mat * Vector<double, 3>{x_Left, y_Bottom, 1}).cast_To<float, 3>();
   instance.m_Temp_Vertex_Data[3] = {{pos[0], pos[1], depth}, {0, tex_Bottom}, instance.m_Batch_Index, animation.parallax_Factor};
 
   glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);

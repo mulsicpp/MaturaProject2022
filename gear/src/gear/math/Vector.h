@@ -192,7 +192,7 @@ public:
   @param vector the vector to be added
   @return a reference to this vector
   */
-  const Vector<T, N> &operator+=(const Vector<T, N> &vector) const
+  const Vector<T, N> &operator+=(const Vector<T, N> &vector)
   {
     for (int i = 0; i < N; i++)
       data[i] += vector.data[i];
@@ -205,7 +205,7 @@ public:
   @param vector the vector to be subtracted
   @return a reference to this vector
   */
-  const Vector<T, N> &operator-=(const Vector<T, N> &vector) const
+  const Vector<T, N> &operator-=(const Vector<T, N> &vector)
   {
     for (int i = 0; i < N; i++)
       data[i] -= vector.data[i];
@@ -218,7 +218,7 @@ public:
   @param k the scalar value to be multiplied with
   @return a reference to this vector
   */
-  const Vector<T, N> &operator*=(const T &k) const
+  const Vector<T, N> &operator*=(const T &k)
   {
     for (int i = 0; i < N; i++)
       data[i] *= k;
@@ -231,7 +231,7 @@ public:
   @param k the scalar value to be divided by
   @return a reference to this vector
   */
-  const Vector<T, N> &operator/=(const T &k) const
+  const Vector<T, N> &operator/=(const T &k)
   {
     for (int i = 0; i < N; i++)
       data[i] /= k;
@@ -353,7 +353,7 @@ template <class T>
 Vector<T, 3> cross_Product(const Vector<T, 3> &vector1, const Vector<T, 3> &vector2)
 {
   Vector<T, 3> ret;
-  float *p_ret = (float *)ret, *p_v1 = (float *)vector1, *p_v2 = (float *)vector2;
+  T *p_ret = (T *)ret, *p_v1 = (T *)vector1, *p_v2 = (T *)vector2;
 
   p_ret[0] = p_v1[1] * p_v2[2] - p_v1[2] * p_v2[1];
   p_ret[1] = p_v1[2] * p_v2[0] - p_v1[0] * p_v2[2];
