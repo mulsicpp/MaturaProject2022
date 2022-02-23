@@ -3,6 +3,7 @@
 
 static void update_Transform_Matricies(gear::TransformComponent &transform)
 {
+  transform.update_Matrix();
 }
 
 void gear::transform_Entities(gear::Scene *scene)

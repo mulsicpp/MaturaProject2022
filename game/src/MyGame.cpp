@@ -31,26 +31,19 @@ void MyGame::on_Startup(void)
   m_Window->set_Title("Game Window!");
   m_Window->set_Resizable(false);
   m_Window->set_Size(1280, 720);
-  //m_Window->set_Fullscreen();
+  // m_Window->set_Fullscreen();
   m_Window->set_Visible(true);
 
   Renderer::create(640, 360);
   Renderer::set_V_Sync(true);
 
+  h = Hitbox::create<Point>({{20, 0}});
 
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
 
-  s1 = Ref<Shape>(new Circle({0, 0}, 12));
-  s2 = Ref<Shape>(new Rect({-50, -30}, {50, 30}));
-
-  Hitbox h = Hitbox::create<Circle>(Circle({0, 0}, 20));
-
-
   Input::add_Global_Callback<ControllerButtonEvent>([](ControllerButtonEvent e)
-  {
-    GEAR_DEBUG_LOG("gamepad button %s", e.get_Action() == Action::PRESSED ? "pressed" : "released");
-  });
+                                                    { GEAR_DEBUG_LOG("gamepad button %s", e.get_Action() == Action::PRESSED ? "pressed" : "released"); });
   GEAR_DEBUG_LOG("%s", glfwGetVersionString());
 
   allow_Gear_Components();
@@ -84,7 +77,7 @@ void MyGame::on_Startup(void)
     for (int j = 0; j < 10; j++)
     {
       Entity new_Eis = m_Scene->create_Entity();
-      //GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
+      // GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
 
       animation_Comp.palette = palettes[(i * 13 + j) % 7];
       animation_Comp.animation_Offset++;
@@ -95,14 +88,15 @@ void MyGame::on_Startup(void)
       animation_Comp.offset = {-32, -32, 1.0f / (i * 0.5 + 1)};
       new_Eis.add<AnimationComponent>(animation_Comp);
       Vector<double, 2> pos(32 - 320 + j * 64.0f, 0);
-      new_Eis.add<TransformComponent>({pos, {1, 1}, GEAR_MIRROR_X});
+      new_Eis.add<TransformComponent>({pos, {1, 1}, 0});
     }
   Entity entity = m_Scene->get_Entity(7);
-  entity.add<EventComponent<KeyEvent>>({[](KeyEvent e) {
-    GEAR_DEBUG_LOG("key pressed");
-  }});
+  entity.add<EventComponent<KeyEvent>>({[](KeyEvent e)
+                                        {
+                                          GEAR_DEBUG_LOG("key pressed");
+                                        }});
 
-  //m_Scene->print();
+  // m_Scene->print();
 
   GEAR_DEBUG_LOG("finished scene");
 
@@ -119,6 +113,20 @@ void MyGame::per_Frame(void)
 
   transform_Entities(m_Scene);
   call_Script_Update(m_Scene);
+
+  auto transform = m_Scene->get_Entity(0).get<TransformComponent>();
+
+  *transform = {{-288, 0}, {1, 1}, 0};
+
+  if (Input::get_Key_State(Key::X) == State::PRESSED)
+    transform->state = GEAR_MIRROR_X;
+  if (Input::get_Key_State(Key::Y) == State::PRESSED)
+    transform->scale[0] = 2;
+  if (Input::get_Key_State(Key::C) == State::PRESSED)
+    transform->position = {-288, -70};
+  
+  transform->update_Matrix();
+
   if (Input::get_Key_State(Key::A) == State::PRESSED || Input::get_Key_State(Key::LEFT) == State::PRESSED)
     cam_Pos[0] -= 6;
 
@@ -134,17 +142,10 @@ void MyGame::per_Frame(void)
   cam.follow_Target();
   Renderer::start_New_Frame();
   Renderer::render_Scene(m_Scene);
-  ((Circle *)s1.get())->position = Input::get_Cursor_Position().cast_To<double, 2>() / 2 - Vector<double, 2>{320, 180};
-  //((Rect *)s1.get())->bottom_Right = ((Rect *)s1.get())->top_Left + Vector<double, 2>{50, 30};
-  //((Circle *)s1.get())->position += {0, 0.7};
-  Vector<double, 2> sep_Vec(0, 0);
-  bool intersects = s1->intersects(s2.get(), &sep_Vec);
-  if(intersects)
-  {
-    ((Circle *)s1.get())->position -= sep_Vec;
-  }
-  Renderer::render_Shape(s2.get(), intersects ? Vector<float, 4>{1, 0, 0, 1} : Vector<float, 4>{0, 0, 1, 1});
-  Renderer::render_Shape(s1.get(), {0, 1, 0, 1});
+  h.transform(transform);
+  Circle *c = (Circle *)h.m_Absolute_Shape.get();
+  GEAR_DEBUG_LOG("(%lf, %lf), %lf", c->position[0], c->position[1], c->radius);
+  Renderer::render_Shape(h.m_Absolute_Shape.get(), {1, 0, 0, 1});
   Renderer::show_Frame();
 }
 

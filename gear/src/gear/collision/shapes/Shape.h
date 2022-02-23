@@ -28,7 +28,7 @@ public:
 
   bool intersects(const Shape *other, Vector<double, 2> *separation_Vector = nullptr) const;
 
-  // virtual void transform(TransformComponent *transform, Shape *transformed_Shape) const = 0;
+  virtual void transform(TransformComponent *transform, Shape *transformed_Shape) const = 0;
 };
 
 _GEAR_END

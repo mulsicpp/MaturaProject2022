@@ -11,8 +11,7 @@ public:
   
   Point(const Vector<double, 2> &pos);
 
-  //bool intersects(Shape *other) override;
-  //void transform(TransformComponent *transform, Shape *transformed_Shape) override;
+  void transform(TransformComponent *transform, Shape *transformed_Shape) const override;
 };
 
 _GEAR_END

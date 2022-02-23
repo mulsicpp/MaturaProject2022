@@ -3,6 +3,7 @@
 #include <gear/resource/Palette.h>
 #include <gear/renderer/Camera.h>
 #include <gear/collision/shapes/Shape.h>
+#include <gear/collision/Hitbox.h>
 
 class MyGame : public gear::Game
 {
@@ -13,8 +14,7 @@ private:
   gear::Ref<gear::Palette> palettes[7];
   int palette_Index = 0;
 
-  gear::Ref<gear::Shape> s1;
-  gear::Ref<gear::Shape> s2;
+  gear::Hitbox h;
 
   gear::Vector<double, 2> cam_Pos;
 
