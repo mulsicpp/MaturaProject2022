@@ -91,12 +91,6 @@ void MyGame::on_Startup(void)
       new_Eis.add<TransformComponent>({pos, {1, 1}, 0});
     }
   Entity entity = m_Scene->get_Entity(7);
-  entity.add<EventComponent<KeyEvent>>({[](KeyEvent e)
-                                        {
-                                          GEAR_DEBUG_LOG("key pressed");
-                                        }});
-
-  // m_Scene->print();
 
   GEAR_DEBUG_LOG("finished scene");
 
@@ -111,7 +105,7 @@ void MyGame::per_Frame(void)
     this->close(0);
   Input::dispatch_Events(m_Scene);
 
-  transform_Entities(m_Scene);
+  m_Scene->update_Transformation();
   call_Script_Update(m_Scene);
 
   auto transform = m_Scene->get_Entity(0).get<TransformComponent>();
@@ -125,7 +119,7 @@ void MyGame::per_Frame(void)
   if (Input::get_Key_State(Key::C) == State::PRESSED)
     transform->position = {-288, -70};
   
-  transform->update_Matrix();
+  m_Scene->get_Entity(0).update_Transformation();
 
   if (Input::get_Key_State(Key::A) == State::PRESSED || Input::get_Key_State(Key::LEFT) == State::PRESSED)
     cam_Pos[0] -= 6;

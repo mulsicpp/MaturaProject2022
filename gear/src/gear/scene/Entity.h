@@ -254,6 +254,11 @@ public:
   */
   uint8_t get_Scene_ID(void) const;
 
+  /*
+  Updates all transformations of the entity.
+  */
+  void update_Transformation(void);
+
 private:
   template <class T1, class T2, class... Ts>
   static void reset_Iterators(ComponentManager<T1> &iterator1, ComponentManager<T2> &iterator2, ComponentManager<Ts> &...iterators)

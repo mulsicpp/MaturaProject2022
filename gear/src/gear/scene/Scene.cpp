@@ -81,6 +81,12 @@ void gear::Scene::add_Manager_Callbacks(gear::ManagerCallbacks callbacks)
   m_Manager_Callbacks[m_Insert_Index++] = callbacks;
 }
 
+void gear::Scene::update_Transformation(void) {
+  for(auto &[id, flags] : this->m_Comp_Flags) {
+    Entity{id, (uint8_t)(this - scenes)}.update_Transformation();
+  }
+}
+
 void gear::Scene::print(void)
 {
   std::cout << "scene " << this - scenes << ":\n";

@@ -1,16 +1,6 @@
 #include "TransformComponent.h"
 #include "Entity.h"
 
-static void update_Transform_Matricies(gear::TransformComponent &transform)
-{
-  transform.update_Matrix();
-}
-
-void gear::transform_Entities(gear::Scene *scene)
-{
-  gear::Entity::for_Each(scene->get_ID(), update_Transform_Matricies);
-}
-
 static const gear::Matrix<double, 3, 3> flip_Axes = {
     0, 1, 0,
     1, 0, 0,
@@ -38,4 +28,4 @@ void gear::TransformComponent::update_Matrix(void)
     m_Matrix = m_Matrix * flip_Axes;
 }
 
-gear::Matrix<double, 3, 3> gear::TransformComponent::get_Matrix(void) { return m_Matrix; }
+gear::Matrix<double, 3, 3> gear::TransformComponent::get_Matrix(void) const { return m_Matrix; }

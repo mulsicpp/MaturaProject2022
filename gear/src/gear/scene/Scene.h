@@ -99,6 +99,11 @@ public:
 
   void add_Manager_Callbacks(ManagerCallbacks callbacks);
 
+  /*
+  Transforms all entities according to their transform component.
+  */
+  void update_Transformation(void);
+
   void print(void);
 };
 

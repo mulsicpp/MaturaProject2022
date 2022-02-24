@@ -27,6 +27,4 @@ private:
   Matrix<double, 3, 3> m_Matrix;
 };
 
-void transform_Entities(Scene *scene);
-
 _GEAR_END
