@@ -12,7 +12,7 @@ public:
 
   Rect(const Vector<double, 2> &top_Left, const Vector<double, 2> &bottom_Right);
 
-  void transform(TransformComponent *transform, Shape *transformed_Shape) const override;
+  void transform(const TransformComponent *transform, Shape *transformed_Shape) const override;
 };
 
 _GEAR_END

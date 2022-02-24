@@ -37,7 +37,7 @@ void MyGame::on_Startup(void)
   Renderer::create(640, 360);
   Renderer::set_V_Sync(true);
 
-  h = Hitbox::create<Point>({{20, 0}});
+  h = Hitbox::create<Rect>({{-5, 0}, {15, 10}});
 
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
@@ -69,7 +69,7 @@ void MyGame::on_Startup(void)
   animation_Comp.offset = {-32, -32, 0};
   animation_Comp.parallax_Factor = 1;
   animation_Comp.palette = palettes[0];
-  animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/eis_jumping_besser.gear");
+  animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/eis_idle.gear");
   animation_Comp.animation_Offset = 0;
   animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
 
@@ -143,8 +143,8 @@ void MyGame::per_Frame(void)
   Renderer::start_New_Frame();
   Renderer::render_Scene(m_Scene);
   h.transform(transform);
-  Circle *c = (Circle *)h.m_Absolute_Shape.get();
-  GEAR_DEBUG_LOG("(%lf, %lf), %lf", c->position[0], c->position[1], c->radius);
+  Rect *r = (Rect *)h.m_Absolute_Shape.get();
+  GEAR_DEBUG_LOG("(%lf, %lf, %lf, %lf)", r->top_Left[0], r->top_Left[1], r->bottom_Right[0], r->bottom_Right[1]);
   Renderer::render_Shape(h.m_Absolute_Shape.get(), {1, 0, 0, 1});
   Renderer::show_Frame();
 }

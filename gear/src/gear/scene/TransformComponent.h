@@ -16,11 +16,11 @@ struct TransformComponent
   Vector<double, 2> scale = {1, 1};
   uint8_t state = 0;
 
-  TransformComponent(Vector<double, 2> position = {0, 0},
-                     Vector<double, 2> scale = {1, 1},
+  TransformComponent(Vector<double, 2> position = Vector<double, 2>(0, 0),
+                     Vector<double, 2> scale = Vector<double, 2>(1, 1),
                      uint8_t state = 0);
 
-  Matrix<double, 3, 3> get_Matrix(void);
+  Matrix<double, 3, 3> get_Matrix(void) const;
   void update_Matrix(void);
 
 private:

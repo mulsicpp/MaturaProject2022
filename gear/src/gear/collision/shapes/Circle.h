@@ -13,7 +13,7 @@ public:
   
   Circle(const Vector<double, 2> &position, double radius);
 
-  void transform(TransformComponent *transform, Shape *transformed_Shape) const override;
+  void transform(const TransformComponent *transform, Shape *transformed_Shape) const override;
 };
 
 _GEAR_END

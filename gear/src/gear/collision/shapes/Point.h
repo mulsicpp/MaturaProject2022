@@ -11,7 +11,7 @@ public:
   
   Point(const Vector<double, 2> &pos);
 
-  void transform(TransformComponent *transform, Shape *transformed_Shape) const override;
+  void transform(const TransformComponent *transform, Shape *transformed_Shape) const override;
 };
 
 _GEAR_END
