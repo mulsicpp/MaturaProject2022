@@ -20,7 +20,7 @@
 #include <gear/collision/shapes/Rect.h>
 #include <gear/collision/shapes/Circle.h>
 #include <gear/collision/shapes/Point.h>
-#include <gear/collision/Hitbox.h>
+#include <gear/collision/CollisionComponent.h>
 
 #include "scripts/EisScript.h"
 
@@ -73,23 +73,28 @@ void MyGame::on_Startup(void)
   animation_Comp.animation_Offset = 0;
   animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
 
-  for (int i = 0; i < 5; i++)
-    for (int j = 0; j < 10; j++)
-    {
-      Entity new_Eis = m_Scene->create_Entity();
-      // GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
+  Entity new_Eis = m_Scene->create_Entity();
+  // GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
 
-      animation_Comp.palette = palettes[(i * 13 + j) % 7];
-      animation_Comp.animation_Offset++;
-      if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
-        animation_Comp.animation_Offset = 0;
+  animation_Comp.palette = palettes[4];
+  animation_Comp.animation_Offset++;
+  if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
+    animation_Comp.animation_Offset = 1.0f;
 
-      animation_Comp.parallax_Factor = 1.0f / (i * 0.5 + 1);
-      animation_Comp.offset = {-32, -32, 1.0f / (i * 0.5 + 1)};
-      new_Eis.add<AnimationComponent>(animation_Comp);
-      Vector<double, 2> pos(32 - 320 + j * 64.0f, 0);
-      new_Eis.add<TransformComponent>({pos, {1, 1}, 0});
-    }
+  animation_Comp.parallax_Factor = 1.0f;
+  animation_Comp.offset = {-32, -32, 0};
+  new_Eis.add<AnimationComponent>(animation_Comp);
+  Vector<double, 2> pos(0, -40);
+  new_Eis.add<TransformComponent>({pos, {1, 1}, 0});
+  new_Eis.add<CollisionComponent>({{Hitbox::create<Rect>({{-12, 14}, {12, 32}}),
+                                    Hitbox::create<Circle>({{2, 14}, 9}),
+                                    Hitbox::create<Circle>({{7, 5}, 6}),
+                                    Hitbox::create<Circle>({{11, -3}, 3})}});
+                                  
+  Entity platform = m_Scene->create_Entity();
+  platform.add<TransformComponent>({{0, 80}, {1, 1}, 0});
+  platform.add<CollisionComponent>({{Hitbox::create<Rect>({{-180, 0}, {180, 30}})}});
+
   Entity entity = m_Scene->get_Entity(7);
 
   GEAR_DEBUG_LOG("finished scene");
@@ -110,28 +115,24 @@ void MyGame::per_Frame(void)
 
   auto transform = m_Scene->get_Entity(0).get<TransformComponent>();
 
-  *transform = {{-288, 0}, {1, 1}, 0};
-
-  if (Input::get_Key_State(Key::X) == State::PRESSED)
-    transform->state = GEAR_MIRROR_X;
-  if (Input::get_Key_State(Key::Y) == State::PRESSED)
-    transform->scale[0] = 2;
-  if (Input::get_Key_State(Key::C) == State::PRESSED)
-    transform->position = {-288, -70};
-  
-  m_Scene->get_Entity(0).update_Transformation();
-
   if (Input::get_Key_State(Key::A) == State::PRESSED || Input::get_Key_State(Key::LEFT) == State::PRESSED)
-    cam_Pos[0] -= 6;
+  {
+    transform->position[0] -= 6;
+    transform->state = 0;
+  }
 
   if (Input::get_Key_State(Key::D) == State::PRESSED || Input::get_Key_State(Key::RIGHT) == State::PRESSED)
-    cam_Pos[0] += 6;
+  {
+    transform->position[0] += 6;
+    transform->state = GEAR_MIRROR_X;
+  }
 
   if (Input::get_Key_State(Key::W) == State::PRESSED || Input::get_Key_State(Key::UP) == State::PRESSED)
-    cam_Pos[1] -= 6;
+    transform->position[1] -= 6;
 
   if (Input::get_Key_State(Key::S) == State::PRESSED || Input::get_Key_State(Key::DOWN) == State::PRESSED)
-    cam_Pos[1] += 6;
+    transform->position[1] += 6;
+  m_Scene->get_Entity(0).update_Transformation();
 
   cam.follow_Target();
   Renderer::start_New_Frame();
@@ -139,7 +140,7 @@ void MyGame::per_Frame(void)
   h.transform(transform);
   Rect *r = (Rect *)h.m_Absolute_Shape.get();
   GEAR_DEBUG_LOG("(%lf, %lf, %lf, %lf)", r->top_Left[0], r->top_Left[1], r->bottom_Right[0], r->bottom_Right[1]);
-  Renderer::render_Shape(h.m_Absolute_Shape.get(), {1, 0, 0, 1});
+  Renderer::render_All_Hitboxes(m_Scene);
   Renderer::show_Frame();
 }
 

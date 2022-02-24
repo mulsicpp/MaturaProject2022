@@ -10,6 +10,8 @@
 #include "pipelines/SpritePipeline.h"
 #include "pipelines/ShapePipeline.h"
 
+#include <gear/collision/CollisionComponent.h>
+
 using SpritePipeline = gear::SpritePipeline;
 
 gear::Framebuffer gear::Renderer::m_Framebuffer;
@@ -110,4 +112,14 @@ void gear::Renderer::render_Shape(const gear::Shape* shape, const Vector<float, 
   else
     glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), 0, 0);
   ShapePipeline::get_Instance().render_Shape(shape, color);
+}
+
+static void collider_Render_Callback(gear::CollisionComponent &collider) {
+  for(auto &hitbox : collider.hitboxes)
+    gear::Renderer::render_Shape(hitbox.m_Absolute_Shape.get(), {0, 1, 0, 1});
+}
+
+void gear::Renderer::render_All_Hitboxes(gear::Scene *scene)
+{
+  gear::Entity::for_Each(scene->get_ID(), collider_Render_Callback);
 }
