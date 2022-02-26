@@ -23,6 +23,7 @@
 #include <gear/collision/CollisionComponent.h>
 
 #include "scripts/EisScript.h"
+#include "scripts/EisScript2.h"
 
 using namespace gear;
 
@@ -82,18 +83,29 @@ void MyGame::on_Startup(void)
   animation_Comp.parallax_Factor = 1.0f;
   animation_Comp.offset = {-32, -32, 0};
   new_Eis.add<AnimationComponent>(animation_Comp);
-  Vector<double, 2> pos(0, -40);
-  new_Eis.add<TransformComponent>({pos, {1, 1}, 0});
+  new_Eis.add<TransformComponent>({{0, -40}, {1, 1}, 0});
   new_Eis.add<CollisionComponent>({{Hitbox::create<Rect>({{-12, 14}, {12, 32}}),
                                     Hitbox::create<Circle>({{2, 14}, 9}),
                                     Hitbox::create<Circle>({{7, 5}, 6}),
                                     Hitbox::create<Circle>({{11, -3}, 3})}});
+
+  new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>());
+
+  animation_Comp.palette = palettes[6];
+
+  new_Eis = m_Scene->create_Entity();
+  new_Eis.add<AnimationComponent>(animation_Comp);
+  new_Eis.add<TransformComponent>({{100, -40}, {1, 1}, 0});
+  new_Eis.add<CollisionComponent>({{Hitbox::create<Rect>({{-12, 14}, {12, 32}}),
+                                    Hitbox::create<Circle>({{2, 14}, 9}),
+                                    Hitbox::create<Circle>({{7, 5}, 6}),
+                                    Hitbox::create<Circle>({{11, -3}, 3})}});
+
+  new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript2>());
                                   
   Entity platform = m_Scene->create_Entity();
   platform.add<TransformComponent>({{0, 80}, {1, 1}, 0});
   platform.add<CollisionComponent>({{Hitbox::create<Rect>({{-180, 0}, {180, 30}})}});
-
-  Entity entity = m_Scene->get_Entity(7);
 
   GEAR_DEBUG_LOG("finished scene");
 
@@ -110,27 +122,6 @@ void MyGame::per_Frame(void)
 
   m_Scene->update_Transformation();
   call_Script_Update(m_Scene);
-
-  auto transform = m_Scene->get_Entity(0).get<TransformComponent>();
-
-  if (Input::get_Key_State(Key::A) == State::PRESSED || Input::get_Key_State(Key::LEFT) == State::PRESSED)
-  {
-    transform->position[0] -= 3;
-    transform->state = 0;
-  }
-
-  if (Input::get_Key_State(Key::D) == State::PRESSED || Input::get_Key_State(Key::RIGHT) == State::PRESSED)
-  {
-    transform->position[0] += 3;
-    transform->state = GEAR_MIRROR_X;
-  }
-
-  if (Input::get_Key_State(Key::W) == State::PRESSED || Input::get_Key_State(Key::UP) == State::PRESSED)
-    transform->position[1] -= 3;
-
-  if (Input::get_Key_State(Key::S) == State::PRESSED || Input::get_Key_State(Key::DOWN) == State::PRESSED)
-    transform->position[1] += 3;
-  m_Scene->get_Entity(0).update_Transformation();
 
   check_Collisions(m_Scene);
 

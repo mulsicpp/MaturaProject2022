@@ -24,10 +24,13 @@ void gear::check_Collisions(gear::Scene *scene)
           if(hitbox1.m_Absolute_Shape->intersects(hitbox2.m_Absolute_Shape.get(), &vec))
           {
             ints++;
-            Entity e = Entity{components[i].get_Entity_ID(), scene->get_ID()};
-            auto transform = e.get<TransformComponent>();
-            transform->position -= vec;
-            e.update_Transformation();
+            Entity e1 = Entity{components[i].get_Entity_ID(), scene->get_ID()};
+            e1.get<TransformComponent>()->position -= vec;
+            Entity e2 = Entity{components[j].get_Entity_ID(), scene->get_ID()};
+            //e2.get<TransformComponent>()->position += vec / 2;
+
+            e1.update_Transformation();
+            //e2.update_Transformation();
           }
         }
       }

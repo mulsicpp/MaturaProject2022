@@ -1,4 +1,4 @@
-#include "EisScript.h"
+#include "EisScript2.h"
 
 #include <gear/renderer/AnimationComponent.h>
 #include <gear/event/EventComponent.h>
@@ -11,36 +11,36 @@
 
 using namespace gear;
 
-void EisScript::on_Create(void)
+void EisScript2::on_Create(void)
 {
 
 }
 
-void EisScript::on_Update(void)
+void EisScript2::on_Update(void)
 {
   auto transform = m_Entity.get<TransformComponent>();
 
-  if (Input::get_Key_State(Key::A) == State::PRESSED)
+  if (Input::get_Key_State(Key::LEFT) == State::PRESSED)
   {
     transform->position[0] -= 3;
     transform->state = 0;
   }
 
-  if (Input::get_Key_State(Key::D) == State::PRESSED)
+  if (Input::get_Key_State(Key::RIGHT) == State::PRESSED)
   {
     transform->position[0] += 3;
     transform->state = GEAR_MIRROR_X;
   }
 
-  if (Input::get_Key_State(Key::W) == State::PRESSED)
+  if (Input::get_Key_State(Key::UP) == State::PRESSED)
     transform->position[1] -= 3;
 
-  if (Input::get_Key_State(Key::S) == State::PRESSED)
+  if (Input::get_Key_State(Key::DOWN) == State::PRESSED)
     transform->position[1] += 3;
-
+    
   m_Entity.update_Transformation();
 }
 
-void EisScript::on_Destroy(void)
+void EisScript2::on_Destroy(void)
 {
 }
