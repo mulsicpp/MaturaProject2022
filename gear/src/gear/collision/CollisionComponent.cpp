@@ -25,12 +25,12 @@ void gear::check_Collisions(gear::Scene *scene)
           {
             ints++;
             Entity e1 = Entity{components[i].get_Entity_ID(), scene->get_ID()};
-            e1.get<TransformComponent>()->position -= vec;
+            e1.get<TransformComponent>()->position -= vec / 2;
             Entity e2 = Entity{components[j].get_Entity_ID(), scene->get_ID()};
-            //e2.get<TransformComponent>()->position += vec / 2;
+            e2.get<TransformComponent>()->position += vec / 2;
 
             e1.update_Transformation();
-            //e2.update_Transformation();
+            e2.update_Transformation();
           }
         }
       }

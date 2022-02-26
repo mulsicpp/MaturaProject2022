@@ -32,7 +32,7 @@ void MyGame::on_Startup(void)
   m_Window->set_Title("Game Window!");
   m_Window->set_Resizable(false);
   m_Window->set_Size(1280, 720);
-  //m_Window->set_Fullscreen();
+  // m_Window->set_Fullscreen();
   m_Window->set_Visible(true);
 
   Renderer::create(640, 360);
@@ -102,10 +102,17 @@ void MyGame::on_Startup(void)
                                     Hitbox::create<Circle>({{11, -3}, 3})}});
 
   new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript2>());
-                                  
+
+  SpriteComponent sprite;
+  sprite.offset = {-183, -3, 0.1};
+  sprite.parallax_Factor = 1;
+  sprite.palette = ResourceManager::get<Palette>("assets/test_sprites/platform_palette.gear");
+  sprite.sprite = ResourceManager::get<Sprite>("assets/test_sprites/platform.gear");
+
   Entity platform = m_Scene->create_Entity();
   platform.add<TransformComponent>({{0, 80}, {1, 1}, 0});
-  platform.add<CollisionComponent>({{Hitbox::create<Rect>({{-180, 0}, {180, 30}})}});
+  platform.add<SpriteComponent>(sprite);
+  platform.add<CollisionComponent>({{Hitbox::create<Rect>({{-183, 0}, {183, 20}})}});
 
   GEAR_DEBUG_LOG("finished scene");
 
@@ -128,7 +135,7 @@ void MyGame::per_Frame(void)
   cam.follow_Target();
   Renderer::start_New_Frame();
   Renderer::render_Scene(m_Scene);
-  Renderer::render_All_Hitboxes(m_Scene);
+  //Renderer::render_All_Hitboxes(m_Scene);
   Renderer::show_Frame();
 }
 

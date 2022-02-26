@@ -7,7 +7,7 @@ gear::Sprite::Sprite(void) : m_TextureID(0), m_Width(0), m_Height(0) {}
 gear::Sprite::~Sprite()
 {
   GEAR_DEBUG_LOG("delete sprite");
-  if(m_TextureID != 0)
+  if (m_TextureID != 0)
     glDeleteTextures(1, &m_TextureID);
 }
 
@@ -25,6 +25,9 @@ int gear::Sprite::load(gear::FileStream *file_Stream)
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, m_Width, m_Height, 0, GL_RED, GL_UNSIGNED_BYTE, data);
 
