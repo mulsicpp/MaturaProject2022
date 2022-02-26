@@ -9,6 +9,7 @@ class Hitbox {
 public:
   Ref<Shape> m_Shape;
   Ref<Shape> m_Absolute_Shape;
+  Ref<Shape> m_Previous_Shape;
 
   template<class T>
   static Hitbox create(T shape)
@@ -16,6 +17,7 @@ public:
     Hitbox ret;
     ret.m_Shape = Ref<Shape>(new T(shape));
     ret.m_Absolute_Shape = Ref<Shape>(new T(shape));
+    ret.m_Previous_Shape = Ref<Shape>(new T(shape));
 
     return ret;
   }

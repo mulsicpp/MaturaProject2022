@@ -47,7 +47,7 @@ bool gear::Shape::intersects(const gear::Shape *shape, gear::Vector<double, 2> *
     ret = intersection_First_Type((gear::Point *)hitbox1, hitbox2, separation_Vector);
     break;
   }
-  if(hitbox1 != this)
+  if(hitbox1 != this && separation_Vector)
     *separation_Vector = -*separation_Vector;
   return ret;
 }

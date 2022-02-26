@@ -31,13 +31,11 @@ void MyGame::on_Startup(void)
   m_Window->set_Title("Game Window!");
   m_Window->set_Resizable(false);
   m_Window->set_Size(1280, 720);
-  // m_Window->set_Fullscreen();
+  //m_Window->set_Fullscreen();
   m_Window->set_Visible(true);
 
   Renderer::create(640, 360);
   Renderer::set_V_Sync(true);
-
-  h = Hitbox::create<Rect>({{-5, 0}, {15, 10}});
 
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
@@ -117,29 +115,28 @@ void MyGame::per_Frame(void)
 
   if (Input::get_Key_State(Key::A) == State::PRESSED || Input::get_Key_State(Key::LEFT) == State::PRESSED)
   {
-    transform->position[0] -= 6;
+    transform->position[0] -= 3;
     transform->state = 0;
   }
 
   if (Input::get_Key_State(Key::D) == State::PRESSED || Input::get_Key_State(Key::RIGHT) == State::PRESSED)
   {
-    transform->position[0] += 6;
+    transform->position[0] += 3;
     transform->state = GEAR_MIRROR_X;
   }
 
   if (Input::get_Key_State(Key::W) == State::PRESSED || Input::get_Key_State(Key::UP) == State::PRESSED)
-    transform->position[1] -= 6;
+    transform->position[1] -= 3;
 
   if (Input::get_Key_State(Key::S) == State::PRESSED || Input::get_Key_State(Key::DOWN) == State::PRESSED)
-    transform->position[1] += 6;
+    transform->position[1] += 3;
   m_Scene->get_Entity(0).update_Transformation();
+
+  check_Collisions(m_Scene);
 
   cam.follow_Target();
   Renderer::start_New_Frame();
   Renderer::render_Scene(m_Scene);
-  h.transform(transform);
-  Rect *r = (Rect *)h.m_Absolute_Shape.get();
-  GEAR_DEBUG_LOG("(%lf, %lf, %lf, %lf)", r->top_Left[0], r->top_Left[1], r->bottom_Right[0], r->bottom_Right[1]);
   Renderer::render_All_Hitboxes(m_Scene);
   Renderer::show_Frame();
 }

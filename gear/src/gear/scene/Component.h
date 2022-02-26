@@ -57,6 +57,20 @@ public:
   }
 
   /*
+  @return the id of the associated entity.
+  */
+  unsigned int get_Entity_ID(void) {
+    return m_Entity_ID;
+  }
+
+  /*
+  @return the id of the associated scene.
+  */
+  unsigned int get_Scene_ID(void) {
+    return m_Scene_ID;
+  }
+
+  /*
   Allows components of this type to be created and added to entites.
   */
   static void allow(void) {

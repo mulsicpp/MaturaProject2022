@@ -104,6 +104,11 @@ public:
   */
   void update_Transformation(void);
 
+  template<class T>
+  Component<T> *get_All_Components(size_t *count) {
+    return Entity::ComponentManager<T>::get_Instance(this - scenes).get_Components(count);
+  }
+
   void print(void);
 };
 

@@ -22,6 +22,7 @@ private:
   template <class T>
   class ComponentManager
   {
+    friend class gear::Scene;
   private:
     WeakVector<Component<T>> m_Components;
     static ComponentManager<T> instances[GEAR_MAX_SCENES];

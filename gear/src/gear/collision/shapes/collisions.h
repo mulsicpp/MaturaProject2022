@@ -82,7 +82,6 @@ bool shapes_Intersect<Rect, Rect>(const Rect *hitbox1, const Rect *hitbox2, Vect
 template <>
 bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, Vector<double, 2> *separation_Vector)
 {
-
   double r_Left = hitbox1->top_Left[0],
          r_Right = hitbox1->bottom_Right[0],
          r_Top = hitbox1->top_Left[1],
@@ -158,13 +157,18 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, 
   Vector<double, 2> vec;
   double dist;
 
+  double root_Of_Two = 1 / sqrt(2);
+
   vec = hitbox2->position - hitbox1->top_Left;
   dist = vec.mag();
   if (dist < c_Rad)
   {
     if (separation_Vector)
     {
-      *separation_Vector = vec * (c_Rad / dist) - vec;
+      if (dist <= c_Rad / 10000)
+        *separation_Vector = {-root_Of_Two * c_Rad, -root_Of_Two * c_Rad};
+      else
+        *separation_Vector = vec * (c_Rad / dist) - vec;
     }
     return true;
   }
@@ -175,7 +179,10 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, 
   {
     if (separation_Vector)
     {
-      *separation_Vector = vec * (c_Rad / dist) - vec;
+      if (dist <= c_Rad / 10000)
+        *separation_Vector = {root_Of_Two * c_Rad, root_Of_Two * c_Rad};
+      else
+        *separation_Vector = vec * (c_Rad / dist) - vec;
     }
     return true;
   }
@@ -186,7 +193,10 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, 
   {
     if (separation_Vector)
     {
-      *separation_Vector = vec * (c_Rad / dist) - vec;
+      if (dist <= c_Rad / 10000)
+        *separation_Vector = {root_Of_Two * c_Rad, -root_Of_Two * c_Rad};
+      else
+        *separation_Vector = vec * (c_Rad / dist) - vec;
     }
     return true;
   }
@@ -197,7 +207,10 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, 
   {
     if (separation_Vector)
     {
-      *separation_Vector = vec * (c_Rad / dist) - vec;
+      if (dist <= c_Rad / 10000)
+        *separation_Vector = {-root_Of_Two * c_Rad, root_Of_Two * c_Rad};
+      else
+        *separation_Vector = vec * (c_Rad / dist) - vec;
     }
     return true;
   }
@@ -277,7 +290,10 @@ bool shapes_Intersect<Circle, Circle>(const Circle *hitbox1, const Circle *hitbo
   double dist = vec.mag();
   if (separation_Vector)
   {
-    *separation_Vector = vec * ((hitbox1->radius + hitbox2->radius) / dist) - vec;
+    if (dist <= hitbox1->radius + hitbox2->radius / 10000)
+      *separation_Vector = {hitbox1->radius + hitbox2->radius, 0};
+    else
+      *separation_Vector = vec * ((hitbox1->radius + hitbox2->radius) / dist) - vec;
   }
   return dist < hitbox1->radius + hitbox2->radius;
 }
@@ -289,7 +305,10 @@ bool shapes_Intersect<Circle, Point>(const Circle *hitbox1, const Point *hitbox2
   double dist = vec.mag();
   if (separation_Vector)
   {
-    *separation_Vector = vec * (hitbox1->radius / dist) - vec;
+    if (dist <= hitbox1->radius / 10000)
+      *separation_Vector = {hitbox1->radius, 0};
+    else
+      *separation_Vector = vec * (hitbox1->radius / dist) - vec;
   }
   return dist < hitbox1->radius;
 }
