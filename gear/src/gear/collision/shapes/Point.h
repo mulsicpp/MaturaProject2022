@@ -9,7 +9,8 @@ class Point : public Shape {
 public:
   Vector<double, 2> position;
   
-  Point(const Vector<double, 2> &pos);
+  Point(void);
+  Point(const Vector<double, 2> &pos, bool enabled = true);
 
   void transform(const TransformComponent *transform, Shape *transformed_Shape) const override;
 };

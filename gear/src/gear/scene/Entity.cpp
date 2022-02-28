@@ -1,7 +1,7 @@
 #include "Entity.h"
 #include "TransformComponent.h"
 
-#include <gear/collision/CollisionComponent.h>
+#include <gear/collision/PhysicsComponent.h>
 
 gear::Entity::Entity(const unsigned int entity_ID, const uint8_t scene_ID) : m_Entity_ID(entity_ID), m_Scene_ID(scene_ID) {}
 
@@ -27,12 +27,10 @@ void gear::Entity::update_Transformation(void)
   {
     transform->update_Matrix();
 
-    if(has<CollisionComponent>())
+    if(has<PhysicsComponent>())
     {
-      auto collision = get<CollisionComponent>();
-      for(auto &hitbox : collision->hitboxes) {
-        hitbox.transform(transform);
-      }
+      auto physics = get<PhysicsComponent>();
+      physics->hitbox.transform(transform);
     }
   }
 }

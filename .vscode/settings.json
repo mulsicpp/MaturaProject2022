@@ -68,6 +68,8 @@
     "xstring": "cpp",
     "xtr1common": "cpp",
     "xtree": "cpp",
-    "mutex": "cpp"
+    "mutex": "cpp",
+    "stop_token": "cpp",
+    "thread": "cpp"
   }
 }

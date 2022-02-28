@@ -20,7 +20,7 @@
 #include <gear/collision/shapes/Rect.h>
 #include <gear/collision/shapes/Circle.h>
 #include <gear/collision/shapes/Point.h>
-#include <gear/collision/CollisionComponent.h>
+#include <gear/collision/PhysicsComponent.h>
 
 #include "scripts/EisScript.h"
 #include "scripts/EisScript2.h"
@@ -84,10 +84,11 @@ void MyGame::on_Startup(void)
   animation_Comp.offset = {-32, -32, 0};
   new_Eis.add<AnimationComponent>(animation_Comp);
   new_Eis.add<TransformComponent>({{0, -40}, {1, 1}, 0});
-  new_Eis.add<CollisionComponent>({{Hitbox::create<Rect>({{-12, 14}, {12, 32}}),
-                                    Hitbox::create<Circle>({{2, 14}, 9}),
-                                    Hitbox::create<Circle>({{7, 5}, 6}),
-                                    Hitbox::create<Circle>({{11, -3}, 3})}});
+  new_Eis.add<PhysicsComponent>({Hitbox::create(
+      Rect{{-12, 14}, {12, 32}},
+      Circle{{2, 14}, 9},
+      Circle{{7, 5}, 6},
+      Circle{{11, -3}, 3})});
 
   new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>());
 
@@ -96,10 +97,11 @@ void MyGame::on_Startup(void)
   new_Eis = m_Scene->create_Entity();
   new_Eis.add<AnimationComponent>(animation_Comp);
   new_Eis.add<TransformComponent>({{100, -40}, {1, 1}, 0});
-  new_Eis.add<CollisionComponent>({{Hitbox::create<Rect>({{-12, 14}, {12, 32}}),
-                                    Hitbox::create<Circle>({{2, 14}, 9}),
-                                    Hitbox::create<Circle>({{7, 5}, 6}),
-                                    Hitbox::create<Circle>({{11, -3}, 3})}});
+  new_Eis.add<PhysicsComponent>({Hitbox::create(
+      Rect{{-12, 14}, {12, 32}},
+      Circle{{2, 14}, 9},
+      Circle{{7, 5}, 6},
+      Circle{{11, -3}, 3})});
 
   new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript2>());
 
@@ -112,7 +114,7 @@ void MyGame::on_Startup(void)
   Entity platform = m_Scene->create_Entity();
   platform.add<TransformComponent>({{0, 80}, {1, 1}, 0});
   platform.add<SpriteComponent>(sprite);
-  platform.add<CollisionComponent>({{Hitbox::create<Rect>({{-183, 0}, {183, 20}})}});
+  platform.add<PhysicsComponent>({{Hitbox::create(Rect{{-183, 0}, {183, 20}})}});
 
   GEAR_DEBUG_LOG("finished scene");
 
@@ -135,7 +137,7 @@ void MyGame::per_Frame(void)
   cam.follow_Target();
   Renderer::start_New_Frame();
   Renderer::render_Scene(m_Scene);
-  //Renderer::render_All_Hitboxes(m_Scene);
+  Renderer::render_All_Hitboxes(m_Scene);
   Renderer::show_Frame();
 }
 

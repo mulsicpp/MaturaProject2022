@@ -11,7 +11,8 @@ public:
   Vector<double, 2> position;
   double radius;
   
-  Circle(const Vector<double, 2> &position, double radius);
+  Circle(void);
+  Circle(const Vector<double, 2> &position, double radius, bool enabled = true);
 
   void transform(const TransformComponent *transform, Shape *transformed_Shape) const override;
 };

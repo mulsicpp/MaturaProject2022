@@ -5,6 +5,16 @@ gear::Shape::Shape(ShapeType type) : m_Type(type) {}
 
 gear::ShapeType gear::Shape::get_Type(void) const { return m_Type; }
 
+bool gear::Shape::is_Enabled(void) const
+{
+  return m_Enabled;
+}
+
+void gear::Shape::set_Enabled(bool enabled)
+{
+  m_Enabled = enabled;
+}
+
 template <class T>
 static bool intersection_First_Type(const T *hitbox1, const gear::Shape *hitbox2, gear::Vector<double, 2> *separation_Vector)
 {
@@ -24,6 +34,8 @@ static bool intersection_First_Type(const T *hitbox1, const gear::Shape *hitbox2
 bool gear::Shape::intersects(const gear::Shape *shape, gear::Vector<double, 2> *separation_Vector) const
 {
   const Shape *hitbox1, *hitbox2;
+  if(!m_Enabled || !shape->m_Enabled)
+    return false;
   bool ret = false;
   if (this->m_Type > shape->m_Type)
   {

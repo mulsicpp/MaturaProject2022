@@ -1,6 +1,11 @@
 #include "Point.h"
 
-gear::Point::Point(const gear::Vector<double, 2> &position) : Shape(ShapeType::POINT), position(position) {}
+gear::Point::Point(void) : Point({0, 0}) {}
+
+gear::Point::Point(const gear::Vector<double, 2> &position, bool enabled) : Shape(ShapeType::POINT), position(position)
+{
+  set_Enabled(enabled);
+}
 
 void gear::Point::transform(const gear::TransformComponent *transform, gear::Shape *transformed_Shape) const 
 {

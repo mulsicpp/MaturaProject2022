@@ -7,8 +7,8 @@
 
 _GEAR_START
 
-struct CollisionComponent {
-  std::vector<Hitbox> hitboxes;
+struct PhysicsComponent {
+  Hitbox hitbox;
 };
 
 void check_Collisions(Scene *scene);

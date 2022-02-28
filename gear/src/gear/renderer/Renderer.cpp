@@ -10,7 +10,7 @@
 #include "pipelines/SpritePipeline.h"
 #include "pipelines/ShapePipeline.h"
 
-#include <gear/collision/CollisionComponent.h>
+#include <gear/collision/PhysicsComponent.h>
 
 using SpritePipeline = gear::SpritePipeline;
 
@@ -114,12 +114,12 @@ void gear::Renderer::render_Shape(const gear::Shape* shape, const Vector<float, 
   ShapePipeline::get_Instance().render_Shape(shape, color);
 }
 
-static void collider_Render_Callback(gear::CollisionComponent &collider) {
-  for(auto &hitbox : collider.hitboxes)
-    gear::Renderer::render_Shape(hitbox.m_Absolute_Shape.get(), {0, 1, 0, 1});
+static void physics_Hitbox_Render_Callback(gear::PhysicsComponent &collider) {
+  for(auto &hitbox : collider.hitbox.get_Shapes())
+    gear::Renderer::render_Shape(hitbox.absolute_Shape.get(), {0, 1, 0, 1});
 }
 
 void gear::Renderer::render_All_Hitboxes(gear::Scene *scene)
 {
-  gear::Entity::for_Each(scene->get_ID(), collider_Render_Callback);
+  gear::Entity::for_Each(scene->get_ID(), physics_Hitbox_Render_Callback);
 }
