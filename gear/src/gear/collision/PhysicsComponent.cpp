@@ -20,7 +20,7 @@ void gear::physics_Step(gear::Scene *scene)
   {
     entities[i] = Entity{phy_Comps[i].get_Entity_ID(), scene_ID};
     transform_Comps[i] = entities[i].get<TransformComponent>();
-    phy_Comps[i].data.velocity += phy_Comps[i].data.acceleration;
+    phy_Comps[i].data.velocity += phy_Comps[i].data.acceleration / 3;
     if (phy_Comps[i].data.velocity[0] < phy_Comps[i].data.velocity_X_Interval[0])
       phy_Comps[i].data.velocity[0] = phy_Comps[i].data.velocity_X_Interval[0];
 
@@ -33,7 +33,7 @@ void gear::physics_Step(gear::Scene *scene)
     if (phy_Comps[i].data.velocity[1] > phy_Comps[i].data.velocity_Y_Interval[1])
       phy_Comps[i].data.velocity[1] = phy_Comps[i].data.velocity_Y_Interval[1];
 
-    transform_Comps[i]->position += phy_Comps[i].data.velocity;
+    transform_Comps[i]->position += phy_Comps[i].data.velocity / 3;
 
     entities[i].update_Transformation();
   }

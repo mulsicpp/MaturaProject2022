@@ -17,7 +17,7 @@ void EisScript::on_Create(void)
 {
   m_Entity.add<EventComponent<KeyEvent>>({[&, this](KeyEvent e) {
     if(e.get_Key() == Key::W && e.get_Action() == Action::PRESSED) {
-      this->m_Entity.get<PhysicsComponent>()->velocity[1] = -6;
+      this->m_Entity.get<PhysicsComponent>()->velocity[1] = -7;
     }
   }});
 }

@@ -120,11 +120,21 @@ void MyGame::on_Startup(void)
   physics.dynamic = false;
   platform.add<PhysicsComponent>(physics);
 
-  Entity platform2 = m_Scene->create_Entity();
-  platform2.add<TransformComponent>({{0, -80}, {1, 1}, 0});
 
-  physics.collider = Hitbox::create(Circle{{0, 0}, 25});
+  Entity platform2 = m_Scene->create_Entity();
+  platform2.add<TransformComponent>({{-100, 20}, {1, 1}, 0});
+  physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
   platform2.add<PhysicsComponent>(physics);
+
+  Entity platform3 = m_Scene->create_Entity();
+  platform3.add<TransformComponent>({{100, 20}, {1, 1}, 0});
+  physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
+  platform3.add<PhysicsComponent>(physics);
+
+  Entity platform4 = m_Scene->create_Entity();
+  platform4.add<TransformComponent>({{0, -30}, {1, 1}, 0});
+  physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
+  platform4.add<PhysicsComponent>(physics);
 
   GEAR_DEBUG_LOG("finished scene");
 
@@ -142,6 +152,8 @@ void MyGame::per_Frame(void)
   m_Scene->update_Transformation();
   call_Script_Update(m_Scene);
 
+  physics_Step(m_Scene);
+  physics_Step(m_Scene);
   physics_Step(m_Scene);
 
   cam.follow_Target();
