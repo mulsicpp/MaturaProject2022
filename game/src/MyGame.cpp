@@ -88,7 +88,7 @@ void MyGame::on_Startup(void)
       Rect{{-12, 14}, {12, 32}},
       Circle{{2, 14}, 9},
       Circle{{7, 5}, 6},
-      Circle{{11, -3}, 3})});
+      Circle{{11, -3}, 3}), {0, 0}, {0, 0.3}, {-100, 100}, {-20, 6}, 10});
 
   new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>());
 
@@ -101,7 +101,7 @@ void MyGame::on_Startup(void)
       Rect{{-12, 14}, {12, 32}},
       Circle{{2, 14}, 9},
       Circle{{7, 5}, 6},
-      Circle{{11, -3}, 3})});
+      Circle{{11, -3}, 3}), {0, 0}, {0, 0.3}, {-100, 100}, {-20, 6}, 10});
 
   new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript2>());
 
@@ -114,7 +114,17 @@ void MyGame::on_Startup(void)
   Entity platform = m_Scene->create_Entity();
   platform.add<TransformComponent>({{0, 80}, {1, 1}, 0});
   platform.add<SpriteComponent>(sprite);
-  platform.add<PhysicsComponent>({{Hitbox::create(Rect{{-183, 0}, {183, 20}})}});
+
+  PhysicsComponent physics;
+  physics.collider = Hitbox::create(Rect{{-183, 0}, {183, 20}});
+  physics.dynamic = false;
+  platform.add<PhysicsComponent>(physics);
+
+  Entity platform2 = m_Scene->create_Entity();
+  platform2.add<TransformComponent>({{0, -80}, {1, 1}, 0});
+
+  physics.collider = Hitbox::create(Circle{{0, 0}, 25});
+  platform2.add<PhysicsComponent>(physics);
 
   GEAR_DEBUG_LOG("finished scene");
 
@@ -132,7 +142,7 @@ void MyGame::per_Frame(void)
   m_Scene->update_Transformation();
   call_Script_Update(m_Scene);
 
-  check_Collisions(m_Scene);
+  physics_Step(m_Scene);
 
   cam.follow_Target();
   Renderer::start_New_Frame();

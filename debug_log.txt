@@ -1,1 +1,1 @@
-[2021-11-04 10:46:49] C:\Users\chris\Desktop\projects\private\MaturaProject2022\game\out\win32\x64
+GL error GL_OUT_OF_MEMORY in DrawElements: (ID: 1365549486) Generic error

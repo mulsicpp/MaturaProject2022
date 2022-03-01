@@ -115,8 +115,8 @@ void gear::Renderer::render_Shape(const gear::Shape* shape, const Vector<float, 
 }
 
 static void physics_Hitbox_Render_Callback(gear::PhysicsComponent &collider) {
-  for(auto &hitbox : collider.hitbox.get_Shapes())
-    gear::Renderer::render_Shape(hitbox.absolute_Shape.get(), {0, 1, 0, 1});
+  for(auto &hitbox : collider.collider.get_Shapes())
+    gear::Renderer::render_Shape(hitbox.absolute_Shape.get(), {0, 1, 1, 1});
 }
 
 void gear::Renderer::render_All_Hitboxes(gear::Scene *scene)

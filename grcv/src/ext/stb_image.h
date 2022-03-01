@@ -1918,7 +1918,7 @@ static stbi_uc *stbi__hdr_to_ldr(float   *data, int x, int y, int comp)
 typedef struct
 {
    stbi_uc  fast[1 << FAST_BITS];
-   // weirdly, repacking this into AoS is a 10% speed loss, instead of a win
+   // weirdly, repacking this into AoS is a 10% velocity loss, instead of a win
    stbi__uint16 code[256];
    stbi_uc  values[256];
    stbi_uc  size[257];
@@ -2092,7 +2092,7 @@ stbi_inline static int stbi__jpeg_huff_decode(stbi__jpeg *j, stbi__huffman *h)
    }
 
    // naive test is to shift the code_buffer down so k bits are
-   // valid, then test against maxcode. To speed this up, we've
+   // valid, then test against maxcode. To velocity this up, we've
    // preshifted maxcode left so that it has (16-k) 0s at the
    // end; in other words, regardless of the number of bits, it
    // wants to be compared against something shifted to have 16;
@@ -7838,7 +7838,7 @@ STBIDEF int stbi_is_16_bit_from_callbacks(stbi_io_callbacks const *c, void *user
       0.56    fix bug: zlib uncompressed mode len vs. nlen
       0.55    fix bug: restart_interval not initialized to 0
       0.54    allow NULL for 'int *comp'
-      0.53    fix bug in png 3->4; speedup png decoding
+      0.53    fix bug in png 3->4; velocityup png decoding
       0.52    png handles req_comp=3,4 directly; minor cleanup; jpeg comments
       0.51    obey req_comp requests, 1-component jpegs return as 1-component,
               on 'test' only check type, not whether we support this variant

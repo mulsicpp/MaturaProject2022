@@ -7,37 +7,40 @@
 #include <gear/core/debug/log.h>
 #include <gear/scene/TransformComponent.h>
 
+#include <gear/collision/PhysicsComponent.h>
+
 #include <gear/event/Input.h>
 
 using namespace gear;
 
 void EisScript::on_Create(void)
 {
-
+  m_Entity.add<EventComponent<KeyEvent>>({[&, this](KeyEvent e) {
+    if(e.get_Key() == Key::W && e.get_Action() == Action::PRESSED) {
+      this->m_Entity.get<PhysicsComponent>()->velocity[1] = -6;
+    }
+  }});
 }
 
 void EisScript::on_Update(void)
 {
   auto transform = m_Entity.get<TransformComponent>();
+  auto physics = m_Entity.get<PhysicsComponent>();
+
+  physics->velocity[0] = 0;
 
   if (Input::get_Key_State(Key::A) == State::PRESSED)
   {
-    transform->position[0] -= 3;
+    physics->velocity[0] -= 3;
     transform->state = 0;
   }
 
   if (Input::get_Key_State(Key::D) == State::PRESSED)
   {
-    transform->position[0] += 3;
+    physics->velocity[0] += 3;
     transform->state = GEAR_MIRROR_X;
   }
-
-  if (Input::get_Key_State(Key::W) == State::PRESSED)
-    transform->position[1] -= 3;
-
-  if (Input::get_Key_State(Key::S) == State::PRESSED)
-    transform->position[1] += 3;
-
+    
   m_Entity.update_Transformation();
 }
 

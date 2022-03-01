@@ -5,6 +5,8 @@
 
 #include <gear/core/debug/log.h>
 
+#define GEAR_PHYSICS_ERROR 0.0001
+
 _GEAR_START
 
 template <class T1, class T2>
@@ -55,6 +57,8 @@ bool shapes_Intersect<Rect, Rect>(const Rect *hitbox1, const Rect *hitbox2, Vect
       min_Dist = distance;
       direction = 4;
     }
+
+    min_Dist += GEAR_PHYSICS_ERROR;
 
     switch (direction)
     {
@@ -131,6 +135,8 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, 
       direction = 4;
     }
 
+    min_Dist += GEAR_PHYSICS_ERROR;
+
     switch (direction)
     {
     case 0:
@@ -168,7 +174,7 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, 
       if (dist <= c_Rad / 10000)
         *separation_Vector = {-root_Of_Two * c_Rad, -root_Of_Two * c_Rad};
       else
-        *separation_Vector = vec * (c_Rad / dist) - vec;
+        *separation_Vector = vec * (c_Rad / dist + GEAR_PHYSICS_ERROR) - vec;
     }
     return true;
   }
@@ -182,7 +188,7 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, 
       if (dist <= c_Rad / 10000)
         *separation_Vector = {root_Of_Two * c_Rad, root_Of_Two * c_Rad};
       else
-        *separation_Vector = vec * (c_Rad / dist) - vec;
+        *separation_Vector = vec * (c_Rad / dist + GEAR_PHYSICS_ERROR) - vec;
     }
     return true;
   }
@@ -196,7 +202,7 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, 
       if (dist <= c_Rad / 10000)
         *separation_Vector = {root_Of_Two * c_Rad, -root_Of_Two * c_Rad};
       else
-        *separation_Vector = vec * (c_Rad / dist) - vec;
+        *separation_Vector = vec * (c_Rad / dist + GEAR_PHYSICS_ERROR) - vec;
     }
     return true;
   }
@@ -210,7 +216,7 @@ bool shapes_Intersect<Rect, Circle>(const Rect *hitbox1, const Circle *hitbox2, 
       if (dist <= c_Rad / 10000)
         *separation_Vector = {-root_Of_Two * c_Rad, root_Of_Two * c_Rad};
       else
-        *separation_Vector = vec * (c_Rad / dist) - vec;
+        *separation_Vector = vec * (c_Rad / dist + GEAR_PHYSICS_ERROR) - vec;
     }
     return true;
   }
@@ -260,6 +266,8 @@ bool shapes_Intersect<Rect, Point>(const Rect *hitbox1, const Point *hitbox2, Ve
       direction = 4;
     }
 
+    min_Dist += GEAR_PHYSICS_ERROR;
+
     switch (direction)
     {
     case 0:
@@ -293,7 +301,7 @@ bool shapes_Intersect<Circle, Circle>(const Circle *hitbox1, const Circle *hitbo
     if (dist <= hitbox1->radius + hitbox2->radius / 10000)
       *separation_Vector = {hitbox1->radius + hitbox2->radius, 0};
     else
-      *separation_Vector = vec * ((hitbox1->radius + hitbox2->radius) / dist) - vec;
+      *separation_Vector = vec * ((hitbox1->radius + hitbox2->radius) / dist + GEAR_PHYSICS_ERROR) - vec;
   }
   return dist < hitbox1->radius + hitbox2->radius;
 }
@@ -308,7 +316,7 @@ bool shapes_Intersect<Circle, Point>(const Circle *hitbox1, const Point *hitbox2
     if (dist <= hitbox1->radius / 10000)
       *separation_Vector = {hitbox1->radius, 0};
     else
-      *separation_Vector = vec * (hitbox1->radius / dist) - vec;
+      *separation_Vector = vec * (hitbox1->radius / dist + GEAR_PHYSICS_ERROR) - vec;
   }
   return dist < hitbox1->radius;
 }

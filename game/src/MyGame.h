@@ -19,7 +19,7 @@ private:
   gear::Vector<double, 2> cam_Pos;
 
   gear::Camera cam = &cam_Pos;
-  double speed = 1;
+  double velocity = 1;
 
 public:
   void on_Startup(void) override;

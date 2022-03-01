@@ -30,7 +30,7 @@ void gear::Entity::update_Transformation(void)
     if(has<PhysicsComponent>())
     {
       auto physics = get<PhysicsComponent>();
-      physics->hitbox.transform(transform);
+      physics->collider.transform(transform);
     }
   }
 }
