@@ -3,12 +3,12 @@
 #include <gear/core/core.h>
 #include <vector>
 #include <functional>
-#include "event_Types/KeyEvent.h"
+#include "events/KeyEvent.h"
 #include <gear/math/Vector.h>
-#include "event_Types/MouseButtonEvent.h"
-#include "event_Types/ControllerAxisEvent.h"
-#include "event_Types/ControllerButtonEvent.h"
-#include "event_Types/ControllerConnectionEvent.h"
+#include "events/MouseButtonEvent.h"
+#include "events/ControllerAxisEvent.h"
+#include "events/ControllerButtonEvent.h"
+#include "events/ControllerConnectionEvent.h"
 #include <gear/scene/Scene.h>
 #include "EventQueue.h"
 #include <thread>

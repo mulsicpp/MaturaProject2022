@@ -5,7 +5,7 @@
 #include <vector>
 #include <functional>
 #include <gear/scene/Entity.h>
-#include "EventComponent.h"
+#include "InputComponent.h"
 #include <mutex>
 #include <gear/core/debug/log.h>
 
@@ -23,7 +23,7 @@ private:
     static std::vector<std::function<void(T)>> m_Global_Event_Callbacks;
     static std::mutex m_Mutex;
 
-    static void event_Callback(EventComponent<T> &event_Component)
+    static void event_Callback(InputComponent<T> &event_Component)
     {
         for (T &event : m_Queue)
         {
@@ -43,7 +43,7 @@ private:
             }
         }
         if (scene != nullptr)
-            gear::Entity::for_Each<EventComponent<T>>(scene->get_ID(), event_Callback);
+            gear::Entity::for_Each<InputComponent<T>>(scene->get_ID(), event_Callback);
         m_Queue.clear();
         m_Mutex.unlock();
     }

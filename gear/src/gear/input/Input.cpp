@@ -1,13 +1,13 @@
 #include "Input.h"
-#include "Event.h"
+#include "events/Event.h"
 #include "EventQueue.h"
 #include <chrono>
 #include <thread>
-#include "event_Types/MouseMovedEvent.h"
-#include "event_Types/ScrollEvent.h"
-#include "event_Types/TextEvent.h"
-#include "event_Types/WindowFocusEvent.h"
-#include "event_Types/WindowIconifyEvent.h"
+#include "events/MouseMovedEvent.h"
+#include "events/ScrollEvent.h"
+#include "events/TextEvent.h"
+#include "events/WindowFocusEvent.h"
+#include "events/WindowIconifyEvent.h"
 
 #include "gamepad_mappings.h"
 

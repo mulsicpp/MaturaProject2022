@@ -3,15 +3,15 @@
 #include "debug/log.h"
 #include <filesystem>
 #include <string.h>
-#include "../event/event_Types/ControllerConnectionEvent.h"
-#include "../event/event_Types/KeyEvent.h"
-#include "../event/event_Types/MouseButtonEvent.h"
-#include "../event/event_Types/MouseMovedEvent.h"
-#include "../event/event_Types/ScrollEvent.h"
-#include "../event/event_Types/TextEvent.h"
-#include "../event/event_Types/WindowFocusEvent.h"
-#include "../event/event_Types/WindowIconifyEvent.h"
-#include "../event/Input.h"
+#include "../input/events/ControllerConnectionEvent.h"
+#include "../input/events/KeyEvent.h"
+#include "../input/events/MouseButtonEvent.h"
+#include "../input/events/MouseMovedEvent.h"
+#include "../input/events/ScrollEvent.h"
+#include "../input/events/TextEvent.h"
+#include "../input/events/WindowFocusEvent.h"
+#include "../input/events/WindowIconifyEvent.h"
+#include "../input/Input.h"
 
 #if defined(GEAR_PLATFORM_LINUX)
 #include <unistd.h>

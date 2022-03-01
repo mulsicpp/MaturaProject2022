@@ -3,9 +3,9 @@
 #include <gear/data/FileStream.h>
 #include <gear/resource/ResourceManager.h>
 
-#include <gear/event/event_Types/KeyEvent.h>
-#include <gear/event/EventComponent.h>
-#include <gear/event/Input.h>
+#include <gear/input/events/KeyEvent.h>
+#include <gear/input/InputComponent.h>
+#include <gear/input/Input.h>
 
 void MyGame::on_Startup(void)
 {
@@ -16,7 +16,7 @@ void MyGame::on_Startup(void)
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
 
-  gear::EventComponent<gear::KeyEvent> e = {[](gear::KeyEvent e){}, false};
+  gear::InputComponent<gear::KeyEvent> e = {[](gear::KeyEvent e){}, false};
   gear::Input::add_Global_Callback<gear::ControllerButtonEvent>([](gear::ControllerButtonEvent e){GEAR_DEBUG_LOG("gamepad button %s", e.get_Action() == gear::Action::PRESSED ? "pressed" : "released");});
 }
 
