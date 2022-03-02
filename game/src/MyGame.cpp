@@ -7,24 +7,43 @@
 #include <gear/input/InputComponent.h>
 #include <gear/input/Input.h>
 
-#include <gear/input/abstract_input/abstract_input.h>
+#include <gear/input/abstract_input/elements/AMouseButton.h>
+#include <gear/input/abstract_input/elements/AControllerButton.h>
 
 using namespace gear;
 
-GEAR_ABSTRACT_INPUT(UIInput, UIKeyboardInput, UIControllerInput, public: int x; );
-
 UIKeyboardInput::UIKeyboardInput() {
-
+  GEAR_MAP_BUTTON(submit, AMouseButton, MouseButton::LEFT);
+  GEAR_MAP_BUTTON(back, AMouseButton, MouseButton::RIGHT);
 }
 
 UIControllerInput::UIControllerInput(int id) : gear::AbstractControllerInput(id) {
-
+  GEAR_MAP_BUTTON(submit, AControllerButton, m_ID, ControllerButton::B);
+  GEAR_MAP_BUTTON(back, AControllerButton, m_ID, ControllerButton::A);
 }
 
 void MyGame::on_Startup(void)
 {
-  Ref<UIInput> input = UIInput::create_From(InputDevice::CONTROLLER_10);
-  input->x = 0;
+  input1 = UIInput::create_From(InputDevice::KEYBOARD);
+
+  input1->submit->set_Callback([](gear::Action action) {
+    GEAR_DEBUG_LOG("submit 1");
+  });
+
+  input1->back->set_Callback([](gear::Action action) {
+    GEAR_DEBUG_LOG("back 1");
+  });
+
+  input2 = UIInput::create_From(InputDevice::CONTROLLER_1);
+
+  input2->submit->set_Callback([](gear::Action action) {
+    GEAR_DEBUG_LOG("submit 2");
+  });
+
+  input2->back->set_Callback([](gear::Action action) {
+    GEAR_DEBUG_LOG("back 2");
+  });
+
   m_Window->set_Size(1280, 720);
   m_Window->set_Title("AHHHHHHH!");
   m_Window->set_Visible(true);
@@ -32,10 +51,7 @@ void MyGame::on_Startup(void)
   GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
   GEAR_DEBUG_LOG("Opened application");
 
-  GEAR_DEBUG_LOG("%i", ((UIControllerInput *)input.get())->get_ID());
-
   gear::InputComponent<gear::KeyEvent> e = {[](gear::KeyEvent e){}, false};
-  gear::Input::add_Global_Callback<gear::ControllerButtonEvent>([](gear::ControllerButtonEvent e){GEAR_DEBUG_LOG("gamepad button %s", e.get_Action() == gear::Action::PRESSED ? "pressed" : "released");});
 }
 
 void MyGame::per_Frame(void)

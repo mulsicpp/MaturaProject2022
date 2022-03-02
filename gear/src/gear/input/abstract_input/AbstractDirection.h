@@ -4,6 +4,10 @@
 #include <functional>
 #include <gear/math/Vector.h>
 
+#define GEAR_DIRECTIONS(...) public: gear::Ref<gear::AbstractDirection> __VA_ARGS__;
+
+#define GEAR_MAP_DIRECTION(name, type, ...) name = gear::Ref<gear::AbstractDirection>(new type(__VA_ARGS__));
+
 _GEAR_START
 
 class AbstractDirection {

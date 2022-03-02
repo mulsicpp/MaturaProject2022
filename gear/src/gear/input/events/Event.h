@@ -34,7 +34,7 @@ protected:
     const EventType m_Type;
     Event(EventType m_Type);
 public:
-    EventType getEventtype(void) const;
+    EventType get_Eventtype(void) const;
 };
 
 _GEAR_END
