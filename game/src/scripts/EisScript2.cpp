@@ -7,7 +7,7 @@
 #include <gear/core/debug/log.h>
 #include <gear/scene/TransformComponent.h>
 
-#include <gear/collision/PhysicsComponent.h>
+#include <gear/collision/DynamicPhysicsComponent.h>
 
 #include <gear/event/Input.h>
 
@@ -17,7 +17,7 @@ void EisScript2::on_Create(void)
 {
   m_Entity.add<EventComponent<ControllerButtonEvent>>({[&, this](ControllerButtonEvent e) {
     if(e.get_Button() == ControllerButton::B && e.get_Action() == Action::PRESSED) {
-      this->m_Entity.get<PhysicsComponent>()->velocity[1] = -7;
+      this->m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
     }
   }});
 }
@@ -25,7 +25,7 @@ void EisScript2::on_Create(void)
 void EisScript2::on_Update(void)
 {
   auto transform = m_Entity.get<TransformComponent>();
-  auto physics = m_Entity.get<PhysicsComponent>();
+  auto physics = m_Entity.get<DynamicPhysicsComponent>();
 
   physics->velocity[0] = 0;
 

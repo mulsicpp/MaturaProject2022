@@ -20,7 +20,7 @@
 #include <gear/collision/shapes/Rect.h>
 #include <gear/collision/shapes/Circle.h>
 #include <gear/collision/shapes/Point.h>
-#include <gear/collision/PhysicsComponent.h>
+#include <gear/collision/DynamicPhysicsComponent.h>
 
 #include "scripts/EisScript.h"
 #include "scripts/EisScript2.h"
@@ -33,10 +33,19 @@ bool platform_Physics_Check(gear::Vector<double, 2> push_Direction, bool pre_Int
   {
     if (entity2.get_Entity_ID() == 0 && Input::get_Key_State(Key::S) == State::PRESSED)
       return false;
+    if (entity2.get_Entity_ID() == 1 && Input::get_Axis_Value(0, ControllerAxis::LEFT_STICK_Y) > 0.4)
+      return false;
     if (abs(push_Direction[0]) < abs(push_Direction[1]) / 20 && push_Direction[1] < 0)
       return true;
   }
   return false;
+}
+
+bool eis_Physics_Check(gear::Vector<double, 2> push_Direction, bool pre_Intersect, Entity entity1, Entity entity2)
+{
+  if (entity2.get_Entity_ID() == 0 || entity2.get_Entity_ID() == 1)
+    return false;
+  return true;
 }
 
 void MyGame::on_Startup(void)
@@ -96,11 +105,13 @@ void MyGame::on_Startup(void)
   animation_Comp.offset = {-32, -32, 0};
   new_Eis.add<AnimationComponent>(animation_Comp);
   new_Eis.add<TransformComponent>({{0, -40}, {1, 1}, 0});
-  new_Eis.add<PhysicsComponent>({Hitbox::create(
+  new_Eis.add<DynamicPhysicsComponent>({Hitbox::create(
                                      Rect{{-12, 14}, {12, 32}},
                                      Circle{{2, 14}, 9},
                                      Circle{{7, 5}, 6},
                                      Circle{{11, -3}, 3}),
+                                 0,
+                                 eis_Physics_Check,
                                  {0, 0},
                                  {0, 0.3},
                                  {-100, 100},
@@ -114,11 +125,14 @@ void MyGame::on_Startup(void)
   new_Eis = m_Scene->create_Entity();
   new_Eis.add<AnimationComponent>(animation_Comp);
   new_Eis.add<TransformComponent>({{100, -40}, {1, 1}, 0});
-  new_Eis.add<PhysicsComponent>({Hitbox::create(
+  // physics.collider
+  new_Eis.add<DynamicPhysicsComponent>({Hitbox::create(
                                      Rect{{-12, 14}, {12, 32}},
                                      Circle{{2, 14}, 9},
                                      Circle{{7, 5}, 6},
                                      Circle{{11, -3}, 3}),
+                                 0,
+                                 eis_Physics_Check,
                                  {0, 0},
                                  {0, 0.3},
                                  {-100, 100},
@@ -137,10 +151,10 @@ void MyGame::on_Startup(void)
   platform.add<TransformComponent>({{0, 80}, {1, 1}, 0});
   platform.add<SpriteComponent>(sprite);
 
-  PhysicsComponent physics;
+  StaticPhysicsComponent physics;
   physics.collider = Hitbox::create(Rect{{-183, 0}, {183, 20}});
-  physics.dynamic = false;
-  platform.add<PhysicsComponent>(physics);
+  physics.check = gear::default_Physics_Check;
+  platform.add<StaticPhysicsComponent>(physics);
 
   physics.check = platform_Physics_Check;
 
@@ -151,19 +165,19 @@ void MyGame::on_Startup(void)
   platform2.add<TransformComponent>({{-100, 20}, {1, 1}, 0});
   platform2.add<SpriteComponent>(sprite);
   physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
-  platform2.add<PhysicsComponent>(physics);
+  platform2.add<StaticPhysicsComponent>(physics);
 
   Entity platform3 = m_Scene->create_Entity();
   platform3.add<TransformComponent>({{100, 20}, {1, 1}, 0});
   platform3.add<SpriteComponent>(sprite);
   physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
-  platform3.add<PhysicsComponent>(physics);
+  platform3.add<StaticPhysicsComponent>(physics);
 
   Entity platform4 = m_Scene->create_Entity();
   platform4.add<TransformComponent>({{0, -30}, {1, 1}, 0});
   platform4.add<SpriteComponent>(sprite);
   physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
-  platform4.add<PhysicsComponent>(physics);
+  platform4.add<StaticPhysicsComponent>(physics);
 
   GEAR_DEBUG_LOG("finished scene");
 

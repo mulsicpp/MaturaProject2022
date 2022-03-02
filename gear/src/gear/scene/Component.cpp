@@ -15,7 +15,7 @@
 #include <gear/event/event_Types/ControllerAxisEvent.h>
 #include <gear/event/event_Types/ControllerButtonEvent.h>
 
-#include <gear/collision/PhysicsComponent.h>
+#include <gear/collision/DynamicPhysicsComponent.h>
 
 #include <gear/scripting/ScriptComponent.h>
 
@@ -46,7 +46,8 @@ void gear::allow_Gear_Components(void) {
   Component<EventComponent<ControllerAxisEvent>>::allow();
   Component<EventComponent<ControllerButtonEvent>>::allow();
 
-  Component<PhysicsComponent>::allow();
+  Component<StaticPhysicsComponent>::allow();
+  Component<DynamicPhysicsComponent>::allow();
 }
 
 unsigned int gear::get_Next_Component_ID(void) {

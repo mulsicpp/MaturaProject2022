@@ -10,7 +10,7 @@
 #include "pipelines/SpritePipeline.h"
 #include "pipelines/ShapePipeline.h"
 
-#include <gear/collision/PhysicsComponent.h>
+#include <gear/collision/DynamicPhysicsComponent.h>
 
 using SpritePipeline = gear::SpritePipeline;
 
@@ -114,12 +114,18 @@ void gear::Renderer::render_Shape(const gear::Shape* shape, const Vector<float, 
   ShapePipeline::get_Instance().render_Shape(shape, color);
 }
 
-static void physics_Hitbox_Render_Callback(gear::PhysicsComponent &collider) {
+static void dynamic_Physics_Hitbox_Render_Callback(gear::DynamicPhysicsComponent &collider) {
+  for(auto &hitbox : collider.collider.get_Shapes())
+    gear::Renderer::render_Shape(hitbox.absolute_Shape.get(), {0, 1, 1, 1});
+}
+
+static void static_Physics_Hitbox_Render_Callback(gear::StaticPhysicsComponent &collider) {
   for(auto &hitbox : collider.collider.get_Shapes())
     gear::Renderer::render_Shape(hitbox.absolute_Shape.get(), {0, 1, 1, 1});
 }
 
 void gear::Renderer::render_All_Hitboxes(gear::Scene *scene)
 {
-  gear::Entity::for_Each(scene->get_ID(), physics_Hitbox_Render_Callback);
+  gear::Entity::for_Each(scene->get_ID(), dynamic_Physics_Hitbox_Render_Callback);
+  gear::Entity::for_Each(scene->get_ID(), static_Physics_Hitbox_Render_Callback);
 }
