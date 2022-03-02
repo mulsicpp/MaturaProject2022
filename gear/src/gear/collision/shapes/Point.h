@@ -13,6 +13,7 @@ public:
   Point(const Vector<double, 2> &pos, bool enabled = true);
 
   void transform(const TransformComponent *transform, Shape *transformed_Shape) const override;
+  void assign(const Shape *other) override;
 };
 
 _GEAR_END

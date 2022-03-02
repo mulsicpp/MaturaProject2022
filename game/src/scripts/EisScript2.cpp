@@ -15,8 +15,8 @@ using namespace gear;
 
 void EisScript2::on_Create(void)
 {
-  m_Entity.add<EventComponent<KeyEvent>>({[&, this](KeyEvent e) {
-    if(e.get_Key() == Key::UP && e.get_Action() == Action::PRESSED) {
+  m_Entity.add<EventComponent<ControllerButtonEvent>>({[&, this](ControllerButtonEvent e) {
+    if(e.get_Button() == ControllerButton::B && e.get_Action() == Action::PRESSED) {
       this->m_Entity.get<PhysicsComponent>()->velocity[1] = -7;
     }
   }});
@@ -29,13 +29,15 @@ void EisScript2::on_Update(void)
 
   physics->velocity[0] = 0;
 
-  if (Input::get_Key_State(Key::LEFT) == State::PRESSED)
+  auto axis_Value = Input::get_Axis_Value(0, ControllerAxis::LEFT_STICK_X);
+
+  if (axis_Value < -0.4)
   {
     physics->velocity[0] -= 3;
     transform->state = 0;
   }
 
-  if (Input::get_Key_State(Key::RIGHT) == State::PRESSED)
+  if (axis_Value > 0.4)
   {
     physics->velocity[0] += 3;
     transform->state = GEAR_MIRROR_X;

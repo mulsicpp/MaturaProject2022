@@ -56,7 +56,7 @@ void gear::Input::init(void)
 {
   m_Window = glfwGetCurrentContext();
 
-  for(const char *mapping : gamepad_Mappings)
+  for (const char *mapping : gamepad_Mappings)
     glfwUpdateGamepadMappings(mapping);
 
   update_Controllermap();
@@ -86,14 +86,20 @@ gear::State gear::Input::get_Mouse_Button_State(MouseButton mouse_Button)
 }
 float gear::Input::get_Axis_Value(int controller_Id, ControllerAxis axis)
 {
-  // Implementation
+  GLFWgamepadstate state;
+  if(glfwGetGamepadState(controller_Id, &state)) {
+    return state.axes[(int)axis];
+  }
   return 0;
 }
 
 gear::State gear::Input::get_Controller_Button_State(int controller_Id, ControllerButton controller_Button)
 {
-  // Implementation
-  return State::PRESSED;
+  GLFWgamepadstate state;
+  if(glfwGetGamepadState(controller_Id, &state)) {
+    return state.buttons[(int)controller_Button] ? State::PRESSED : State::RELEASED;
+  }
+  return State::RELEASED;
 }
 
 void gear::Input::dispatch_Events(Scene *scene)

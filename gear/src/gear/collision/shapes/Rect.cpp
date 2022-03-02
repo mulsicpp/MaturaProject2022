@@ -1,5 +1,7 @@
 #include "Rect.h"
 
+#include <gear/core/debug/log.h>
+
 gear::Rect::Rect(void) : Rect({0, 0}, {1, 1}) {}
 
 gear::Rect::Rect(const gear::Vector<double, 2> &top_Left, const gear::Vector<double, 2> &bottom_Right, bool enabled)
@@ -19,4 +21,13 @@ void gear::Rect::transform(const gear::TransformComponent *transform, gear::Shap
 
   if (s->top_Left[1] > s->bottom_Right[1])
     GEAR_SWAP_VALUES(s->top_Left[1], s->bottom_Right[1]);
+}
+
+void gear::Rect::assign(const gear::Shape *other)
+{
+  Shape::assign(other);
+  if(get_Type() == other->get_Type()) {
+    this->top_Left = ((Rect *)other)->top_Left;
+    this->bottom_Right = ((Rect *)other)->bottom_Right;
+  }
 }

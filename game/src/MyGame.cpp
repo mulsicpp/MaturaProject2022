@@ -27,6 +27,16 @@
 
 using namespace gear;
 
+bool platform_Physics_Check(gear::Vector<double, 2> push_Direction, bool pre_Intersect)
+{
+  if(!pre_Intersect)
+  {
+    if(abs(push_Direction[0]) < abs(push_Direction[1]) / 20 && push_Direction[1] < 0)
+      return true;
+  }
+  return false;
+}
+
 void MyGame::on_Startup(void)
 {
   m_Window->set_Title("Game Window!");
@@ -75,7 +85,7 @@ void MyGame::on_Startup(void)
   Entity new_Eis = m_Scene->create_Entity();
   // GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
 
-  animation_Comp.palette = palettes[4];
+  animation_Comp.palette = palettes[5];
   animation_Comp.animation_Offset++;
   if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
     animation_Comp.animation_Offset = 1.0f;
@@ -120,6 +130,7 @@ void MyGame::on_Startup(void)
   physics.dynamic = false;
   platform.add<PhysicsComponent>(physics);
 
+  physics.check = platform_Physics_Check;
 
   Entity platform2 = m_Scene->create_Entity();
   platform2.add<TransformComponent>({{-100, 20}, {1, 1}, 0});
@@ -153,8 +164,8 @@ void MyGame::per_Frame(void)
   call_Script_Update(m_Scene);
 
   physics_Step(m_Scene);
-  physics_Step(m_Scene);
-  physics_Step(m_Scene);
+  //physics_Step(m_Scene);
+  //physics_Step(m_Scene);
 
   cam.follow_Target();
   Renderer::start_New_Frame();

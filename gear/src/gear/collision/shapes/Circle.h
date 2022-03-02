@@ -15,6 +15,7 @@ public:
   Circle(const Vector<double, 2> &position, double radius, bool enabled = true);
 
   void transform(const TransformComponent *transform, Shape *transformed_Shape) const override;
+  void assign(const Shape *other) override;
 };
 
 _GEAR_END

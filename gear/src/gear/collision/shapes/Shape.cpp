@@ -63,3 +63,8 @@ bool gear::Shape::intersects(const gear::Shape *shape, gear::Vector<double, 2> *
     *separation_Vector = -*separation_Vector;
   return ret;
 }
+
+void gear::Shape::assign(const gear::Shape *other)
+{
+  this->m_Enabled = other->m_Enabled;
+}

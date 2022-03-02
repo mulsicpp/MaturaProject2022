@@ -37,6 +37,11 @@ public:
   std::vector<ExtendedShape> &get_Shapes(void);
 
   void transform(TransformComponent *transform);
+
+  bool intersects(const Hitbox& other) const;
+  bool intersected(const Hitbox& other) const;
+
+  void set_Previous(void);
 };
 
 _GEAR_END

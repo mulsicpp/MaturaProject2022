@@ -5,6 +5,11 @@
 
 #include <gear/core/debug/log.h>
 
+bool gear::default_Physics_Check(gear::Vector<double, 2> push_Direction, bool pre_Intersect)
+{
+  return true;
+}
+
 void gear::physics_Step(gear::Scene *scene)
 {
   size_t count;
@@ -20,7 +25,7 @@ void gear::physics_Step(gear::Scene *scene)
   {
     entities[i] = Entity{phy_Comps[i].get_Entity_ID(), scene_ID};
     transform_Comps[i] = entities[i].get<TransformComponent>();
-    phy_Comps[i].data.velocity += phy_Comps[i].data.acceleration / 3;
+    phy_Comps[i].data.velocity += phy_Comps[i].data.acceleration;
     if (phy_Comps[i].data.velocity[0] < phy_Comps[i].data.velocity_X_Interval[0])
       phy_Comps[i].data.velocity[0] = phy_Comps[i].data.velocity_X_Interval[0];
 
@@ -33,7 +38,7 @@ void gear::physics_Step(gear::Scene *scene)
     if (phy_Comps[i].data.velocity[1] > phy_Comps[i].data.velocity_Y_Interval[1])
       phy_Comps[i].data.velocity[1] = phy_Comps[i].data.velocity_Y_Interval[1];
 
-    transform_Comps[i]->position += phy_Comps[i].data.velocity / 3;
+    transform_Comps[i]->position += phy_Comps[i].data.velocity;
 
     entities[i].update_Transformation();
   }
@@ -44,6 +49,7 @@ void gear::physics_Step(gear::Scene *scene)
   {
     for (int j = i + 1; j < count; j++)
     {
+      bool previous_Intersection = phy_Comps[i].data.collider.intersected(phy_Comps[j].data.collider);
       for (auto &hitbox1 : phy_Comps[i].data.collider.get_Shapes())
       {
         for (auto &hitbox2 : phy_Comps[j].data.collider.get_Shapes())
@@ -51,6 +57,8 @@ void gear::physics_Step(gear::Scene *scene)
           if (hitbox1.absolute_Shape->intersects(hitbox2.absolute_Shape.get(), &vec))
           {
             ints++;
+            if(!phy_Comps[i].data.check(vec, previous_Intersection) || !phy_Comps[j].data.check(-vec, previous_Intersection))
+              continue;
             double inv_Mass1, inv_Mass2;
             if (phy_Comps[i].data.dynamic)
             {
@@ -108,7 +116,10 @@ void gear::physics_Step(gear::Scene *scene)
     }
   }
 
+  for(int i = 0; i < count; i++)
+    phy_Comps[i].data.collider.set_Previous();
+
   delete[] transform_Comps;
   delete[] entities;
-  GEAR_DEBUG_LOG("collisions: %i", ints);
+  //GEAR_DEBUG_LOG("collisions: %i", ints);
 }

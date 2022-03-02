@@ -7,6 +7,8 @@
 
 _GEAR_START
 
+bool default_Physics_Check(Vector<double, 2> push_Direction, bool pre_Intersect);
+
 struct PhysicsComponent {
   Hitbox collider;
   Vector<double, 2> velocity = {0, 0};
@@ -15,6 +17,7 @@ struct PhysicsComponent {
   Vector<double, 2> velocity_Y_Interval = {-100, 100};
   double mass = 10;
   double restitution = 0;
+  bool(*check)(Vector<double, 2> push_Direction, bool pre_Intersect) = default_Physics_Check;
   bool dynamic = true;
 };
 
