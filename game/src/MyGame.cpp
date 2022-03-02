@@ -27,11 +27,13 @@
 
 using namespace gear;
 
-bool platform_Physics_Check(gear::Vector<double, 2> push_Direction, bool pre_Intersect)
+bool platform_Physics_Check(gear::Vector<double, 2> push_Direction, bool pre_Intersect, Entity entity1, Entity entity2)
 {
-  if(!pre_Intersect)
+  if (!pre_Intersect)
   {
-    if(abs(push_Direction[0]) < abs(push_Direction[1]) / 20 && push_Direction[1] < 0)
+    if (entity2.get_Entity_ID() == 0 && Input::get_Key_State(Key::S) == State::PRESSED)
+      return false;
+    if (abs(push_Direction[0]) < abs(push_Direction[1]) / 20 && push_Direction[1] < 0)
       return true;
   }
   return false;
@@ -95,10 +97,15 @@ void MyGame::on_Startup(void)
   new_Eis.add<AnimationComponent>(animation_Comp);
   new_Eis.add<TransformComponent>({{0, -40}, {1, 1}, 0});
   new_Eis.add<PhysicsComponent>({Hitbox::create(
-      Rect{{-12, 14}, {12, 32}},
-      Circle{{2, 14}, 9},
-      Circle{{7, 5}, 6},
-      Circle{{11, -3}, 3}), {0, 0}, {0, 0.3}, {-100, 100}, {-20, 6}, 10});
+                                     Rect{{-12, 14}, {12, 32}},
+                                     Circle{{2, 14}, 9},
+                                     Circle{{7, 5}, 6},
+                                     Circle{{11, -3}, 3}),
+                                 {0, 0},
+                                 {0, 0.3},
+                                 {-100, 100},
+                                 {-20, 6},
+                                 10});
 
   new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>());
 
@@ -108,10 +115,15 @@ void MyGame::on_Startup(void)
   new_Eis.add<AnimationComponent>(animation_Comp);
   new_Eis.add<TransformComponent>({{100, -40}, {1, 1}, 0});
   new_Eis.add<PhysicsComponent>({Hitbox::create(
-      Rect{{-12, 14}, {12, 32}},
-      Circle{{2, 14}, 9},
-      Circle{{7, 5}, 6},
-      Circle{{11, -3}, 3}), {0, 0}, {0, 0.3}, {-100, 100}, {-20, 6}, 10});
+                                     Rect{{-12, 14}, {12, 32}},
+                                     Circle{{2, 14}, 9},
+                                     Circle{{7, 5}, 6},
+                                     Circle{{11, -3}, 3}),
+                                 {0, 0},
+                                 {0, 0.3},
+                                 {-100, 100},
+                                 {-20, 6},
+                                 10});
 
   new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript2>());
 
@@ -132,18 +144,24 @@ void MyGame::on_Startup(void)
 
   physics.check = platform_Physics_Check;
 
+  sprite.offset = {-35, -3, 0.1};
+  sprite.sprite = ResourceManager::get<Sprite>("assets/test_sprites/platform2.gear");
+
   Entity platform2 = m_Scene->create_Entity();
   platform2.add<TransformComponent>({{-100, 20}, {1, 1}, 0});
+  platform2.add<SpriteComponent>(sprite);
   physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
   platform2.add<PhysicsComponent>(physics);
 
   Entity platform3 = m_Scene->create_Entity();
   platform3.add<TransformComponent>({{100, 20}, {1, 1}, 0});
+  platform3.add<SpriteComponent>(sprite);
   physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
   platform3.add<PhysicsComponent>(physics);
 
   Entity platform4 = m_Scene->create_Entity();
   platform4.add<TransformComponent>({{0, -30}, {1, 1}, 0});
+  platform4.add<SpriteComponent>(sprite);
   physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
   platform4.add<PhysicsComponent>(physics);
 
@@ -164,13 +182,13 @@ void MyGame::per_Frame(void)
   call_Script_Update(m_Scene);
 
   physics_Step(m_Scene);
-  //physics_Step(m_Scene);
-  //physics_Step(m_Scene);
+  physics_Step(m_Scene);
+  physics_Step(m_Scene);
 
   cam.follow_Target();
   Renderer::start_New_Frame();
   Renderer::render_Scene(m_Scene);
-  Renderer::render_All_Hitboxes(m_Scene);
+  // Renderer::render_All_Hitboxes(m_Scene);
   Renderer::show_Frame();
 }
 

@@ -5,7 +5,7 @@
 
 #include <gear/core/debug/log.h>
 
-bool gear::default_Physics_Check(gear::Vector<double, 2> push_Direction, bool pre_Intersect)
+bool gear::default_Physics_Check(gear::Vector<double, 2> push_Direction, bool pre_Intersect, Entity entity1, Entity entity2)
 {
   return true;
 }
@@ -25,7 +25,7 @@ void gear::physics_Step(gear::Scene *scene)
   {
     entities[i] = Entity{phy_Comps[i].get_Entity_ID(), scene_ID};
     transform_Comps[i] = entities[i].get<TransformComponent>();
-    phy_Comps[i].data.velocity += phy_Comps[i].data.acceleration;
+    phy_Comps[i].data.velocity += phy_Comps[i].data.acceleration / 3;
     if (phy_Comps[i].data.velocity[0] < phy_Comps[i].data.velocity_X_Interval[0])
       phy_Comps[i].data.velocity[0] = phy_Comps[i].data.velocity_X_Interval[0];
 
@@ -38,7 +38,7 @@ void gear::physics_Step(gear::Scene *scene)
     if (phy_Comps[i].data.velocity[1] > phy_Comps[i].data.velocity_Y_Interval[1])
       phy_Comps[i].data.velocity[1] = phy_Comps[i].data.velocity_Y_Interval[1];
 
-    transform_Comps[i]->position += phy_Comps[i].data.velocity;
+    transform_Comps[i]->position += phy_Comps[i].data.velocity / 3;
 
     entities[i].update_Transformation();
   }
@@ -57,7 +57,7 @@ void gear::physics_Step(gear::Scene *scene)
           if (hitbox1.absolute_Shape->intersects(hitbox2.absolute_Shape.get(), &vec))
           {
             ints++;
-            if(!phy_Comps[i].data.check(vec, previous_Intersection) || !phy_Comps[j].data.check(-vec, previous_Intersection))
+            if(!phy_Comps[i].data.check(vec, previous_Intersection, entities[i], entities[j]) || !phy_Comps[j].data.check(-vec, previous_Intersection, entities[j], entities[i]))
               continue;
             double inv_Mass1, inv_Mass2;
             if (phy_Comps[i].data.dynamic)
