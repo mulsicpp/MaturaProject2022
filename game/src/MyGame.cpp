@@ -112,6 +112,8 @@ void MyGame::on_Startup(void)
                                      Circle{{11, -3}, 3}),
                                  0,
                                  eis_Physics_Check,
+                                 nullptr,
+                                 nullptr,
                                  {0, 0},
                                  {0, 0.3},
                                  {-100, 100},
@@ -133,6 +135,8 @@ void MyGame::on_Startup(void)
                                      Circle{{11, -3}, 3}),
                                  0,
                                  eis_Physics_Check,
+                                 nullptr,
+                                 nullptr,
                                  {0, 0},
                                  {0, 0.3},
                                  {-100, 100},
@@ -199,10 +203,12 @@ void MyGame::per_Frame(void)
   physics_Step(m_Scene);
   physics_Step(m_Scene);
 
+
+
   cam.follow_Target();
   Renderer::start_New_Frame();
   Renderer::render_Scene(m_Scene);
-  // Renderer::render_All_Hitboxes(m_Scene);
+  Renderer::render_All_Hitboxes(m_Scene);
   Renderer::show_Frame();
 }
 

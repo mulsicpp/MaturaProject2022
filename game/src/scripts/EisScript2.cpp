@@ -15,11 +15,20 @@ using namespace gear;
 
 void EisScript2::on_Create(void)
 {
-  m_Entity.add<EventComponent<ControllerButtonEvent>>({[&, this](ControllerButtonEvent e) {
+  m_Entity.add<EventComponent<ControllerButtonEvent>>({[this](ControllerButtonEvent e) {
     if(e.get_Button() == ControllerButton::B && e.get_Action() == Action::PRESSED) {
-      this->m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
+      if(jumps) {
+        m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
+        jumps--;
+      }
     }
   }});
+  DynamicPhysicsComponent *physics = m_Entity.get<DynamicPhysicsComponent>();
+  physics->on_Collision_Event = [this] (Vector<double, 2> vec, bool pre_Intersect, Entity e1, Entity e2) {
+    GEAR_DEBUG_LOG("collision occured");
+    if (abs(vec[0]) < abs(vec[1]) / 20 && vec[1] > 0)
+      jumps = 2;
+  };
 }
 
 void EisScript2::on_Update(void)
