@@ -7,7 +7,7 @@
 _GEAR_START
 
 class Hitbox {
-private:
+protected:
   std::vector<ExtendedShape> m_Shapes;
 public:
 

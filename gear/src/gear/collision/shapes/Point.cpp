@@ -22,3 +22,7 @@ void gear::Point::assign(const gear::Shape *other)
     this->position = ((Point *)other)->position;
   }
 }
+
+gear::Ref<gear::Shape> gear::Point::copy(void) const {
+  return Ref<Point>(new Point(*this));
+}

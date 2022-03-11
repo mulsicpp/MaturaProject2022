@@ -62,8 +62,8 @@ void gear::physics_Step(gear::Scene *scene)
             if (!dynamic_Phys[i].data.check(vec, previous_Intersection, dynamic_Entities[i], dynamic_Entities[j]) || !dynamic_Phys[j].data.check(-vec, previous_Intersection, dynamic_Entities[j], dynamic_Entities[i]))
               continue;
 
-            if(dynamic_Phys[i].data.on_Collision_Event != nullptr) dynamic_Phys[i].data.on_Collision_Event(vec, previous_Intersection, dynamic_Entities[i], dynamic_Entities[j]);
-            if(dynamic_Phys[j].data.on_Collision_Event != nullptr) dynamic_Phys[j].data.on_Collision_Event(-vec, previous_Intersection, dynamic_Entities[j], dynamic_Entities[i]);
+            if(dynamic_Phys[i].data.on_Collision != nullptr) dynamic_Phys[i].data.on_Collision(vec, previous_Intersection, dynamic_Entities[i], dynamic_Entities[j]);
+            if(dynamic_Phys[j].data.on_Collision != nullptr) dynamic_Phys[j].data.on_Collision(-vec, previous_Intersection, dynamic_Entities[j], dynamic_Entities[i]);
 
             double inv_Mass1, inv_Mass2;
 
@@ -92,8 +92,8 @@ void gear::physics_Step(gear::Scene *scene)
             dynamic_Phys[i].data.velocity -= impulse * inv_Mass1;
             dynamic_Phys[j].data.velocity += impulse * inv_Mass2;
 
-            if(dynamic_Phys[i].data.on_Collision_Resolved_Event != nullptr) dynamic_Phys[i].data.on_Collision_Resolved_Event(vec, previous_Intersection, dynamic_Entities[i], dynamic_Entities[j]);
-            if(dynamic_Phys[j].data.on_Collision_Resolved_Event != nullptr) dynamic_Phys[j].data.on_Collision_Resolved_Event(-vec, previous_Intersection, dynamic_Entities[j], dynamic_Entities[i]);
+            if(dynamic_Phys[i].data.on_Collision_Resolved != nullptr) dynamic_Phys[i].data.on_Collision_Resolved(vec, previous_Intersection, dynamic_Entities[i], dynamic_Entities[j]);
+            if(dynamic_Phys[j].data.on_Collision_Resolved != nullptr) dynamic_Phys[j].data.on_Collision_Resolved(-vec, previous_Intersection, dynamic_Entities[j], dynamic_Entities[i]);
           }
         }
       }
@@ -115,8 +115,8 @@ void gear::physics_Step(gear::Scene *scene)
             if (!static_Phys[i].data.check(vec, previous_Intersection, static_Entities[i], dynamic_Entities[j]) || !dynamic_Phys[j].data.check(-vec, previous_Intersection, dynamic_Entities[j], static_Entities[i]))
               continue;
             
-            if(static_Phys[i].data.on_Collision_Event != nullptr) static_Phys[i].data.on_Collision_Event(vec, previous_Intersection, static_Entities[i], dynamic_Entities[j]);
-            if(dynamic_Phys[j].data.on_Collision_Event != nullptr) dynamic_Phys[j].data.on_Collision_Event(-vec, previous_Intersection, dynamic_Entities[j], static_Entities[i]);
+            if(static_Phys[i].data.on_Collision != nullptr) static_Phys[i].data.on_Collision(vec, previous_Intersection, static_Entities[i], dynamic_Entities[j]);
+            if(dynamic_Phys[j].data.on_Collision != nullptr) dynamic_Phys[j].data.on_Collision(-vec, previous_Intersection, dynamic_Entities[j], static_Entities[i]);
 
             double inv_Mass;
 
@@ -139,8 +139,8 @@ void gear::physics_Step(gear::Scene *scene)
 
             dynamic_Phys[j].data.velocity += impulse * inv_Mass;
 
-            if(static_Phys[i].data.on_Collision_Resolved_Event != nullptr) static_Phys[i].data.on_Collision_Resolved_Event(vec, previous_Intersection, static_Entities[i], dynamic_Entities[j]);
-            if(dynamic_Phys[j].data.on_Collision_Resolved_Event != nullptr) dynamic_Phys[j].data.on_Collision_Resolved_Event(-vec, previous_Intersection, dynamic_Entities[j], static_Entities[i]);
+            if(static_Phys[i].data.on_Collision_Resolved != nullptr) static_Phys[i].data.on_Collision_Resolved(vec, previous_Intersection, static_Entities[i], dynamic_Entities[j]);
+            if(dynamic_Phys[j].data.on_Collision_Resolved != nullptr) dynamic_Phys[j].data.on_Collision_Resolved(-vec, previous_Intersection, dynamic_Entities[j], static_Entities[i]);
           }
         }
       }

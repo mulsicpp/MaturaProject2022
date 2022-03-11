@@ -5,6 +5,12 @@
 #include <gear/collision/shapes/Shape.h>
 #include <gear/collision/Hitbox.h>
 
+class MyCamera : public gear::Camera {
+public:
+  MyCamera(const gear::Vector<double, 2> *target_Position);
+  void follow_Target(void) override;
+};
+
 class MyGame : public gear::Game
 {
 private:
@@ -13,12 +19,13 @@ private:
   gear::Entity *eis_Idle;
   gear::Ref<gear::Palette> palettes[7];
   int palette_Index = 0;
+  gear::Vector<double, 2> m_Target_Pos;
 
   gear::Hitbox h;
 
   gear::Vector<double, 2> cam_Pos;
 
-  gear::Camera cam = &cam_Pos;
+  MyCamera cam = &cam_Pos;
   double velocity = 1;
 
 public:

@@ -31,3 +31,7 @@ void gear::Rect::assign(const gear::Shape *other)
     this->bottom_Right = ((Rect *)other)->bottom_Right;
   }
 }
+
+gear::Ref<gear::Shape> gear::Rect::copy(void) const {
+  return Ref<Rect>(new Rect(*this));
+}

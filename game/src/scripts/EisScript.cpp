@@ -15,11 +15,35 @@ using namespace gear;
 
 void EisScript::on_Create(void)
 {
-  m_Entity.add<EventComponent<KeyEvent>>({[&, this](KeyEvent e) {
+  m_Entity.add<EventComponent<KeyEvent>>({[this](KeyEvent e) {
     if(e.get_Key() == Key::W && e.get_Action() == Action::PRESSED) {
-      this->m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
+      if(ground)
+        m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
+      else if(jumps) {
+        m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
+        jumps--;
+      }
+
+    }
+    if(e.get_Key() == Key::SPACE && e.get_Action() == Action::PRESSED) {
+      Vector<double, 2> flash_Dir = {0, 0};
+      if(Input::get_Key_State(Key::A) == State::PRESSED) flash_Dir[0] -= 60;
+      if(Input::get_Key_State(Key::D) == State::PRESSED) flash_Dir[0] += 60;
+      if(Input::get_Key_State(Key::W) == State::PRESSED) flash_Dir[1] -= 60;
+      if(Input::get_Key_State(Key::S) == State::PRESSED) flash_Dir[1] += 60;
+      m_Entity.get<TransformComponent>()->position += flash_Dir;
+      m_Entity.get<DynamicPhysicsComponent>()->velocity = 0;
     }
   }});
+  DynamicPhysicsComponent *physics = m_Entity.get<DynamicPhysicsComponent>();
+  physics->on_Collision = [this] (Vector<double, 2> vec, bool pre_Intersect, Entity e1, Entity e2) {
+    GEAR_DEBUG_LOG("collision occured");
+    if (abs(vec[0]) < abs(vec[1]) / 20 && vec[1] > 0)
+    {
+      jumps = 1;
+      ground = true;
+    }
+  };
 }
 
 void EisScript::on_Update(void)
@@ -27,7 +51,11 @@ void EisScript::on_Update(void)
   auto transform = m_Entity.get<TransformComponent>();
   auto physics = m_Entity.get<DynamicPhysicsComponent>();
 
+  ground = false;
+
   physics->velocity[0] = 0;
+
+  auto axis_Value = Input::get_Axis_Value(0, ControllerAxis::LEFT_STICK_X);
 
   if (Input::get_Key_State(Key::A) == State::PRESSED)
   {

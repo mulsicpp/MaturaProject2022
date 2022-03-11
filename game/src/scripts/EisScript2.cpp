@@ -17,17 +17,23 @@ void EisScript2::on_Create(void)
 {
   m_Entity.add<EventComponent<ControllerButtonEvent>>({[this](ControllerButtonEvent e) {
     if(e.get_Button() == ControllerButton::B && e.get_Action() == Action::PRESSED) {
-      if(jumps) {
+      if(ground)
+        m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
+      else if(jumps) {
         m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
         jumps--;
       }
+
     }
   }});
   DynamicPhysicsComponent *physics = m_Entity.get<DynamicPhysicsComponent>();
-  physics->on_Collision_Event = [this] (Vector<double, 2> vec, bool pre_Intersect, Entity e1, Entity e2) {
+  physics->on_Collision = [this] (Vector<double, 2> vec, bool pre_Intersect, Entity e1, Entity e2) {
     GEAR_DEBUG_LOG("collision occured");
     if (abs(vec[0]) < abs(vec[1]) / 20 && vec[1] > 0)
-      jumps = 2;
+    {
+      jumps = 1;
+      ground = true;
+    }
   };
 }
 
@@ -35,6 +41,8 @@ void EisScript2::on_Update(void)
 {
   auto transform = m_Entity.get<TransformComponent>();
   auto physics = m_Entity.get<DynamicPhysicsComponent>();
+
+  ground = false;
 
   physics->velocity[0] = 0;
 

@@ -25,3 +25,7 @@ void gear::Circle::assign(const gear::Shape *other)
     this->radius = ((Circle *)other)->radius;
   }
 }
+
+gear::Ref<gear::Shape> gear::Circle::copy(void) const {
+  return Ref<Circle>(new Circle(*this));
+}

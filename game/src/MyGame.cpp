@@ -27,6 +27,12 @@
 
 using namespace gear;
 
+MyCamera::MyCamera(const Vector<double, 2> *target_Position) : gear::Camera(target_Position) {}
+
+void MyCamera::follow_Target(void) {
+  this->m_Position += (*m_Target_Position - m_Position) / 20;
+}
+
 bool platform_Physics_Check(gear::Vector<double, 2> push_Direction, bool pre_Intersect, Entity entity1, Entity entity2)
 {
   if (!pre_Intersect)
@@ -174,13 +180,13 @@ void MyGame::on_Startup(void)
   Entity platform3 = m_Scene->create_Entity();
   platform3.add<TransformComponent>({{100, 20}, {1, 1}, 0});
   platform3.add<SpriteComponent>(sprite);
-  physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
+  //physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
   platform3.add<StaticPhysicsComponent>(physics);
 
   Entity platform4 = m_Scene->create_Entity();
   platform4.add<TransformComponent>({{0, -30}, {1, 1}, 0});
   platform4.add<SpriteComponent>(sprite);
-  physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
+  // physics.collider = Hitbox::create(Rect{{-35, 0}, {35, 5}});
   platform4.add<StaticPhysicsComponent>(physics);
 
   GEAR_DEBUG_LOG("finished scene");
@@ -203,7 +209,7 @@ void MyGame::per_Frame(void)
   physics_Step(m_Scene);
   physics_Step(m_Scene);
 
-
+  cam_Pos = (Entity{0, 0}.get<TransformComponent>()->position + Entity{1, 0}.get<TransformComponent>()->position) / 2;
 
   cam.follow_Target();
   Renderer::start_New_Frame();

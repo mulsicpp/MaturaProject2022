@@ -34,6 +34,7 @@ public:
 
   virtual void transform(const TransformComponent *transform, Shape *transformed_Shape) const = 0;
   virtual void assign(const Shape *other);
+  virtual Ref<Shape> copy(void) const = 0;
 };
 
 _GEAR_END
