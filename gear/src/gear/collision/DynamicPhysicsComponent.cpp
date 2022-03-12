@@ -59,11 +59,11 @@ void gear::physics_Step(gear::Scene *scene)
           if (hitbox1.absolute_Shape->intersects(hitbox2.absolute_Shape.get(), &vec))
           {
             ints++;
-            if (!dynamic_Phys[i].data.check(vec, previous_Intersection, dynamic_Entities[i], dynamic_Entities[j]) || !dynamic_Phys[j].data.check(-vec, previous_Intersection, dynamic_Entities[j], dynamic_Entities[i]))
+            if (!dynamic_Phys[i].data.check({ dynamic_Entities[i], dynamic_Entities[j], vec, previous_Intersection }) || !dynamic_Phys[j].data.check({ dynamic_Entities[j], dynamic_Entities[i], -vec, previous_Intersection }))
               continue;
 
-            if(dynamic_Phys[i].data.on_Collision != nullptr) dynamic_Phys[i].data.on_Collision(vec, previous_Intersection, dynamic_Entities[i], dynamic_Entities[j]);
-            if(dynamic_Phys[j].data.on_Collision != nullptr) dynamic_Phys[j].data.on_Collision(-vec, previous_Intersection, dynamic_Entities[j], dynamic_Entities[i]);
+            if(dynamic_Phys[i].data.on_Collision != nullptr) dynamic_Phys[i].data.on_Collision({ dynamic_Entities[i], dynamic_Entities[j], vec, previous_Intersection });
+            if(dynamic_Phys[j].data.on_Collision != nullptr) dynamic_Phys[j].data.on_Collision({ dynamic_Entities[j], dynamic_Entities[i], -vec, previous_Intersection });
 
             double inv_Mass1, inv_Mass2;
 
@@ -92,8 +92,8 @@ void gear::physics_Step(gear::Scene *scene)
             dynamic_Phys[i].data.velocity -= impulse * inv_Mass1;
             dynamic_Phys[j].data.velocity += impulse * inv_Mass2;
 
-            if(dynamic_Phys[i].data.on_Collision_Resolved != nullptr) dynamic_Phys[i].data.on_Collision_Resolved(vec, previous_Intersection, dynamic_Entities[i], dynamic_Entities[j]);
-            if(dynamic_Phys[j].data.on_Collision_Resolved != nullptr) dynamic_Phys[j].data.on_Collision_Resolved(-vec, previous_Intersection, dynamic_Entities[j], dynamic_Entities[i]);
+            if(dynamic_Phys[i].data.on_Collision_Resolved != nullptr) dynamic_Phys[i].data.on_Collision_Resolved({ dynamic_Entities[i], dynamic_Entities[j], vec, previous_Intersection });
+            if(dynamic_Phys[j].data.on_Collision_Resolved != nullptr) dynamic_Phys[j].data.on_Collision_Resolved({ dynamic_Entities[j], dynamic_Entities[i], -vec, previous_Intersection });
           }
         }
       }
@@ -112,11 +112,11 @@ void gear::physics_Step(gear::Scene *scene)
           if (hitbox1.absolute_Shape->intersects(hitbox2.absolute_Shape.get(), &vec))
           {
             ints++;
-            if (!static_Phys[i].data.check(vec, previous_Intersection, static_Entities[i], dynamic_Entities[j]) || !dynamic_Phys[j].data.check(-vec, previous_Intersection, dynamic_Entities[j], static_Entities[i]))
+            if (!static_Phys[i].data.check({ static_Entities[i], dynamic_Entities[j], vec, previous_Intersection }) || !dynamic_Phys[j].data.check({ dynamic_Entities[j], static_Entities[i], -vec, previous_Intersection }))
               continue;
             
-            if(static_Phys[i].data.on_Collision != nullptr) static_Phys[i].data.on_Collision(vec, previous_Intersection, static_Entities[i], dynamic_Entities[j]);
-            if(dynamic_Phys[j].data.on_Collision != nullptr) dynamic_Phys[j].data.on_Collision(-vec, previous_Intersection, dynamic_Entities[j], static_Entities[i]);
+            if(static_Phys[i].data.on_Collision != nullptr) static_Phys[i].data.on_Collision({ static_Entities[i], dynamic_Entities[j], vec, previous_Intersection });
+            if(dynamic_Phys[j].data.on_Collision != nullptr) dynamic_Phys[j].data.on_Collision({ dynamic_Entities[j], static_Entities[i], -vec, previous_Intersection });
 
             double inv_Mass;
 
@@ -139,8 +139,8 @@ void gear::physics_Step(gear::Scene *scene)
 
             dynamic_Phys[j].data.velocity += impulse * inv_Mass;
 
-            if(static_Phys[i].data.on_Collision_Resolved != nullptr) static_Phys[i].data.on_Collision_Resolved(vec, previous_Intersection, static_Entities[i], dynamic_Entities[j]);
-            if(dynamic_Phys[j].data.on_Collision_Resolved != nullptr) dynamic_Phys[j].data.on_Collision_Resolved(-vec, previous_Intersection, dynamic_Entities[j], static_Entities[i]);
+            if(static_Phys[i].data.on_Collision_Resolved != nullptr) static_Phys[i].data.on_Collision_Resolved({ static_Entities[i], dynamic_Entities[j], vec, previous_Intersection });
+            if(dynamic_Phys[j].data.on_Collision_Resolved != nullptr) dynamic_Phys[j].data.on_Collision_Resolved({ dynamic_Entities[j], static_Entities[i], -vec, previous_Intersection });
           }
         }
       }

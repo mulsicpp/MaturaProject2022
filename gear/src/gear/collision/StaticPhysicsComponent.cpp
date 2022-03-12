@@ -5,7 +5,7 @@
 
 #include <gear/core/debug/log.h>
 
-bool gear::default_Physics_Check(gear::Vector<double, 2> push_Direction, bool pre_Intersect, Entity entity1, Entity entity2)
+bool gear::default_Physics_Check(CollisionEvent event)
 {
   return true;
 }

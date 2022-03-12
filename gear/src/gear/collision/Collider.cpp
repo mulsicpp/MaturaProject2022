@@ -1,17 +1,17 @@
-#include "Hitbox.h"
+#include "Collider.h"
 
-std::vector<gear::ExtendedShape> &gear::Hitbox::get_Shapes(void)
+std::vector<gear::ExtendedShape> &gear::Collider::get_Shapes(void)
 {
   return m_Shapes;
 }
 
-void gear::Hitbox::transform(gear::TransformComponent *transform)
+void gear::Collider::transform(gear::TransformComponent *transform)
 {
   for (auto &shape : m_Shapes)
     shape.shape->transform(transform, shape.absolute_Shape.get());
 }
 
-bool gear::Hitbox::intersects(const gear::Hitbox &other) const
+bool gear::Collider::intersects(const gear::Collider &other) const
 {
   for (auto &shape1 : m_Shapes)
     for (auto &shape2 : other.m_Shapes)
@@ -20,7 +20,7 @@ bool gear::Hitbox::intersects(const gear::Hitbox &other) const
   return false;
 }
 
-bool gear::Hitbox::intersected(const gear::Hitbox &other) const
+bool gear::Collider::intersected(const gear::Collider &other) const
 {
   for (auto &shape1 : m_Shapes)
     for (auto &shape2 : other.m_Shapes)
@@ -29,7 +29,7 @@ bool gear::Hitbox::intersected(const gear::Hitbox &other) const
   return false;
 }
 
-void gear::Hitbox::set_Previous(void)
+void gear::Collider::set_Previous(void)
 {
   for (auto &shape : m_Shapes)
     shape.previous_Shape->assign(shape.absolute_Shape.get());

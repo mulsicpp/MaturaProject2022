@@ -6,15 +6,15 @@
 
 _GEAR_START
 
-class Hitbox {
+class Collider {
 protected:
   std::vector<ExtendedShape> m_Shapes;
 public:
 
   template<class T, class... Ts>
-  static Hitbox create(T shape, Ts... shapes)
+  static Collider create(T shape, Ts... shapes)
   {
-    Hitbox ret;
+    Collider ret;
     ret.add(shape, shapes...);
     return ret;
   }
@@ -38,8 +38,8 @@ public:
 
   void transform(TransformComponent *transform);
 
-  bool intersects(const Hitbox& other) const;
-  bool intersected(const Hitbox& other) const;
+  bool intersects(const Collider& other) const;
+  bool intersected(const Collider& other) const;
 
   void set_Previous(void);
 };
