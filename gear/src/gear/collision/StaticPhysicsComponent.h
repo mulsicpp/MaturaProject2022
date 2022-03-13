@@ -4,7 +4,7 @@
 #include <vector>
 #include <gear/scene/Scene.h>
 #include "Collider.h"
-#include "events/CollisionEvent.h"
+#include "CollisionEvent.h"
 
 _GEAR_START
 

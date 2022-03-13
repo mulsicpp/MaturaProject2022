@@ -103,7 +103,7 @@ void MyGame::on_Startup(void)
     Entity new_Eis = m_Scene->create_Entity();
     // GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
 
-    animation_Comp.palette = palettes[5];
+    animation_Comp.palette = palettes[3];
     animation_Comp.animation_Offset++;
     if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
         animation_Comp.animation_Offset = 1.0f;
@@ -215,7 +215,7 @@ void MyGame::per_Frame(void)
     cam.follow_Target();
     Renderer::start_New_Frame();
     Renderer::render_Scene(m_Scene);
-    Renderer::render_All_Hitboxes(m_Scene);
+    // Renderer::render_All_Hitboxes(m_Scene);
     Renderer::show_Frame();
 }
 

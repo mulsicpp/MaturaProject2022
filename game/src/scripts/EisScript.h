@@ -2,7 +2,7 @@
 
 class EisScript : public gear::ScriptableEntity
 {
-    int jumps = 1;
+    int jumps = 3;
     bool ground = false;
 
     virtual void on_Create(void) override;

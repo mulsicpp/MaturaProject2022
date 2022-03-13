@@ -23,7 +23,7 @@ void EisScript::on_Create(void)
                                                         m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
                                                     else if (jumps)
                                                     {
-                                                        m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
+                                                        m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -5.5;
                                                         jumps--;
                                                     }
                                                 }
@@ -48,7 +48,7 @@ void EisScript::on_Create(void)
         GEAR_DEBUG_LOG("collision occured");
         if (abs(e.get_Separation_Vector()[0]) < abs(e.get_Separation_Vector()[1]) / 20 && e.get_Separation_Vector()[1] > 0)
         {
-            jumps = 1;
+            jumps = 3;
             ground = true;
         }
     };

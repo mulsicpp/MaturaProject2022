@@ -23,7 +23,7 @@ void EisScript2::on_Create(void)
                                                                      m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
                                                                  else if (jumps)
                                                                  {
-                                                                     m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
+                                                                     m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -5.5;
                                                                      jumps--;
                                                                  }
                                                              }
