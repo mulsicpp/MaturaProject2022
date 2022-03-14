@@ -131,7 +131,7 @@ void MyGame::on_Startup(void)
 
     new_Eis.add<HurtboxComponent>({{Hurtbox::create(1, Circle{{0, 23}, 12})}});
     HitboxComponent h = {{Hitbox::create(1, Circle{{-20, 23}, 12, false})}};
-    h.hitboxes[0]->on_Collision_Begin([](CollisionEvent e) { GEAR_DEBUG_LOG("COLLISION"); });
+    h.hitboxes[0]->on_Collision_Begin([](CollisionEvent e) { e.get_Other_Entity().get<DynamicPhysicsComponent>()->velocity = {0, -4}; });
     new_Eis.add<HitboxComponent>(h);
     new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>());
 
@@ -158,7 +158,7 @@ void MyGame::on_Startup(void)
 
     new_Eis.add<HurtboxComponent>({{Hurtbox::create(1, Circle{{0, 23}, 12})}});
     h = {{Hitbox::create(1, Circle{{-20, 23}, 12, false})}};
-    h.hitboxes[0]->on_Collision_Begin([](CollisionEvent e) { GEAR_DEBUG_LOG("COLLISION"); });
+    h.hitboxes[0]->on_Collision_Begin([](CollisionEvent e) { e.get_Other_Entity().get<DynamicPhysicsComponent>()->velocity = {0, -4}; });
     new_Eis.add<HitboxComponent>(h);
     new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript2>());
 
@@ -219,6 +219,8 @@ void MyGame::per_Frame(void)
     physics_Step(m_Scene);
     physics_Step(m_Scene);
     physics_Step(m_Scene);
+
+    hitbox_Collision_Check(m_Scene);
 
     cam_Pos = (Entity{0, 0}.get<TransformComponent>()->position + Entity{1, 0}.get<TransformComponent>()->position) / 2;
 

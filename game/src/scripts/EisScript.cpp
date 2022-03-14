@@ -24,7 +24,7 @@ void EisScript::on_Create(void)
         {
             if(e.get_Action() == Action::PRESSED)
                 attack->set_Enabled(true);
-            else
+            else if(e.get_Action() == Action::RELEASED)
                 attack->set_Enabled(false);
         }
         if (e.get_Key() == Key::W && e.get_Action() == Action::PRESSED)

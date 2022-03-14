@@ -10,6 +10,7 @@ _GEAR_START
 
 class Hitbox : public Hurtbox
 {
+    friend void hitbox_Collision_Check(Scene *scene);
 protected:
     std::function<void (CollisionEvent)> m_On_Collision_Begin;
     std::function<void (CollisionEvent)> m_On_Colliding;
