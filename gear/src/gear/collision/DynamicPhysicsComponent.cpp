@@ -51,10 +51,10 @@ void gear::physics_Step(gear::Scene *scene)
   {
     for (int j = i + 1; j < dynamic_Count; j++)
     {
-      bool previous_Intersection = dynamic_Phys[i].data.collider.intersected(dynamic_Phys[j].data.collider);
-      for (auto &hitbox1 : dynamic_Phys[i].data.collider.get_Shapes())
+      bool previous_Intersection = dynamic_Phys[i].data.collider->intersected(*dynamic_Phys[j].data.collider);
+      for (auto &hitbox1 : dynamic_Phys[i].data.collider->get_Shapes())
       {
-        for (auto &hitbox2 : dynamic_Phys[j].data.collider.get_Shapes())
+        for (auto &hitbox2 : dynamic_Phys[j].data.collider->get_Shapes())
         {
           if (hitbox1.absolute_Shape->intersects(hitbox2.absolute_Shape.get(), &vec))
           {
@@ -104,10 +104,10 @@ void gear::physics_Step(gear::Scene *scene)
   {
     for (int j = 0; j < dynamic_Count; j++)
     {
-      bool previous_Intersection = static_Phys[i].data.collider.intersected(dynamic_Phys[j].data.collider);
-      for (auto &hitbox1 : static_Phys[i].data.collider.get_Shapes())
+      bool previous_Intersection = static_Phys[i].data.collider->intersected(*dynamic_Phys[j].data.collider);
+      for (auto &hitbox1 : static_Phys[i].data.collider->get_Shapes())
       {
-        for (auto &hitbox2 : dynamic_Phys[j].data.collider.get_Shapes())
+        for (auto &hitbox2 : dynamic_Phys[j].data.collider->get_Shapes())
         {
           if (hitbox1.absolute_Shape->intersects(hitbox2.absolute_Shape.get(), &vec))
           {
@@ -148,9 +148,9 @@ void gear::physics_Step(gear::Scene *scene)
   }
 
   for (int i = 0; i < dynamic_Count; i++)
-    dynamic_Phys[i].data.collider.set_Previous();
+    dynamic_Phys[i].data.collider->set_Previous();
   for (int i = 0; i < static_Count; i++)
-    static_Phys[i].data.collider.set_Previous();
+    static_Phys[i].data.collider->set_Previous();
 
   delete[] transforms;
   delete[] dynamic_Entities;

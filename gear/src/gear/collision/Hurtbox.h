@@ -14,11 +14,11 @@ protected:
     uint32_t m_Layer;
 public:
     template <class T, class... Ts>
-    static Hurtbox create(uint32_t layer, T shape, Ts... shapes)
+    static Ref<Hurtbox> create(uint32_t layer, T shape, Ts... shapes)
     {
-        Hurtbox ret;
-        ret.m_Layer = layer;
-        ret.add(shape, shapes...);
+        Ref<Hurtbox> ret(new Hurtbox);
+        ret->m_Layer = layer;
+        ret->add(shape, shapes...);
         return ret;
     }
 

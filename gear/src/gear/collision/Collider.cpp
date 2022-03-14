@@ -34,3 +34,9 @@ void gear::Collider::set_Previous(void)
   for (auto &shape : m_Shapes)
     shape.previous_Shape->assign(shape.absolute_Shape.get());
 }
+
+void gear::Collider::set_Enabled(bool enabled)
+{
+  for (auto &shape : m_Shapes)
+    shape.shape->set_Enabled(enabled);
+}

@@ -19,6 +19,8 @@ class Shape
 {
 private:
   const ShapeType m_Type;
+
+protected:
   bool m_Enabled = true;
 
 public:

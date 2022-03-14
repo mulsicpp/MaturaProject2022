@@ -11,7 +11,7 @@ _GEAR_START
 bool default_Physics_Check(CollisionEvent event);
 
 struct StaticPhysicsComponent {
-  Collider collider;
+  Ref<Collider> collider;
   double restitution = 0;
   bool(*check)(CollisionEvent event) = default_Physics_Check;
   std::function<void(CollisionEvent)> on_Collision;

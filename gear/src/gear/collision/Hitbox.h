@@ -16,11 +16,11 @@ protected:
     std::function<void (CollisionEvent)> m_On_Collision_End;
 public:
     template <class T, class... Ts>
-    static Hitbox create(uint32_t layer, T shape, Ts... shapes)
+    static Ref<Hitbox> create(uint32_t layer, T shape, Ts... shapes)
     {
-        Hitbox ret;
-        ret.m_Layer = layer;
-        ret.add(shape, shapes...);
+        Ref<Hitbox> ret(new Hitbox);
+        ret->m_Layer = layer;
+        ret->add(shape, shapes...);
         return ret;
     }
 

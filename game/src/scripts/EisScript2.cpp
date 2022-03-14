@@ -31,7 +31,6 @@ void EisScript2::on_Create(void)
     DynamicPhysicsComponent *physics = m_Entity.get<DynamicPhysicsComponent>();
     physics->on_Collision = [this](CollisionEvent e)
     {
-        GEAR_DEBUG_LOG("collision occured");
         if (abs(e.get_Separation_Vector()[0]) < abs(e.get_Separation_Vector()[1]) / 20 && e.get_Separation_Vector()[1] > 0)
         {
             jumps = 1;

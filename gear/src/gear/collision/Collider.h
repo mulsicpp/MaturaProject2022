@@ -12,10 +12,10 @@ protected:
 public:
 
   template<class T, class... Ts>
-  static Collider create(T shape, Ts... shapes)
+  static Ref<Collider> create(T shape, Ts... shapes)
   {
-    Collider ret;
-    ret.add(shape, shapes...);
+    Ref<Collider> ret(new Collider);
+    ret->add(shape, shapes...);
     return ret;
   }
 
@@ -42,6 +42,8 @@ public:
   bool intersected(const Collider& other) const;
 
   void set_Previous(void);
+
+  void set_Enabled(bool enabled);
 };
 
 _GEAR_END
