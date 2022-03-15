@@ -131,7 +131,8 @@ void MyGame::on_Startup(void)
 
     new_Eis.add<HurtboxComponent>({{Hurtbox::create(1, Circle{{0, 23}, 12})}});
     HitboxComponent h = {{Hitbox::create(1, Circle{{-20, 23}, 12, false})}};
-    h.hitboxes[0]->on_Collision_Begin([](CollisionEvent e) { e.get_Other_Entity().get<DynamicPhysicsComponent>()->velocity = {0, -4}; });
+    h.hitboxes[0]->on_Collision_Begin([](CollisionEvent e) { 
+        e.get_Other_Entity().get<TransformComponent>()->position[0] += e.get_Entity().get<TransformComponent>()->state & GEAR_MIRROR_X ? 20 : -20; });
     new_Eis.add<HitboxComponent>(h);
     new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>());
 

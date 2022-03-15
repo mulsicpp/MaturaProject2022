@@ -40,6 +40,8 @@ void gear::hitbox_Collision_Check(gear::Scene *scene)
         for(auto &hitbox: hitbox_Comps[i].data.hitboxes)
             for(auto &hurtbox : hurtbox_Comps[j].data.hurtboxes)
             {
+                if(hitbox->get_Layer() != hurtbox->get_Layer())
+                    continue;
                 bool previous_Intersection = hitbox->intersected(*hurtbox.get());
                 bool intersection = hitbox->intersects(*hurtbox.get());
 
