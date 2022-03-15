@@ -212,6 +212,7 @@ void MyGame::per_Frame(void)
 {
     if (m_Window->should_Close())
         this->close(0);
+        
     Input::dispatch_Events(m_Scene);
 
     m_Scene->update_Transformation();
@@ -228,7 +229,9 @@ void MyGame::per_Frame(void)
     cam.follow_Target();
     Renderer::start_New_Frame();
     Renderer::render_Scene(m_Scene);
+    GEAR_DEBUG_LOG("redndering hitboxes");
     Renderer::render_All_Hitboxes(m_Scene);
+    GEAR_DEBUG_LOG("show");
     Renderer::show_Frame();
 }
 

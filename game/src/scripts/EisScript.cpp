@@ -10,9 +10,34 @@
 #include <gear/collision/DynamicPhysicsComponent.h>
 #include <gear/collision/HitboxComponent.h>
 
+#include <gear/collision/shapes/Circle.h>
+
 #include <gear/event/Input.h>
 
 using namespace gear;
+
+static void spawn_Projectile(Entity e) {
+    Scene *scene = Scene::get(e.get_Scene_ID());
+    Entity projectile = scene->create_Entity();
+
+    GEAR_DEBUG_LOG("entity id: %i", projectile.get_Entity_ID());
+    auto transform = e.get<TransformComponent>();
+    auto pos = transform->get_Matrix() * Vector<double, 3>{-12, 10, 1};
+    projectile.add<TransformComponent>({pos.use_As<2>(), {1, 1}, 0});
+    DynamicPhysicsComponent physics;
+    physics.collider = Collider::create(Circle{{0, 0}, 5});
+    physics.velocity = transform->state & GEAR_MIRROR_X ? 5 : -5;
+    physics.acceleration = {0, 0};
+    physics.on_Collision = [=] (CollisionEvent e2) {
+        if(e2.get_Other_Entity().get_Entity_ID() != e.get_Entity_ID())
+        {
+            GEAR_DEBUG_LOG("removing projectile");
+            scene->remove_Entity(projectile);
+            GEAR_DEBUG_LOG("removed projectile successfully");
+        }
+    };
+    projectile.add<DynamicPhysicsComponent>(physics);
+};
 
 void EisScript::on_Create(void)
 {
@@ -23,9 +48,7 @@ void EisScript::on_Create(void)
         if (e.get_Key() == Key::ENTER)
         {
             if(e.get_Action() == Action::PRESSED)
-                attack->set_Enabled(true);
-            else if(e.get_Action() == Action::RELEASED)
-                attack->set_Enabled(false);
+                spawn_Projectile(m_Entity);
         }
         if (e.get_Key() == Key::W && e.get_Action() == Action::PRESSED)
         {
