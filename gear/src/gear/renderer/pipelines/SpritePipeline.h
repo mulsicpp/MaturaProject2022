@@ -9,8 +9,6 @@
 #include "../AnimationComponent.h"
 #include "../SpriteComponent.h"
 
-#include <vector>
-
 _GEAR_START
 
 class SpritePipeline : public RenderPipeline

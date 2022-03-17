@@ -25,6 +25,8 @@ private:
   
   uint8_t m_Scene_ID;
   unsigned int m_Entity_ID;
+public:
+  T data;
 
   Component(void) = default;
 
@@ -39,9 +41,6 @@ private:
 
   static void on_Component_Remove(Entity entity, T *component){}
 
-public:
-  T data;
-
   /*
   @return the ID of the component. Can be between 0 to GEAR_MAX_COMPONENTS-1 if it is allowed, else it is -1
   */
@@ -54,6 +53,20 @@ public:
   */
   static uint64_t get_Flag(void) {
     return flag;
+  }
+
+  /*
+  @return the id of the associated entity.
+  */
+  unsigned int get_Entity_ID(void) {
+    return m_Entity_ID;
+  }
+
+  /*
+  @return the id of the associated scene.
+  */
+  unsigned int get_Scene_ID(void) {
+    return m_Scene_ID;
   }
 
   /*
@@ -73,7 +86,6 @@ public:
   }
 
   friend class gear::Entity;
-  friend class gear::WeakVector<Component<T>>;
 };
 
 template<class T>

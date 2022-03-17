@@ -15,6 +15,10 @@
 #include <gear/event/event_Types/ControllerAxisEvent.h>
 #include <gear/event/event_Types/ControllerButtonEvent.h>
 
+#include <gear/collision/DynamicPhysicsComponent.h>
+#include <gear/collision/HitboxComponent.h>
+#include <gear/collision/HurtboxComponent.h>
+
 #include <gear/scripting/ScriptComponent.h>
 
 #include "TransformComponent.h"
@@ -43,6 +47,12 @@ void gear::allow_Gear_Components(void) {
   Component<EventComponent<ControllerConnectionEvent>>::allow();
   Component<EventComponent<ControllerAxisEvent>>::allow();
   Component<EventComponent<ControllerButtonEvent>>::allow();
+
+  Component<StaticPhysicsComponent>::allow();
+  Component<DynamicPhysicsComponent>::allow();
+
+  Component<HitboxComponent>::allow();
+  Component<HurtboxComponent>::allow();
 }
 
 unsigned int gear::get_Next_Component_ID(void) {

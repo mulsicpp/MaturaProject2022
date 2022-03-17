@@ -11,7 +11,7 @@ struct TextComponent {
   const char* text;
   Ref<Font> font;
   int width, height;
-  Vector<float, 3> offset = { 0, 0, 0 };
+  Vector<double, 3> offset = { 0, 0, 0 };
 };
 
 _GEAR_END

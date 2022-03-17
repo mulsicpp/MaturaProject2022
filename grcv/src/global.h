@@ -1,6 +1,6 @@
 #pragma once
 
-//colors
+// colors
 #define C_RESET "\033[0m"
 
 #define BLACK "\033[0;30m"
@@ -16,16 +16,16 @@
 template <class... T>
 void error(const char *str, T... args)
 {
-  printf(RED);
-  printf(str, args...);
-  printf("\n" C_RESET);
-  exit(1);
+    printf(RED);
+    printf(str, args...);
+    printf("\n" C_RESET);
+    exit(1);
 }
 
-template<class... T>
+template <class... T>
 void msg(const char *format, const char *str, T... args)
 {
-  printf(format);
-  printf(str, args...);
-  printf("\n" C_RESET);
+    printf(format);
+    printf(str, args...);
+    printf("\n" C_RESET);
 }

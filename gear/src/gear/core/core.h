@@ -1,6 +1,8 @@
 #pragma once
 
-#define _GEAR_START namespace gear {
+#define _GEAR_START \
+  namespace gear    \
+  {
 #define _GEAR_END }
 
 #if defined(_WIN32)
@@ -21,6 +23,13 @@
 #define GEAR_BIT(x) (1 << (x))
 #define GEAR_BIT_TYPE(type, x) ((type)1 << (x))
 
+#define GEAR_SWAP_VALUES(x, y) \
+  {                            \
+    auto temp = x;             \
+    x = y;                     \
+    y = temp;                  \
+  }
+
 #if !defined(GEAR_MAX_SCENES)
 #define GEAR_MAX_SCENES 8
 #else
@@ -39,8 +48,7 @@
 
 _GEAR_START
 
-
-template<class T>
+template <class T>
 using Ref = std::shared_ptr<T>;
 
 template <class... T>
@@ -51,6 +59,5 @@ void error(const char *str, T... args)
   printf("\033[0m\n");
   exit(1);
 }
-
 
 _GEAR_END

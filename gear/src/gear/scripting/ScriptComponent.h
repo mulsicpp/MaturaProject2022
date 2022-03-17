@@ -30,10 +30,11 @@ public:
   void (*destruct_Script)(ScriptComponent *);
 
   template <class T>
-  void bind(void)
+  ScriptComponent& bind(void)
   {
     construct_Script = construct<T>;
     destruct_Script = destruct<T>;
+    return *this;
   }
 
 };

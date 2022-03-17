@@ -2,23 +2,35 @@
 
 #include <gear/resource/Palette.h>
 #include <gear/renderer/Camera.h>
+#include <gear/collision/shapes/Shape.h>
+#include <gear/collision/Collider.h>
+
+class MyCamera : public gear::Camera
+{
+public:
+    MyCamera(const gear::Vector<double, 2> *target_Position);
+    void follow_Target(void) override;
+};
 
 class MyGame : public gear::Game
 {
 private:
-  gear::Scene *m_Scene;
-  gear::Entity *eis;
-  gear::Entity *eis_Idle;
-  gear::Ref<gear::Palette> palettes[7];
-  int palette_Index = 0;
+    gear::Scene *m_Scene;
+    gear::Entity *eis;
+    gear::Entity *eis_Idle;
+    gear::Ref<gear::Palette> palettes[7];
+    int palette_Index = 0;
+    gear::Vector<double, 2> m_Target_Pos;
 
-  gear::Vector<float, 2> cam_Pos;
+    gear::Collider h;
 
-  gear::Camera cam = &cam_Pos;
-  float speed = 1;
+    gear::Vector<double, 2> cam_Pos;
+
+    MyCamera cam = &cam_Pos;
+    double velocity = 1;
 
 public:
-  void on_Startup(void) override;
-  void per_Frame(void) override;
-  void on_Shutdown(void) override;
+    void on_Startup(void) override;
+    void per_Frame(void) override;
+    void on_Shutdown(void) override;
 };

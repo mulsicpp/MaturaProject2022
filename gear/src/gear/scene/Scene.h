@@ -2,7 +2,7 @@
 
 #include <gear/core/core.h>
 #include <functional>
-#include <unordered_map>
+#include <map>
 #include <stdint.h>
 #include "Component.h"
 
@@ -24,7 +24,7 @@ class Scene
 {
   friend class gear::Entity;
 private:
-  std::unordered_map<unsigned int, uint64_t> m_Comp_Flags;
+  std::map<unsigned int, uint64_t> m_Comp_Flags;
   unsigned int m_Next_ID;
 
   static Scene scenes[GEAR_MAX_SCENES];
@@ -98,6 +98,16 @@ public:
   void remove_All_Components_On(unsigned int entity_ID);
 
   void add_Manager_Callbacks(ManagerCallbacks callbacks);
+
+  /*
+  Transforms all entities according to their transform component.
+  */
+  void update_Transformation(void);
+
+  template<class T>
+  Component<T> *get_All_Components(size_t *count) {
+    return Entity::ComponentManager<T>::get_Instance(this - scenes).get_Components(count);
+  }
 
   void print(void);
 };

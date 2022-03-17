@@ -6,6 +6,7 @@
 #include "Framebuffer.h"
 #include "RenderPipeline.h"
 #include <gear/scene/Scene.h>
+#include <gear/collision/shapes/Shape.h>
 
 #include "Camera.h"
 
@@ -38,6 +39,8 @@ public:
   static void show_Frame(void);
 
   static void render_Scene(Scene *scene);
+  static void render_Shape(const Shape *shape, const Vector<float, 4> &color);
+  static void render_All_Hitboxes(Scene *scene);
 };
 
 _GEAR_END

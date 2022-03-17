@@ -15,6 +15,9 @@ extern const char *const SHADER_UPSCALE_FS;
 extern const char *const SHADER_SPRITE_VS;
 extern const char *const SHADER_SPRITE_FS;
 
+extern const char *const SHADER_SHAPE_VS;
+extern const char *const SHADER_SHAPE_FS;
+
 //extern const char *SHADER_TEXT_VS;
 //extern const char *SHADER_TEXT_FS;
 
