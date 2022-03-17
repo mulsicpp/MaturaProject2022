@@ -53,13 +53,12 @@ private:
 
         static void remove_Entity(uint8_t scene_ID, unsigned int entity_ID)
         {
-            GEAR_DEBUG_LOG("searching ...");
             Component<T> *comp = instances[scene_ID].find(entity_ID);
-            GEAR_DEBUG_LOG("found index: %i, count: %i", comp - instances[scene_ID].m_Components.data(), instances[scene_ID].m_Components.count());
             if (comp != nullptr)
             {
+                GEAR_DEBUG_LOG("found %i", comp - instances[scene_ID].m_Components.data());
                 Component<T>::on_Component_Remove({entity_ID, scene_ID}, &(comp->data));
-                GEAR_DEBUG_LOG("remove event");
+                GEAR_DEBUG_LOG("remove script");
                 instances[scene_ID].m_Components.remove(comp - instances[scene_ID].m_Components.data());
                 GEAR_DEBUG_LOG("remove");
             }
@@ -101,8 +100,8 @@ private:
                 }
                 else
                 {
-                    count -= index + 1;
-                    data = data + index + 1;
+                    count -= index;
+                    data = data + index;
                 }
             }
             if (data->m_Entity_ID == entity_ID)
@@ -296,8 +295,9 @@ public:
         reset_Iterators(ComponentManager<T>::get_Instance(scene_ID)...);
         for (const auto &[id, flags] : comp_Flags)
         {
-            if (Entity(id, scene_ID).has<T...>())
+            if (Entity(id, scene_ID).has<T...>()){
                 function(ComponentManager<T>::get_Instance(scene_ID).iterate_To(id)...);
+            }
         }
     }
 

@@ -176,6 +176,7 @@ void MyGame::on_Startup(void)
     StaticPhysicsComponent physics;
     physics.collider = Collider::create(Rect{{-183, 0}, {183, 20}});
     physics.check = gear::default_Physics_Check;
+    physics.restitution = 1;
     platform.add<StaticPhysicsComponent>(physics);
 
     physics.check = platform_Physics_Check;
@@ -212,21 +213,15 @@ void MyGame::per_Frame(void)
 {
     if (m_Window->should_Close())
         this->close(0);
-    
-    GEAR_DEBUG_LOG("input");
+    GEAR_DEBUG_LOG("start of loop");
     Input::dispatch_Events(m_Scene);
 
     m_Scene->update_Transformation();
-    GEAR_DEBUG_LOG("script");
     call_Script_Update(m_Scene);
 
-    GEAR_DEBUG_LOG("physics");
-
     physics_Step(m_Scene);
     physics_Step(m_Scene);
     physics_Step(m_Scene);
-
-    GEAR_DEBUG_LOG("hitboxes");
 
     hitbox_Collision_Check(m_Scene);
 
@@ -234,11 +229,8 @@ void MyGame::per_Frame(void)
 
     cam.follow_Target();
     Renderer::start_New_Frame();
-    ("rendering");
     Renderer::render_Scene(m_Scene);
-    GEAR_DEBUG_LOG("rendering hitboxes");
     Renderer::render_All_Hitboxes(m_Scene);
-    GEAR_DEBUG_LOG("show");
     Renderer::show_Frame();
 }
 

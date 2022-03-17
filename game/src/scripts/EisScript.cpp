@@ -18,33 +18,49 @@
 
 #include <gear/collision/shapes/Circle.h>
 
+#include <gear/scripting/ScriptComponent.h>
+
 #include <gear/event/Input.h>
 
 using namespace gear;
+
+bool projectile_Physics_Check(CollisionEvent e) {
+    if( e.get_Other_Entity().get_Entity_ID() == 0)
+        return false;
+    return true;
+}
 
 static void spawn_Projectile(Entity e)
 {
     Scene *scene = Scene::get(e.get_Scene_ID());
     Entity projectile = scene->create_Entity();
-
-    GEAR_DEBUG_LOG("entity id: %i", projectile.get_Entity_ID());
     auto transform = e.get<TransformComponent>();
-    auto pos = transform->get_Matrix() * Vector<double, 3>{-14, 15, 1};
+    auto pos = transform->get_Matrix() * Vector<double, 3>{-17, 15, 1};
     projectile.add<TransformComponent>({pos.use_As<2>(), {1, 1}, transform->state});
     DynamicPhysicsComponent physics;
     physics.collider = Collider::create(Circle{{0, 0}, 5});
-    physics.velocity = transform->state & GEAR_MIRROR_X ? 5 : -5;
-    physics.acceleration = {0, 0};
+    physics.velocity = transform->state & GEAR_MIRROR_X ? 6 : -6;
+    physics.acceleration = {0, 0.3};
+    physics.restitution = 1;
+    physics.check = projectile_Physics_Check;
     physics.on_Collision = [=](CollisionEvent e2)
     {
-        if (e2.get_Other_Entity().get_Entity_ID() != e.get_Entity_ID())
-        {
-            GEAR_DEBUG_LOG("removing projectile");
+        if(e2.get_Other_Entity().get_Entity_ID() == 1)
             scene->remove_Entity(projectile);
-            GEAR_DEBUG_LOG("removed projectile successfully");
-        }
     };
     projectile.add<DynamicPhysicsComponent>(physics);
+
+    class ProjectileScript : gear::ScriptableEntity {
+    private:
+        int time_To_Live = 80;
+        virtual void on_Update(void) override {
+            time_To_Live--;
+            if(time_To_Live <= 0)
+                Scene::get(m_Entity.get_Scene_ID())->remove_Entity(m_Entity);
+        }
+    };
+
+    projectile.add<ScriptComponent>(ScriptComponent().bind<ProjectileScript>());
 
     SpriteComponent sprite;
     sprite.sprite = ResourceManager::get<Sprite>("assets/test_sprites/triangle.gear");
