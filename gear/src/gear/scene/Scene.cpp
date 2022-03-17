@@ -53,6 +53,7 @@ struct X
 gear::Entity gear::Scene::create_Entity(void)
 {
     m_Comp_Flags[m_Next_ID] = 0;
+    GEAR_DEBUG_LOG("scene map: %i: %lli, length: %i", m_Next_ID, m_Comp_Flags[m_Next_ID], m_Comp_Flags.size());
     return {m_Next_ID++, (uint8_t)(this - scenes)};
 }
 

@@ -2,7 +2,7 @@
 
 #include <gear/core/core.h>
 #include <functional>
-#include <unordered_map>
+#include <map>
 #include <stdint.h>
 #include "Component.h"
 
@@ -24,7 +24,7 @@ class Scene
 {
   friend class gear::Entity;
 private:
-  std::unordered_map<unsigned int, uint64_t> m_Comp_Flags;
+  std::map<unsigned int, uint64_t> m_Comp_Flags;
   unsigned int m_Next_ID;
 
   static Scene scenes[GEAR_MAX_SCENES];

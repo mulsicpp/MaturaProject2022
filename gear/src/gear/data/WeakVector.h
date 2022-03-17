@@ -3,6 +3,7 @@
 #include <gear/core/core.h>
 #include "memcpy.h"
 #include <string>
+#include <vector>
 
 _GEAR_START
 
@@ -118,7 +119,7 @@ public:
     {
       m_Capacity /= 2;
       T *temp = new T[m_Capacity];
-      gear::memcpy(temp, m_Data, index * sizeof(T));
+      gear::memcpy(temp, m_Data, index);
       gear::memcpy(temp + index, m_Data + index + 1, m_Count - index);
       delete[] m_Data;
       m_Data = temp;
@@ -143,5 +144,16 @@ public:
 
 template <class T>
 const unsigned int WeakVector<T>::_min_capacity = 8;
+
+
+template<class T>
+void vector_Insert(std::vector<T> &vec, T value, int index) {
+    vec.insert(vec.begin() + index, value);
+}
+
+template<class T>
+void vector_Remove(std::vector<T> &vec, int index) {
+    vec.erase(vec.begin() + index);
+}
 
 _GEAR_END

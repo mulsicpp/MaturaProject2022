@@ -55,11 +55,13 @@ private:
         {
             GEAR_DEBUG_LOG("searching ...");
             Component<T> *comp = instances[scene_ID].find(entity_ID);
-            GEAR_DEBUG_LOG("found: %p, count: %i", comp, instances[scene_ID].m_Components.count());
+            GEAR_DEBUG_LOG("found index: %i, count: %i", comp - instances[scene_ID].m_Components.data(), instances[scene_ID].m_Components.count());
             if (comp != nullptr)
             {
                 Component<T>::on_Component_Remove({entity_ID, scene_ID}, &(comp->data));
+                GEAR_DEBUG_LOG("remove event");
                 instances[scene_ID].m_Components.remove(comp - instances[scene_ID].m_Components.data());
+                GEAR_DEBUG_LOG("remove");
             }
         }
 
@@ -99,8 +101,8 @@ private:
                 }
                 else
                 {
-                    count -= index;
-                    data = data + index;
+                    count -= index + 1;
+                    data = data + index + 1;
                 }
             }
             if (data->m_Entity_ID == entity_ID)
@@ -290,7 +292,7 @@ public:
     */
     static void for_Each(uint8_t scene_ID, void (*function)(T &...args))
     {
-        const std::unordered_map<unsigned int, uint64_t> &comp_Flags = Scene::get(scene_ID)->m_Comp_Flags;
+        const std::map<unsigned int, uint64_t> &comp_Flags = Scene::get(scene_ID)->m_Comp_Flags;
         reset_Iterators(ComponentManager<T>::get_Instance(scene_ID)...);
         for (const auto &[id, flags] : comp_Flags)
         {

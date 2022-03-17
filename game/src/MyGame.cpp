@@ -113,7 +113,7 @@ void MyGame::on_Startup(void)
     animation_Comp.parallax_Factor = 1.0f;
     animation_Comp.offset = {-32, -32, 0};
     new_Eis.add<AnimationComponent>(animation_Comp);
-    new_Eis.add<TransformComponent>({{0, -40}, {1, 1}, 0});
+    new_Eis.add<TransformComponent>({{-100, -40}, {1, 1}, GEAR_MIRROR_X});
     new_Eis.add<DynamicPhysicsComponent>({Collider::create(
                                               Rect{{-12, 14}, {12, 32}},
                                               Circle{{2, 14}, 9},
@@ -212,15 +212,21 @@ void MyGame::per_Frame(void)
 {
     if (m_Window->should_Close())
         this->close(0);
-        
+    
+    GEAR_DEBUG_LOG("input");
     Input::dispatch_Events(m_Scene);
 
     m_Scene->update_Transformation();
+    GEAR_DEBUG_LOG("script");
     call_Script_Update(m_Scene);
+
+    GEAR_DEBUG_LOG("physics");
 
     physics_Step(m_Scene);
     physics_Step(m_Scene);
     physics_Step(m_Scene);
+
+    GEAR_DEBUG_LOG("hitboxes");
 
     hitbox_Collision_Check(m_Scene);
 
@@ -228,8 +234,9 @@ void MyGame::per_Frame(void)
 
     cam.follow_Target();
     Renderer::start_New_Frame();
+    ("rendering");
     Renderer::render_Scene(m_Scene);
-    GEAR_DEBUG_LOG("redndering hitboxes");
+    GEAR_DEBUG_LOG("rendering hitboxes");
     Renderer::render_All_Hitboxes(m_Scene);
     GEAR_DEBUG_LOG("show");
     Renderer::show_Frame();

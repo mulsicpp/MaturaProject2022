@@ -1,6 +1,12 @@
 #include "EisScript.h"
 
 #include <gear/renderer/AnimationComponent.h>
+#include <gear/renderer/SpriteComponent.h>
+
+#include <gear/resource/ResourceManager.h>
+#include <gear/resource/Sprite.h>
+#include <gear/resource/Palette.h>
+
 #include <gear/event/EventComponent.h>
 #include <gear/event/event_Types/KeyEvent.h>
 
@@ -16,20 +22,22 @@
 
 using namespace gear;
 
-static void spawn_Projectile(Entity e) {
+static void spawn_Projectile(Entity e)
+{
     Scene *scene = Scene::get(e.get_Scene_ID());
     Entity projectile = scene->create_Entity();
 
     GEAR_DEBUG_LOG("entity id: %i", projectile.get_Entity_ID());
     auto transform = e.get<TransformComponent>();
-    auto pos = transform->get_Matrix() * Vector<double, 3>{-12, 10, 1};
-    projectile.add<TransformComponent>({pos.use_As<2>(), {1, 1}, 0});
+    auto pos = transform->get_Matrix() * Vector<double, 3>{-14, 15, 1};
+    projectile.add<TransformComponent>({pos.use_As<2>(), {1, 1}, transform->state});
     DynamicPhysicsComponent physics;
     physics.collider = Collider::create(Circle{{0, 0}, 5});
     physics.velocity = transform->state & GEAR_MIRROR_X ? 5 : -5;
     physics.acceleration = {0, 0};
-    physics.on_Collision = [=] (CollisionEvent e2) {
-        if(e2.get_Other_Entity().get_Entity_ID() != e.get_Entity_ID())
+    physics.on_Collision = [=](CollisionEvent e2)
+    {
+        if (e2.get_Other_Entity().get_Entity_ID() != e.get_Entity_ID())
         {
             GEAR_DEBUG_LOG("removing projectile");
             scene->remove_Entity(projectile);
@@ -37,6 +45,12 @@ static void spawn_Projectile(Entity e) {
         }
     };
     projectile.add<DynamicPhysicsComponent>(physics);
+
+    SpriteComponent sprite;
+    sprite.sprite = ResourceManager::get<Sprite>("assets/test_sprites/triangle.gear");
+    sprite.palette = ResourceManager::get<Palette>("assets/test_sprites/triangle_palette.gear");
+    sprite.offset = {-5, -5, 0};
+    projectile.add<SpriteComponent>(sprite);
 };
 
 void EisScript::on_Create(void)
@@ -47,7 +61,7 @@ void EisScript::on_Create(void)
     {
         if (e.get_Key() == Key::ENTER)
         {
-            if(e.get_Action() == Action::PRESSED)
+            if (e.get_Action() == Action::PRESSED)
                 spawn_Projectile(m_Entity);
         }
         if (e.get_Key() == Key::W && e.get_Action() == Action::PRESSED)
