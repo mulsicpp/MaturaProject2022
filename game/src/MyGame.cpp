@@ -134,7 +134,7 @@ void MyGame::on_Startup(void)
     h.hitboxes[0]->on_Collision_Begin([](CollisionEvent e) { 
         e.get_Other_Entity().get<TransformComponent>()->position[0] += e.get_Entity().get<TransformComponent>()->state & GEAR_MIRROR_X ? 20 : -20; });
     new_Eis.add<HitboxComponent>(h);
-    new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>());
+    new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(-1));
 
     animation_Comp.palette = palettes[6];
 

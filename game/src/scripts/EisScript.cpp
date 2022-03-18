@@ -40,7 +40,7 @@ static void spawn_Projectile(Entity e)
     DynamicPhysicsComponent physics;
     physics.collider = Collider::create(Circle{{0, 0}, 5});
     physics.velocity = transform->state & GEAR_MIRROR_X ? 6 : -6;
-    physics.acceleration = {0, 0.3};
+    physics.acceleration = {0, 0};
     physics.restitution = 1;
     physics.check = projectile_Physics_Check;
     physics.on_Collision = [=](CollisionEvent e2)
@@ -52,7 +52,7 @@ static void spawn_Projectile(Entity e)
 
     class ProjectileScript : gear::ScriptableEntity {
     private:
-        int time_To_Live = 80;
+        int time_To_Live = 40;
         virtual void on_Update(void) override {
             time_To_Live--;
             if(time_To_Live <= 0)
@@ -68,6 +68,10 @@ static void spawn_Projectile(Entity e)
     sprite.offset = {-5, -5, 0};
     projectile.add<SpriteComponent>(sprite);
 };
+
+EisScript::EisScript(int input) : m_Input(input) {
+
+}
 
 void EisScript::on_Create(void)
 {

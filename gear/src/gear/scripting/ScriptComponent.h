@@ -4,16 +4,17 @@
 #include "ScriptableEntity.h"
 #include <gear/scene/Component.h>
 #include <gear/core/debug/log.h>
+#include <functional>
 
 _GEAR_START
 
 struct ScriptComponent
 {
 private:
-  template <class T>
-  static ScriptableEntity *construct(void)
+  template <class T, class... Args>
+  static ScriptableEntity *construct(Args ...args)
   {
-    return (ScriptableEntity*)(new T());
+    return (ScriptableEntity*)(new T(args...));
   }
 
   template <class T>
@@ -26,13 +27,13 @@ private:
 public:
   ScriptableEntity *script;
 
-  ScriptableEntity *(*construct_Script)(void);
-  void (*destruct_Script)(ScriptComponent *);
+  std::function<ScriptableEntity *(void)> construct_Script;
+  std::function<void (ScriptComponent *)>destruct_Script;
 
-  template <class T>
-  ScriptComponent& bind(void)
+  template <class T, class... Args>
+  ScriptComponent& bind(Args... args)
   {
-    construct_Script = construct<T>;
+    construct_Script = std::bind(construct<T, Args...>, args...);
     destruct_Script = destruct<T>;
     return *this;
   }

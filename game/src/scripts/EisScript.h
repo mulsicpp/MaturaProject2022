@@ -7,6 +7,11 @@ class EisScript : public gear::ScriptableEntity
     bool ground = false;
     gear::Ref<gear::Hitbox> attack;
 
+    int m_Input = -1;
+public:
+    EisScript() = default;
+    EisScript(int input);
+
     virtual void on_Create(void) override;
     virtual void on_Update(void) override;
     virtual void on_Destroy(void) override;
