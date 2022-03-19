@@ -1,5 +1,5 @@
 #include "AControllerAxis.h"
-#include <gear/input/Input.h>
+#include "../../Input.h"
 
 gear::AControllerAxis::AControllerAxis(int controller_ID, ControllerAxis axis)
 {
