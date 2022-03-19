@@ -4,3 +4,10 @@ void gear::AbstractDirection::set_Callback(const std::function<void(gear::Vector
 {
   m_Callback = callback;
 }
+
+  bool gear::AbstractDirection::is_Normalized(void){
+    return m_Normalized;
+  }
+  void gear::AbstractDirection::set_Normalized(bool normalized){
+    m_Normalized = normalized;
+  }
