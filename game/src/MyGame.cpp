@@ -62,7 +62,7 @@ void MyGame::on_Startup(void)
     m_Window->set_Title("Game Window!");
     m_Window->set_Resizable(false);
     m_Window->set_Size(1280, 720);
-    // m_Window->set_Fullscreen();
+    m_Window->set_Fullscreen();
     m_Window->set_Visible(true);
 
     Renderer::create(640, 360);
@@ -105,7 +105,7 @@ void MyGame::on_Startup(void)
     Entity new_Eis = m_Scene->create_Entity();
     // GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
 
-    animation_Comp.palette = palettes[3];
+    animation_Comp.palette = palettes[1];
     animation_Comp.animation_Offset++;
     if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
         animation_Comp.animation_Offset = 1.0f;
@@ -131,12 +131,12 @@ void MyGame::on_Startup(void)
 
     new_Eis.add<HurtboxComponent>({{Hurtbox::create(1, Circle{{0, 23}, 12})}});
     HitboxComponent h = {{Hitbox::create(1, Circle{{-20, 23}, 12, false})}};
-    h.hitboxes[0]->on_Collision_Begin([](CollisionEvent e) { 
+    h.hitboxes[0]->on_Collision_Begin([](HitboxEvent e) { 
         e.get_Other_Entity().get<TransformComponent>()->position[0] += e.get_Entity().get<TransformComponent>()->state & GEAR_MIRROR_X ? 20 : -20; });
     new_Eis.add<HitboxComponent>(h);
     new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(-1));
 
-    animation_Comp.palette = palettes[6];
+    animation_Comp.palette = palettes[2];
 
     new_Eis = m_Scene->create_Entity();
     new_Eis.add<AnimationComponent>(animation_Comp);
@@ -159,7 +159,7 @@ void MyGame::on_Startup(void)
 
     new_Eis.add<HurtboxComponent>({{Hurtbox::create(1, Circle{{0, 23}, 12})}});
     h = {{Hitbox::create(1, Circle{{-20, 23}, 12, false})}};
-    h.hitboxes[0]->on_Collision_Begin([](CollisionEvent e) { e.get_Other_Entity().get<DynamicPhysicsComponent>()->velocity = {0, -4}; });
+    h.hitboxes[0]->on_Collision_Begin([](HitboxEvent e) { e.get_Other_Entity().get<DynamicPhysicsComponent>()->velocity = {0, -4}; });
     new_Eis.add<HitboxComponent>(h);
     new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript2>());
 
@@ -213,7 +213,7 @@ void MyGame::per_Frame(void)
 {
     if (m_Window->should_Close())
         this->close(0);
-    GEAR_DEBUG_LOG("start of loop");
+    //GEAR_DEBUG_LOG("start of loop");
     Input::dispatch_Events(m_Scene);
 
     m_Scene->update_Transformation();
@@ -230,7 +230,7 @@ void MyGame::per_Frame(void)
     cam.follow_Target();
     Renderer::start_New_Frame();
     Renderer::render_Scene(m_Scene);
-    Renderer::render_All_Hitboxes(m_Scene);
+    //Renderer::render_All_Hitboxes(m_Scene);
     Renderer::show_Frame();
 }
 

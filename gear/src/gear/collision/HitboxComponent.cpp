@@ -41,9 +41,11 @@ void gear::hitbox_Collision_Check(gear::Scene *scene)
             if (hitbox_Entities[i].get_Entity_ID() == hurtbox_Entities[j].get_Entity_ID())
                 continue;
             for (auto &hitbox : hitbox_Comps[i].data.hitboxes)
+            {
+                auto layer = hitbox->get_Layer();
                 for (auto &hurtbox : hurtbox_Comps[j].data.hurtboxes)
                 {
-                    if (hitbox->get_Layer() != hurtbox->get_Layer())
+                    if (layer != hurtbox->get_Layer())
                         continue;
                     bool previous_Intersection = hitbox->intersected(*hurtbox.get());
                     bool intersection = hitbox->intersects(*hurtbox.get());
@@ -52,14 +54,15 @@ void gear::hitbox_Collision_Check(gear::Scene *scene)
                     {
                         if (!previous_Intersection)
                             if (hitbox->m_On_Collision_Begin)
-                                callbacks.push_back(std::bind(hitbox->m_On_Collision_Begin, CollisionEvent{hitbox_Entities[i], hurtbox_Entities[j], {0, 0}, previous_Intersection}));
+                                callbacks.push_back(std::bind(hitbox->m_On_Collision_Begin, HitboxEvent{hitbox_Entities[i], hurtbox_Entities[j], layer}));
                         if (hitbox->m_On_Colliding)
-                            callbacks.push_back(std::bind(hitbox->m_On_Colliding, CollisionEvent{hitbox_Entities[i], hurtbox_Entities[j], {0, 0}, previous_Intersection}));
+                            callbacks.push_back(std::bind(hitbox->m_On_Colliding, HitboxEvent{hitbox_Entities[i], hurtbox_Entities[j], layer}));
                     }
                     else if (previous_Intersection)
                         if (hitbox->m_On_Collision_End)
-                            callbacks.push_back(std::bind(hitbox->m_On_Collision_End, CollisionEvent{hitbox_Entities[i], hurtbox_Entities[j], {0, 0}, previous_Intersection}));
+                            callbacks.push_back(std::bind(hitbox->m_On_Collision_End, HitboxEvent{hitbox_Entities[i], hurtbox_Entities[j], layer}));
                 }
+            }
         }
 
     for (int i = 0; i < hitbox_Count; i++)

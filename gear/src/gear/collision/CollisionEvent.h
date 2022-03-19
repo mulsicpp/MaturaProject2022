@@ -9,7 +9,6 @@ _GEAR_START
 class CollisionEvent
 {
     friend void physics_Step(gear::Scene *scene);
-    friend void hitbox_Collision_Check(Scene *scene);
 protected:
     Entity m_Entity, m_Other_Entity;
     Vector<double, 2> m_Separation_Vector;

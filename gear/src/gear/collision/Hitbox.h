@@ -2,7 +2,7 @@
 
 #include <gear/core/core.h>
 #include "Hurtbox.h"
-#include "CollisionEvent.h"
+#include "HitboxEvent.h"
 
 #include <functional>
 
@@ -12,9 +12,9 @@ class Hitbox : public Hurtbox
 {
     friend void hitbox_Collision_Check(Scene *scene);
 protected:
-    std::function<void (CollisionEvent)> m_On_Collision_Begin;
-    std::function<void (CollisionEvent)> m_On_Colliding;
-    std::function<void (CollisionEvent)> m_On_Collision_End;
+    std::function<void (HitboxEvent)> m_On_Collision_Begin;
+    std::function<void (HitboxEvent)> m_On_Colliding;
+    std::function<void (HitboxEvent)> m_On_Collision_End;
 public:
     template <class T, class... Ts>
     static Ref<Hitbox> create(uint32_t layer, T shape, Ts... shapes)
@@ -25,9 +25,9 @@ public:
         return ret;
     }
 
-    void on_Collision_Begin(std::function<void (CollisionEvent)> action);
-    void on_Colliding(std::function<void (CollisionEvent)> action);
-    void on_Collision_End(std::function<void (CollisionEvent)> action);
+    void on_Collision_Begin(std::function<void (HitboxEvent)> action);
+    void on_Colliding(std::function<void (HitboxEvent)> action);
+    void on_Collision_End(std::function<void (HitboxEvent)> action);
 };
 
 _GEAR_END
