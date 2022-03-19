@@ -2,7 +2,7 @@
 
 #include <gear/core/core.h>
 #include "../AbstractButton.h"
-#include "../EventHandler.h"
+#include "../../EventQueue.h"
 #include "../../events/ControllerButtonEvent.h"
 
 _GEAR_START

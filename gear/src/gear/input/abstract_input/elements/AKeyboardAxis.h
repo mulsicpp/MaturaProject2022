@@ -2,7 +2,7 @@
 
 #include <gear/core/core.h>
 #include "../AbstractAxis.h"
-#include "../EventHandler.h"
+#include "../../EventQueue.h"
 #include "../../events/KeyEvent.h"
 
 _GEAR_START
