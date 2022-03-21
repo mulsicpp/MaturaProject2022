@@ -46,13 +46,14 @@ private:
   static std::vector<std::function<void(T)>> m_Global_Event_Callbacks;
   static std::unordered_map<uint64_t, EventHandler<T> *> m_Event_Handlers;
   static std::mutex m_Mutex;
+  static std::vector<std::function<void(void)>> m_Callbacks;
 
   static void event_Callback(InputComponent<T> &event_Component)
   {
     for (T &event : m_Queue)
     {
       if (event_Component.active)
-        event_Component.callback(event);
+      m_Callbacks.push_back(std::bind(event_Component.callback, event));
     }
   }
 
@@ -63,17 +64,20 @@ private:
     {
       for (auto &callback : m_Global_Event_Callbacks)
       {
-        callback(event);
+        m_Callbacks.push_back(std::bind(callback, event));
       }
       for (std::pair<uint64_t, EventHandler<T> *> el : m_Event_Handlers)
       {
-        el.second->handle_Event(event);
+        m_Callbacks.push_back(std::bind(&EventHandler<T>::handle_Event, el.second, event));
       }
     }
 
     if (scene != nullptr)
       gear::Entity::for_Each<InputComponent<T>>(scene->get_ID(), event_Callback);
     m_Queue.clear();
+    for(auto &callback : m_Callbacks)
+        callback();
+    m_Callbacks.clear();
     m_Mutex.unlock();
   }
 
@@ -94,5 +98,7 @@ template <class T>
 std::unordered_map<uint64_t, EventHandler<T> *> gear::EventQueue<T>::m_Event_Handlers;
 template <class T>
 std::mutex gear::EventQueue<T>::m_Mutex;
+template<class T>
+std::vector<std::function<void(void)>> gear::EventQueue<T>::m_Callbacks;
 
 _GEAR_END

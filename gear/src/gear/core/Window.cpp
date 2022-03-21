@@ -40,6 +40,7 @@ gear::Window *gear::Window::create_Fullscreen_Window(const char *name)
   int window_width = mode->width;
   int window_height = mode->height;
   ret->m_Window = glfwCreateWindow(window_width, window_height, name, glfwGetPrimaryMonitor(), NULL);
+  glfwFocusWindow(ret->m_Window);
   return ret;
 }
 
@@ -71,7 +72,9 @@ void gear::Window::set_Fullscreen()
   GLFWmonitor *monitor = glfwGetPrimaryMonitor();
   const GLFWvidmode *mode = glfwGetVideoMode(monitor);
   glfwSetWindowMonitor(m_Window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+  glfwFocusWindow(m_Window);
 }
+
 void gear::Window::set_Windowed(int width, int height)
 {
   glfwSetWindowMonitor(m_Window, nullptr, 0, 0, width, height, 0);

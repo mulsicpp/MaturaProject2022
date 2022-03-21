@@ -19,12 +19,14 @@ void gear::AControllerAxisButton::handle_Event(gear::ControllerAxisEvent event)
         if (Input::get_Axis_Value(m_Controller_ID, m_Button) <= m_Intervall_Max && Input::get_Axis_Value(m_Controller_ID, m_Button) >= m_Intervall_Min)
         {
             m_State = State::PRESSED;
-            m_Callback(Action::PRESSED);
+            if (m_Callback != nullptr)
+                m_Callback(Action::PRESSED);
         }
         else
         {
             m_State = State::RELEASED;
-            m_Callback(Action::RELEASED);
+            if (m_Callback != nullptr)
+                m_Callback(Action::RELEASED);
         }
 }
 
@@ -39,5 +41,5 @@ float gear::AControllerAxisButton::get_Intervall_Min() const
 }
 float gear::AControllerAxisButton::get_Intervall_Max() const
 {
-        return m_Intervall_Max;
+    return m_Intervall_Max;
 }

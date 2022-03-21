@@ -52,8 +52,8 @@ struct X
 
 gear::Entity gear::Scene::create_Entity(void)
 {
+    GEAR_DEBUG_LOG("creating entity: %i", m_Next_ID);
     m_Comp_Flags[m_Next_ID] = 0;
-    GEAR_DEBUG_LOG("scene map: %i: %lli, length: %i", m_Next_ID, m_Comp_Flags[m_Next_ID], m_Comp_Flags.size());
     return {m_Next_ID++, (uint8_t)(this - scenes)};
 }
 
@@ -64,11 +64,9 @@ void gear::Scene::remove_Entity(Entity entity)
 
 void gear::Scene::remove_Entity_With_ID(unsigned int entity_ID)
 {
-    GEAR_DEBUG_LOG("removing comps");
+    GEAR_DEBUG_LOG("deleting entity: %i", entity_ID);
     remove_All_Components_On(entity_ID);
-    GEAR_DEBUG_LOG("removing key");
     m_Comp_Flags.erase(entity_ID);
-    GEAR_DEBUG_LOG("entity id: %i, size: %i", entity_ID, m_Comp_Flags.size());
 }
 
 gear::Entity gear::Scene::get_Entity(unsigned int index)

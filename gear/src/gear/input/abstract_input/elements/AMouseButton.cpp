@@ -8,7 +8,7 @@ gear::State gear::AMouseButton::get_State(void) const
 }
 
 void gear::AMouseButton::handle_Event(gear::MouseButtonEvent event) {
-  if(event.get_Mouse_Button() == m_Button) {
+  if(event.get_Mouse_Button() == m_Button && m_Callback != nullptr) {
     m_Callback(event.get_Action());
   }
 }

@@ -56,11 +56,8 @@ private:
             Component<T> *comp = instances[scene_ID].find(entity_ID);
             if (comp != nullptr)
             {
-                GEAR_DEBUG_LOG("found %i", comp - instances[scene_ID].m_Components.data());
                 Component<T>::on_Component_Remove({entity_ID, scene_ID}, &(comp->data));
-                GEAR_DEBUG_LOG("remove script");
                 instances[scene_ID].m_Components.remove(comp - instances[scene_ID].m_Components.data());
-                GEAR_DEBUG_LOG("remove");
             }
         }
 

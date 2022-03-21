@@ -8,7 +8,10 @@ gear::State gear::AKeyboardButton::get_State(void) const
 }
 
 void gear::AKeyboardButton::handle_Event(gear::KeyEvent event) {
-  if(event.get_Key() == m_Button) {
-    m_Callback(event.get_Action());
+  if(event.get_Key() == m_Button && m_Callback != nullptr) {
+    if(event.get_Action() == Action::PRESSED)
+        m_Callback(Action::PRESSED);
+    else if(event.get_Action() == Action::RELEASED)
+        m_Callback(Action::RELEASED);
   }
 }

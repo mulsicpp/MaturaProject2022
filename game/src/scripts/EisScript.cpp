@@ -20,15 +20,37 @@
 
 #include <gear/scripting/ScriptComponent.h>
 
+#include <gear/input/abstract_input/elements/AKeyboardButton.h>
+#include <gear/input/abstract_input/elements/AControllerAxisButton.h>
+#include <gear/input/abstract_input/elements/AControllerButton.h>
+
 #include <gear/input/Input.h>
 
 using namespace gear;
 
+KFighterInput::KFighterInput(void)
+{
+    GEAR_MAP_BUTTON(left, AKeyboardButton, Key::A);
+    GEAR_MAP_BUTTON(right, AKeyboardButton, Key::D);
+    GEAR_MAP_BUTTON(up, AKeyboardButton, Key::W);
+    GEAR_MAP_BUTTON(down, AKeyboardButton, Key::S);
+    GEAR_MAP_BUTTON(attack, AKeyboardButton, Key::ENTER);
+    GEAR_MAP_BUTTON(flash, AKeyboardButton, Key::SPACE);
+}
+
+CFighterInput::CFighterInput(int id) : AbstractControllerInput(id)
+{
+    GEAR_MAP_BUTTON(left, AControllerAxisButton, id, ControllerAxis::LEFT_STICK_X, -1, -0.4);
+    GEAR_MAP_BUTTON(right, AControllerAxisButton, id, ControllerAxis::LEFT_STICK_X, 0.4, 1);
+    GEAR_MAP_BUTTON(up, AControllerAxisButton, id, ControllerAxis::LEFT_STICK_Y, -1, -0.4);
+    GEAR_MAP_BUTTON(down, AControllerAxisButton, id, ControllerAxis::LEFT_STICK_Y, 0.4, 1);
+    GEAR_MAP_BUTTON(attack, AControllerButton, id, ControllerButton::B);
+    GEAR_MAP_BUTTON(flash, AControllerButton, id, ControllerButton::Y);
+}
+
 bool projectile_Physics_Check(CollisionEvent e)
 {
-    if (e.get_Other_Entity().get_Entity_ID() == 0)
-        return false;
-    return true;
+    return false;
 }
 
 static void spawn_Projectile(Entity e)
@@ -72,21 +94,44 @@ static void spawn_Projectile(Entity e)
     projectile.add<SpriteComponent>(sprite);
 };
 
-EisScript::EisScript(int input) : m_Input(input)
+EisScript::EisScript(InputDevice device)
 {
+    m_Input = FighterInput::create_From(device);
 }
 
 void EisScript::on_Create(void)
 {
     attack = m_Entity.get<HitboxComponent>()->hitboxes[0];
     InputComponent<KeyEvent> comp;
-    comp.callback = [this](KeyEvent e)
-    {
-        if (e.get_Key() == Key::ENTER)
-        {
-            if (e.get_Action() == Action::PRESSED)
+
+    m_Input->attack->set_Callback(
+        [this](Action a) {
+            if (a == Action::PRESSED)
                 spawn_Projectile(m_Entity);
         }
+    );
+
+    m_Input->flash->set_Callback(
+        [this](Action a)
+        {
+            if (a == Action::PRESSED)
+            {
+                Vector<double, 2> flash_Dir = {0, 0};
+                if (Input::get_Key_State(Key::A) == State::PRESSED)
+                    flash_Dir[0] -= 60;
+                if (Input::get_Key_State(Key::D) == State::PRESSED)
+                    flash_Dir[0] += 60;
+                if (Input::get_Key_State(Key::W) == State::PRESSED)
+                    flash_Dir[1] -= 60;
+                if (Input::get_Key_State(Key::S) == State::PRESSED)
+                    flash_Dir[1] += 60;
+                m_Entity.get<TransformComponent>()->position += flash_Dir;
+                m_Entity.get<DynamicPhysicsComponent>()->velocity = 0;
+            }
+        });
+
+    comp.callback = [this](KeyEvent e)
+    {
         if (e.get_Key() == Key::W && e.get_Action() == Action::PRESSED)
         {
             if (ground)
@@ -96,20 +141,6 @@ void EisScript::on_Create(void)
                 m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -5.5;
                 jumps--;
             }
-        }
-        if (e.get_Key() == Key::SPACE && e.get_Action() == Action::PRESSED)
-        {
-            Vector<double, 2> flash_Dir = {0, 0};
-            if (Input::get_Key_State(Key::A) == State::PRESSED)
-                flash_Dir[0] -= 60;
-            if (Input::get_Key_State(Key::D) == State::PRESSED)
-                flash_Dir[0] += 60;
-            if (Input::get_Key_State(Key::W) == State::PRESSED)
-                flash_Dir[1] -= 60;
-            if (Input::get_Key_State(Key::S) == State::PRESSED)
-                flash_Dir[1] += 60;
-            m_Entity.get<TransformComponent>()->position += flash_Dir;
-            m_Entity.get<DynamicPhysicsComponent>()->velocity = 0;
         }
     };
     m_Entity.add<InputComponent<KeyEvent>>(comp);
@@ -135,13 +166,13 @@ void EisScript::on_Update(void)
 
     auto axis_Value = Input::get_Axis_Value(0, ControllerAxis::LEFT_STICK_X);
 
-    if (Input::get_Key_State(Key::A) == State::PRESSED)
+    if (m_Input->left->get_State() == State::PRESSED)
     {
         physics->velocity[0] -= 3;
         transform->state = 0;
     }
 
-    if (Input::get_Key_State(Key::D) == State::PRESSED)
+    if (m_Input->right->get_State() == State::PRESSED)
     {
         physics->velocity[0] += 3;
         transform->state = GEAR_MIRROR_X;

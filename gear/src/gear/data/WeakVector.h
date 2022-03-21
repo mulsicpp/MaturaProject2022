@@ -117,10 +117,8 @@ public:
     void remove(int index)
     {
         m_Count--;
-        GEAR_DEBUG_LOG("in remove");
         if (m_Count > _min_capacity && m_Capacity / m_Count == 2)
         {
-            GEAR_DEBUG_LOG("reallocating chunk");
             m_Capacity /= 2;
             T *temp = new T[m_Capacity];
             gear::memcpy(temp, m_Data, index);
@@ -130,7 +128,6 @@ public:
         }
         else
         {
-            GEAR_DEBUG_LOG("moving memory back");
             gear::memcpy(m_Data + index, m_Data + index + 1, m_Count - index);
         }
     }

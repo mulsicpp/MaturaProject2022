@@ -18,11 +18,12 @@ The game hasn't really been started. At the moment we are still working on the g
 - debug logger
 - ECS (entity component system)
 - resource manager
-
-## Planned future features
+- resource converter
 - event system
 - 2d renderer
 - scripting
 - collision detection
+
+## Planned future features
 - UI
 - networking

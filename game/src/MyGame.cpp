@@ -60,7 +60,7 @@ void MyGame::on_Startup(void)
     m_Window->set_Title("Game Window!");
     m_Window->set_Resizable(false);
     m_Window->set_Size(1280, 720);
-    m_Window->set_Fullscreen();
+    // m_Window->set_Fullscreen();
     m_Window->set_Visible(true);
 
     Renderer::create(640, 360);
@@ -132,9 +132,9 @@ void MyGame::on_Startup(void)
     h.hitboxes[0]->on_Collision_Begin([](HitboxEvent e) { 
         e.get_Other_Entity().get<TransformComponent>()->position[0] += e.get_Entity().get<TransformComponent>()->state & GEAR_MIRROR_X ? 20 : -20; });
     new_Eis.add<HitboxComponent>(h);
-    new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(-1));
+    new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::KEYBOARD));
 
-    animation_Comp.palette = palettes[2];
+    animation_Comp.palette = palettes[3];
 
     new_Eis = m_Scene->create_Entity();
     new_Eis.add<AnimationComponent>(animation_Comp);
@@ -159,7 +159,7 @@ void MyGame::on_Startup(void)
     h = {{Hitbox::create(1, Circle{{-20, 23}, 12, false})}};
     h.hitboxes[0]->on_Collision_Begin([](HitboxEvent e) { e.get_Other_Entity().get<DynamicPhysicsComponent>()->velocity = {0, -4}; });
     new_Eis.add<HitboxComponent>(h);
-    new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript2>());
+    new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::CONTROLLER_1));
 
     SpriteComponent sprite;
     sprite.offset = {-183, -3, 0.1};

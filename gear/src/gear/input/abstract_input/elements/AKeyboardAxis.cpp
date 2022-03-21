@@ -31,7 +31,7 @@ void gear::AKeyboardAxis::handle_Event(KeyEvent event)
             value--;
         if (Input::get_Key_State(m_Max_Key) == State::PRESSED)
             value++;
-        
     }
-    m_Callback(value);
+    if (m_Callback != nullptr)
+        m_Callback(value);
 }

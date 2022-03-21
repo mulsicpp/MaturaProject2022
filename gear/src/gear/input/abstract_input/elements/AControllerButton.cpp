@@ -8,7 +8,7 @@ gear::State gear::AControllerButton::get_State(void) const
 }
 
 void gear::AControllerButton::handle_Event(gear::ControllerButtonEvent event) {
-  if(event.get_Controller_Id() == m_Controller_ID && event.get_Button() == m_Button) {
+  if(event.get_Controller_Id() == m_Controller_ID && event.get_Button() == m_Button && m_Callback != nullptr) {
     m_Callback(event.get_Action());
   }
 }
