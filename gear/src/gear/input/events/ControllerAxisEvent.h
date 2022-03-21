@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gear/core/core.h>
-#include "../Event.h"
+#include "../events/Event.h"
 
 _GEAR_START
 
