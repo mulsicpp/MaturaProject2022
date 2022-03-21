@@ -3,17 +3,17 @@
 #include <gear/renderer/AnimationComponent.h>
 #include <gear/renderer/TextComponent.h>
 
-#include <gear/event/EventComponent.h>
-#include <gear/event/event_Types/KeyEvent.h>
-#include <gear/event/event_Types/TextEvent.h>
-#include <gear/event/event_Types/MouseButtonEvent.h>
-#include <gear/event/event_Types/MouseMovedEvent.h>
-#include <gear/event/event_Types/ScrollEvent.h>
-#include <gear/event/event_Types/WindowFocusEvent.h>
-#include <gear/event/event_Types/WindowIconifyEvent.h>
-#include <gear/event/event_Types/ControllerConnectionEvent.h>
-#include <gear/event/event_Types/ControllerAxisEvent.h>
-#include <gear/event/event_Types/ControllerButtonEvent.h>
+#include <gear/input/InputComponent.h>
+#include <gear/input/events/KeyEvent.h>
+#include <gear/input/events/TextEvent.h>
+#include <gear/input/events/MouseButtonEvent.h>
+#include <gear/input/events/MouseMovedEvent.h>
+#include <gear/input/events/ScrollEvent.h>
+#include <gear/input/events/WindowFocusEvent.h>
+#include <gear/input/events/WindowIconifyEvent.h>
+#include <gear/input/events/ControllerConnectionEvent.h>
+#include <gear/input/events/ControllerAxisEvent.h>
+#include <gear/input/events/ControllerButtonEvent.h>
 
 #include <gear/collision/DynamicPhysicsComponent.h>
 #include <gear/collision/HitboxComponent.h>
@@ -34,19 +34,19 @@ void gear::allow_Gear_Components(void) {
   Component<AnimationComponent>::allow();
   Component<TextComponent>::allow();
 
-  Component<EventComponent<KeyEvent>>::allow();
-  Component<EventComponent<TextEvent>>::allow();
+  Component<InputComponent<KeyEvent>>::allow();
+  Component<InputComponent<TextEvent>>::allow();
 
-  Component<EventComponent<MouseButtonEvent>>::allow();
-  Component<EventComponent<MouseMovedEvent>>::allow();
-  Component<EventComponent<ScrollEvent>>::allow();
+  Component<InputComponent<MouseButtonEvent>>::allow();
+  Component<InputComponent<MouseMovedEvent>>::allow();
+  Component<InputComponent<ScrollEvent>>::allow();
 
-  Component<EventComponent<WindowFocusEvent>>::allow();
-  Component<EventComponent<WindowIconifyEvent>>::allow();
+  Component<InputComponent<WindowFocusEvent>>::allow();
+  Component<InputComponent<WindowIconifyEvent>>::allow();
 
-  Component<EventComponent<ControllerConnectionEvent>>::allow();
-  Component<EventComponent<ControllerAxisEvent>>::allow();
-  Component<EventComponent<ControllerButtonEvent>>::allow();
+  Component<InputComponent<ControllerConnectionEvent>>::allow();
+  Component<InputComponent<ControllerAxisEvent>>::allow();
+  Component<InputComponent<ControllerButtonEvent>>::allow();
 
   Component<StaticPhysicsComponent>::allow();
   Component<DynamicPhysicsComponent>::allow();

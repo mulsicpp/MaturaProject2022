@@ -1,33 +1,5 @@
 #include "MyGame.h"
 
-#include <gear/data/FileStream.h>
-#include <gear/resource/ResourceManager.h>
-#include <gear/renderer/Renderer.h>
-#include <gear/renderer/SpriteComponent.h>
-#include <gear/renderer/AnimationComponent.h>
-
-#include <gear/scene/TransformComponent.h>
-#include <exception>
-
-#include <gear/input/events/KeyEvent.h>
-#include <gear/input/InputComponent.h>
-#include <gear/input/Input.h>
-
-#include <gear/input/abstract_input/elements/AMouseButton.h>
-#include <gear/input/abstract_input/elements/AControllerButton.h>
-
-using namespace gear;
-
-UIKeyboardInput::UIKeyboardInput() {
-  GEAR_MAP_BUTTON(submit, AMouseButton, MouseButton::LEFT);
-  GEAR_MAP_BUTTON(back, AMouseButton, MouseButton::RIGHT);
-}
-
-UIControllerInput::UIControllerInput(int id) : gear::AbstractControllerInput(id) {
-  GEAR_MAP_BUTTON(submit, AControllerButton, m_ID, ControllerButton::B);
-  GEAR_MAP_BUTTON(back, AControllerButton, m_ID, ControllerButton::A);
-}
-
 #include <gear/scripting/ScriptComponent.h>
 
 #include <time.h>
@@ -41,6 +13,17 @@ UIControllerInput::UIControllerInput(int id) : gear::AbstractControllerInput(id)
 
 #include "scripts/EisScript.h"
 #include "scripts/EisScript2.h"
+
+#include <gear/input/Input.h>
+
+#include <gear/renderer/Renderer.h>
+#include <gear/renderer/SpriteComponent.h>
+#include <gear/renderer/AnimationComponent.h>
+
+#include <gear/resource/ResourceManager.h>
+#include <gear/resource/Sprite.h>
+#include <gear/resource/Animation.h>
+#include <gear/resource/Palette.h>
 
 using namespace gear;
 

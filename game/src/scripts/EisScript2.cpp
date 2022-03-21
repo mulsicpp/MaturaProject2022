@@ -1,21 +1,21 @@
 #include "EisScript2.h"
 
 #include <gear/renderer/AnimationComponent.h>
-#include <gear/event/EventComponent.h>
-#include <gear/event/event_Types/KeyEvent.h>
+#include <gear/input/InputComponent.h>
+#include <gear/input/events/ControllerButtonEvent.h>
 
 #include <gear/core/debug/log.h>
 #include <gear/scene/TransformComponent.h>
 
 #include <gear/collision/DynamicPhysicsComponent.h>
 
-#include <gear/event/Input.h>
+#include <gear/input/Input.h>
 
 using namespace gear;
 
 void EisScript2::on_Create(void)
 {
-    m_Entity.add<EventComponent<ControllerButtonEvent>>({[this](ControllerButtonEvent e)
+    m_Entity.add<InputComponent<ControllerButtonEvent>>({[this](ControllerButtonEvent e)
                                                          {
                                                              if (e.get_Button() == ControllerButton::B && e.get_Action() == Action::PRESSED)
                                                              {

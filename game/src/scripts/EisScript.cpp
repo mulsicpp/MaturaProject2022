@@ -7,8 +7,8 @@
 #include <gear/resource/Sprite.h>
 #include <gear/resource/Palette.h>
 
-#include <gear/event/EventComponent.h>
-#include <gear/event/event_Types/KeyEvent.h>
+#include <gear/input/InputComponent.h>
+#include <gear/input/events/KeyEvent.h>
 
 #include <gear/core/debug/log.h>
 #include <gear/scene/TransformComponent.h>
@@ -20,12 +20,13 @@
 
 #include <gear/scripting/ScriptComponent.h>
 
-#include <gear/event/Input.h>
+#include <gear/input/Input.h>
 
 using namespace gear;
 
-bool projectile_Physics_Check(CollisionEvent e) {
-    if( e.get_Other_Entity().get_Entity_ID() == 0)
+bool projectile_Physics_Check(CollisionEvent e)
+{
+    if (e.get_Other_Entity().get_Entity_ID() == 0)
         return false;
     return true;
 }
@@ -45,17 +46,19 @@ static void spawn_Projectile(Entity e)
     physics.check = projectile_Physics_Check;
     physics.on_Collision = [=](CollisionEvent e2)
     {
-        if(e2.get_Other_Entity().get_Entity_ID() == 1)
+        if (e2.get_Other_Entity().get_Entity_ID() == 1)
             scene->remove_Entity(projectile);
     };
     projectile.add<DynamicPhysicsComponent>(physics);
 
-    class ProjectileScript : gear::ScriptableEntity {
+    class ProjectileScript : gear::ScriptableEntity
+    {
     private:
         int time_To_Live = 40;
-        virtual void on_Update(void) override {
+        virtual void on_Update(void) override
+        {
             time_To_Live--;
-            if(time_To_Live <= 0)
+            if (time_To_Live <= 0)
                 Scene::get(m_Entity.get_Scene_ID())->remove_Entity(m_Entity);
         }
     };
@@ -69,14 +72,14 @@ static void spawn_Projectile(Entity e)
     projectile.add<SpriteComponent>(sprite);
 };
 
-EisScript::EisScript(int input) : m_Input(input) {
-
+EisScript::EisScript(int input) : m_Input(input)
+{
 }
 
 void EisScript::on_Create(void)
 {
     attack = m_Entity.get<HitboxComponent>()->hitboxes[0];
-    EventComponent<KeyEvent> comp;
+    InputComponent<KeyEvent> comp;
     comp.callback = [this](KeyEvent e)
     {
         if (e.get_Key() == Key::ENTER)
@@ -109,7 +112,7 @@ void EisScript::on_Create(void)
             m_Entity.get<DynamicPhysicsComponent>()->velocity = 0;
         }
     };
-    m_Entity.add<EventComponent<KeyEvent>>(comp);
+    m_Entity.add<InputComponent<KeyEvent>>(comp);
     DynamicPhysicsComponent *physics = m_Entity.get<DynamicPhysicsComponent>();
     physics->on_Collision = [this](CollisionEvent e)
     {
