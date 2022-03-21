@@ -112,7 +112,7 @@ void MyGame::on_Startup(void)
 
     animation_Comp.parallax_Factor = 1.0f;
     animation_Comp.offset = {-32, -32, 0};
-    new_Eis.add<AnimationComponent>(animation_Comp);
+    new_Eis.add<AnimationComponent>({animation_Comp});
     new_Eis.add<TransformComponent>({{-100, -40}, {1, 1}, GEAR_MIRROR_X});
     new_Eis.add<DynamicPhysicsComponent>({Collider::create(
                                               Rect{{-12, 14}, {12, 32}},
