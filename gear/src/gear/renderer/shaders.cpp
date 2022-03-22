@@ -5,7 +5,7 @@ _GEAR_START
 char shader_Buffer[GEAR_MAX_SHADER_CODE_LENGTH];
 
 const char *const SHADER_UPSCALE_VS = R"(
-#version 430 core
+#version 330 core
 
 layout(location = 0) in vec2 in_Position;
 layout(location = 1) in vec2 in_Tex_Position;
@@ -19,11 +19,11 @@ void main() {
 )";
 
 const char *const SHADER_UPSCALE_FS = R"(
-#version 430 core
+#version 330 core
 
 layout(location = 0) out vec4 out_Color;
 
-layout(binding = 0) uniform sampler2D u_Texture;
+uniform sampler2D u_Texture;
 
 in vec2 tex_Position;
 
@@ -35,7 +35,7 @@ void main() {
 
 
 const char *const SHADER_SPRITE_VS = R"(
-#version 430 core
+#version 330 core
 
 layout(location = 0) in vec3 in_Position;
 layout(location = 1) in vec2 in_Tex_Position;
@@ -48,34 +48,34 @@ uniform int u_Frame_Height;
 uniform vec2 u_Camera_Pos;
 
 out vec2 tex_Position;
-out flat int tex_Index;
+out float tex_Index;
 
 void main() {
   gl_Position = vec4((in_Position.x - u_Camera_Pos.x * in_Parallax) * 2.0f / float(u_Frame_Width), -(in_Position.y - u_Camera_Pos.y * in_Parallax) * 2.0f / float(u_Frame_Height), in_Position.z, 1.0f);
   tex_Position = in_Tex_Position;
-  tex_Index = int(in_Index);
+  tex_Index = in_Index;
 }
 )";
 
 const char *const SHADER_SPRITE_FS = R"(
-#version 430 core
+#version 330 core
 
 layout(location = 0) out vec4 out_Color;
 
-layout(binding = 0) uniform sampler2D u_Texture[%i];
-layout(binding = 1) uniform sampler1D u_Palette[%i];
+uniform sampler2D u_Texture[%i];
+uniform sampler1D u_Palette[%i];
 
 in vec2 tex_Position;
-in flat int tex_Index;
+in float tex_Index;
 
 void main() {
-  int index = int(texture(u_Texture[tex_Index], tex_Position).r * 255.0f + 0.5);
+  int index = int(texture(u_Texture[int(tex_Index)], tex_Position).r * 255.0f + 0.5);
   if(index == 0)
   {
     discard;
   }
   else
-  out_Color = texture(u_Palette[tex_Index], (float(index) - 0.5f) / 255.0f);
+  out_Color = texture(u_Palette[int(tex_Index)], (float(index) - 0.5f) / 255.0f);
   //out_Color = vec4(vec3(gl_FragCoord.z), 1.0);
 }
 )";
@@ -83,7 +83,7 @@ void main() {
 
 
 const char *const SHADER_SHAPE_VS = R"(
-#version 430 core
+#version 330 core
 
 layout(location = 0) in vec2 in_Position;
 
@@ -98,7 +98,7 @@ void main() {
 )";
 
 const char *const SHADER_SHAPE_FS = R"(
-#version 430 core
+#version 330 core
 
 layout(location = 0) out vec4 out_Color;
 
