@@ -102,14 +102,13 @@ EisScript::EisScript(InputDevice device)
 void EisScript::on_Create(void)
 {
     attack = m_Entity.get<HitboxComponent>()->hitboxes[0];
-    InputComponent<KeyEvent> comp;
 
     m_Input->attack->set_Callback(
-        [this](Action a) {
+        [this](Action a)
+        {
             if (a == Action::PRESSED)
                 spawn_Projectile(m_Entity);
-        }
-    );
+        });
 
     m_Input->flash->set_Callback(
         [this](Action a)
@@ -117,33 +116,34 @@ void EisScript::on_Create(void)
             if (a == Action::PRESSED)
             {
                 Vector<double, 2> flash_Dir = {0, 0};
-                if (Input::get_Key_State(Key::A) == State::PRESSED)
+                if (m_Input->left->get_State() == State::PRESSED)
                     flash_Dir[0] -= 60;
-                if (Input::get_Key_State(Key::D) == State::PRESSED)
+                if (m_Input->right->get_State() == State::PRESSED)
                     flash_Dir[0] += 60;
-                if (Input::get_Key_State(Key::W) == State::PRESSED)
+                if (m_Input->up->get_State() == State::PRESSED)
                     flash_Dir[1] -= 60;
-                if (Input::get_Key_State(Key::S) == State::PRESSED)
+                if (m_Input->down->get_State() == State::PRESSED)
                     flash_Dir[1] += 60;
                 m_Entity.get<TransformComponent>()->position += flash_Dir;
                 m_Entity.get<DynamicPhysicsComponent>()->velocity = 0;
             }
         });
 
-    comp.callback = [this](KeyEvent e)
-    {
-        if (e.get_Key() == Key::W && e.get_Action() == Action::PRESSED)
+    m_Input->up->set_Callback(
+        [this](Action a)
         {
-            if (ground)
-                m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
-            else if (jumps)
+            if (a == Action::PRESSED)
             {
-                m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -5.5;
-                jumps--;
+                if (ground)
+                    m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
+                else if (jumps)
+                {
+                    m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -5.5;
+                    jumps--;
+                }
             }
-        }
-    };
-    m_Entity.add<InputComponent<KeyEvent>>(comp);
+        });
+    
     DynamicPhysicsComponent *physics = m_Entity.get<DynamicPhysicsComponent>();
     physics->on_Collision = [this](CollisionEvent e)
     {

@@ -18,15 +18,15 @@ void gear::AControllerAxisButton::handle_Event(gear::ControllerAxisEvent event)
     if (event.get_Controller_Id() == m_Controller_ID && event.get_Axis() == m_Button)
         if (Input::get_Axis_Value(m_Controller_ID, m_Button) <= m_Intervall_Max && Input::get_Axis_Value(m_Controller_ID, m_Button) >= m_Intervall_Min)
         {
-            m_State = State::PRESSED;
-            if (m_Callback != nullptr)
+            if (m_State == State::RELEASED && m_Callback != nullptr)
                 m_Callback(Action::PRESSED);
+            m_State = State::PRESSED;
         }
         else
         {
-            m_State = State::RELEASED;
-            if (m_Callback != nullptr)
+            if (m_State == State::PRESSED && m_Callback != nullptr)
                 m_Callback(Action::RELEASED);
+            m_State = State::RELEASED;
         }
 }
 

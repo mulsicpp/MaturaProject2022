@@ -36,7 +36,7 @@ void gear::Input::controller_Loop(void)
           gear::EventQueue<ControllerAxisEvent>::push_Event({key, i, value.axes[i]});
       }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(3));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 }
 
