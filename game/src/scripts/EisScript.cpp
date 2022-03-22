@@ -21,8 +21,12 @@
 #include <gear/scripting/ScriptComponent.h>
 
 #include <gear/input/abstract_input/elements/AKeyboardButton.h>
+#include <gear/input/abstract_input/elements/AMouseButton.h>
 #include <gear/input/abstract_input/elements/AControllerAxisButton.h>
 #include <gear/input/abstract_input/elements/AControllerButton.h>
+
+#include <gear/input/abstract_input/elements/AKeyboardAxis.h>
+#include <gear/input/abstract_input/elements/AControllerAxis.h>
 
 #include <gear/input/Input.h>
 
@@ -30,22 +34,26 @@ using namespace gear;
 
 KFighterInput::KFighterInput(void)
 {
-    GEAR_MAP_BUTTON(left, AKeyboardButton, Key::A);
-    GEAR_MAP_BUTTON(right, AKeyboardButton, Key::D);
-    GEAR_MAP_BUTTON(up, AKeyboardButton, Key::W);
-    GEAR_MAP_BUTTON(down, AKeyboardButton, Key::S);
-    GEAR_MAP_BUTTON(attack, AKeyboardButton, Key::ENTER);
-    GEAR_MAP_BUTTON(flash, AKeyboardButton, Key::SPACE);
+    left = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::A), GEAR_CREATE_BUTTON(AKeyboardButton, Key::LEFT));
+    right = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::D), GEAR_CREATE_BUTTON(AKeyboardButton, Key::RIGHT));
+    up = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::W), GEAR_CREATE_BUTTON(AKeyboardButton, Key::UP));
+    down = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::S), GEAR_CREATE_BUTTON(AKeyboardButton, Key::DOWN));
+    attack = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::ENTER), GEAR_CREATE_BUTTON(AMouseButton, MouseButton::LEFT));
+    flash = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::SPACE), GEAR_CREATE_BUTTON(AKeyboardButton, Key::F));
+
+    x_Axis = GEAR_CREATE_OR_AXIS(GEAR_CREATE_AXIS(AKeyboardAxis, Key::A, Key::D), GEAR_CREATE_AXIS(AKeyboardAxis, Key::LEFT, Key::RIGHT));
 }
 
 CFighterInput::CFighterInput(int id) : AbstractControllerInput(id)
 {
-    GEAR_MAP_BUTTON(left, AControllerAxisButton, id, ControllerAxis::LEFT_STICK_X, -1, -0.4);
-    GEAR_MAP_BUTTON(right, AControllerAxisButton, id, ControllerAxis::LEFT_STICK_X, 0.4, 1);
-    GEAR_MAP_BUTTON(up, AControllerAxisButton, id, ControllerAxis::LEFT_STICK_Y, -1, -0.4);
-    GEAR_MAP_BUTTON(down, AControllerAxisButton, id, ControllerAxis::LEFT_STICK_Y, 0.4, 1);
-    GEAR_MAP_BUTTON(attack, AControllerButton, id, ControllerButton::B);
-    GEAR_MAP_BUTTON(flash, AControllerButton, id, ControllerButton::Y);
+    left = GEAR_CREATE_BUTTON(AControllerAxisButton, id, ControllerAxis::LEFT_STICK_X, -1, -0.4);
+    right = GEAR_CREATE_BUTTON(AControllerAxisButton, id, ControllerAxis::LEFT_STICK_X, 0.4, 1);
+    up = GEAR_CREATE_BUTTON(AControllerAxisButton, id, ControllerAxis::LEFT_STICK_Y, -1, -0.4);
+    down = GEAR_CREATE_BUTTON(AControllerAxisButton, id, ControllerAxis::LEFT_STICK_Y, 0.4, 1);
+    attack = GEAR_CREATE_BUTTON(AControllerButton, id, ControllerButton::B);
+    flash = GEAR_CREATE_BUTTON(AControllerButton, id, ControllerButton::Y);
+
+    x_Axis = GEAR_CREATE_AXIS(AControllerAxis, id, ControllerAxis::LEFT_STICK_X);
 }
 
 bool projectile_Physics_Check(CollisionEvent e)
@@ -164,17 +172,17 @@ void EisScript::on_Update(void)
 
     physics->velocity[0] = 0;
 
-    auto axis_Value = Input::get_Axis_Value(0, ControllerAxis::LEFT_STICK_X);
+    auto axis_Value = m_Input->x_Axis->get_Value();
 
-    if (m_Input->left->get_State() == State::PRESSED)
+    if (axis_Value < -0.2)
     {
-        physics->velocity[0] -= 3;
+        physics->velocity[0] += 3 * axis_Value;
         transform->state = 0;
     }
 
-    if (m_Input->right->get_State() == State::PRESSED)
+    if (axis_Value > 0.2)
     {
-        physics->velocity[0] += 3;
+        physics->velocity[0] += 3 * axis_Value;
         transform->state = GEAR_MIRROR_X;
     }
 
