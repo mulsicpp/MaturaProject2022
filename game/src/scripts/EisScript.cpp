@@ -30,6 +30,8 @@
 
 #include <gear/input/Input.h>
 
+#include <gear/core/Game.h>
+
 using namespace gear;
 
 KFighterInput::KFighterInput(void)
@@ -70,7 +72,7 @@ static void spawn_Projectile(Entity e)
     projectile.add<TransformComponent>({pos.use_As<2>(), {1, 1}, transform->state});
     DynamicPhysicsComponent physics;
     physics.collider = Collider::create(Circle{{0, 0}, 5});
-    physics.velocity = transform->state & GEAR_MIRROR_X ? 6 : -6;
+    physics.velocity = transform->state & GEAR_MIRROR_X ? 720 : -720;
     physics.acceleration = {0, 0};
     physics.restitution = 1;
     physics.check = projectile_Physics_Check;
@@ -84,10 +86,10 @@ static void spawn_Projectile(Entity e)
     class ProjectileScript : gear::ScriptableEntity
     {
     private:
-        int time_To_Live = 40;
+        double time_To_Live = 1;
         virtual void on_Update(void) override
         {
-            time_To_Live--;
+            time_To_Live -= gear::Game::get_Delta_Time();
             if (time_To_Live <= 0)
                 Scene::get(m_Entity.get_Scene_ID())->remove_Entity(m_Entity);
         }
@@ -143,10 +145,10 @@ void EisScript::on_Create(void)
             if (a == Action::PRESSED)
             {
                 if (ground)
-                    m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -7;
+                    m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -420;
                 else if (jumps)
                 {
-                    m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -5.5;
+                    m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = -330;
                     jumps--;
                 }
             }
@@ -176,13 +178,13 @@ void EisScript::on_Update(void)
 
     if (axis_Value < -0.2)
     {
-        physics->velocity[0] += 3 * axis_Value;
+        physics->velocity[0] += 180 * axis_Value;
         transform->state = 0;
     }
 
     if (axis_Value > 0.2)
     {
-        physics->velocity[0] += 3 * axis_Value;
+        physics->velocity[0] += 180 * axis_Value;
         transform->state = GEAR_MIRROR_X;
     }
 

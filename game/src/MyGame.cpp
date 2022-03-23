@@ -114,9 +114,9 @@ void MyGame::on_Startup(void)
                                           nullptr,
                                           nullptr,
                                           {0, 0},
-                                          {0, 0.3},
-                                          {-100, 100},
-                                          {-20, 6},
+                                          {0, 1000},
+                                          {-10000, 10000},
+                                          {-1200, 360},
                                           10});
 
     new_Eis.add<HurtboxComponent>({{Hurtbox::create(1, Circle{{0, 23}, 12})}});
@@ -142,9 +142,9 @@ void MyGame::on_Startup(void)
                                           nullptr,
                                           nullptr,
                                           {0, 0},
-                                          {0, 0.3},
-                                          {-100, 100},
-                                          {-20, 6},
+                                          {0, 1000},
+                                          {-10000, 10000},
+                                          {-1200, 360},
                                           10});
 
     new_Eis.add<HurtboxComponent>({{Hurtbox::create(1, Circle{{0, 23}, 12})}});
@@ -209,9 +209,7 @@ void MyGame::per_Frame(void)
     m_Scene->update_Transformation();
     call_Script_Update(m_Scene);
 
-    physics_Step(m_Scene);
-    physics_Step(m_Scene);
-    physics_Step(m_Scene);
+    physics_Timed_Step(m_Scene);
 
     hitbox_Collision_Check(m_Scene);
 
