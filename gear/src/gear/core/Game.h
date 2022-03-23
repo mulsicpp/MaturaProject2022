@@ -19,6 +19,7 @@ protected:
   gear::Window *m_Window = nullptr;
   const char m_Path_To_App[512]{0};
   gear::Window *main_Window;
+  static double m_Delta_Time;
 
   void gear_Init(void);
 
@@ -35,6 +36,8 @@ public:
   void close(int exit_code);
 
   const char *get_App_Path(void) const;
+
+  static double get_Delta_Time(void);
 };
 
 _GEAR_END
