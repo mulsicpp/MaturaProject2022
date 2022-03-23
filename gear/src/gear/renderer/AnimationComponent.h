@@ -18,6 +18,7 @@ struct AnimationComponent {
   float frame_Rate;
   float parallax_Factor = 1;
   gear::Vector<float, 3> offset = { 0, 0, 0 };
+  float factor = 1;
 
   std::function<void (AnimationEvent)> on_Change;
   std::function<void (AnimationEvent)> on_End;

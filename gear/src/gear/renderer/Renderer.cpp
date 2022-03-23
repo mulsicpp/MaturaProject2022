@@ -96,7 +96,7 @@ void gear::Renderer::render_Scene(gear::Scene *scene)
         glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), 0, 0);
 
     SpritePipeline::get_Instance().render(scene);
-    gear::Entity::for_Each(scene->get_ID(), animation_Player_Callback);
+    continue_Animations(scene);
 }
 
 void gear::Renderer::render_Shape(const gear::Shape *shape, const Vector<float, 4> &color)
