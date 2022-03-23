@@ -158,7 +158,7 @@ void gear::SpritePipeline::push_Animation_Quad(gear::TransformComponent &positio
 
   float depth = animation.offset[2];
 
-  int frame_Index = animation.animation_Offset;
+  int frame_Index = animation.frame_Offset;
 
   float tex_Top = float(frame_Index) / animation.animation->get_Frame_Count();
   float tex_Bottom = float(frame_Index + 1) / animation.animation->get_Frame_Count();

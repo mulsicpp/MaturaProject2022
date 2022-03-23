@@ -12,7 +12,6 @@
 #include <gear/collision/HurtboxComponent.h>
 
 #include "scripts/EisScript.h"
-#include "scripts/EisScript2.h"
 
 #include <gear/input/Input.h>
 
@@ -93,19 +92,16 @@ void MyGame::on_Startup(void)
     animation_Comp.parallax_Factor = 1;
     animation_Comp.palette = palettes[0];
     animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/eis_idle.gear");
-    animation_Comp.animation_Offset = 0;
+    animation_Comp.frame_Offset = 0;
     animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
 
     Entity new_Eis = m_Scene->create_Entity();
     // GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
 
-    animation_Comp.palette = palettes[1];
-    animation_Comp.animation_Offset++;
-    if (animation_Comp.animation_Offset >= animation_Comp.animation->get_Frame_Count())
-        animation_Comp.animation_Offset = 1.0f;
-
     animation_Comp.parallax_Factor = 1.0f;
     animation_Comp.offset = {-32, -32, 0};
+
+    animation_Comp.palette = palettes[1];
     new_Eis.add<AnimationComponent>({animation_Comp});
     new_Eis.add<TransformComponent>({{-100, -40}, {1, 1}, GEAR_MIRROR_X});
     new_Eis.add<DynamicPhysicsComponent>({Collider::create(
