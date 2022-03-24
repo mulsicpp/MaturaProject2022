@@ -64,7 +64,11 @@ void gear::physics_Step(gear::Scene *scene)
                 {
                     if (hitbox1.absolute_Shape->intersects(hitbox2.absolute_Shape.get(), &vec))
                     {
-                        ints++;
+                        if (dynamic_Phys[i].data.on_Overlap != nullptr)
+                            callbacks.push_back(std::bind(dynamic_Phys[i].data.on_Overlap, CollisionEvent{dynamic_Entities[i], dynamic_Entities[j], vec, previous_Intersection}));
+                        if (dynamic_Phys[j].data.on_Overlap != nullptr)
+                            callbacks.push_back(std::bind(dynamic_Phys[j].data.on_Overlap, CollisionEvent{dynamic_Entities[j], dynamic_Entities[i], -vec, previous_Intersection}));
+                        
                         if (!dynamic_Phys[i].data.check({dynamic_Entities[i], dynamic_Entities[j], vec, previous_Intersection}) || !dynamic_Phys[j].data.check({dynamic_Entities[j], dynamic_Entities[i], -vec, previous_Intersection}))
                             continue;
 
@@ -121,7 +125,11 @@ void gear::physics_Step(gear::Scene *scene)
                 {
                     if (hitbox1.absolute_Shape->intersects(hitbox2.absolute_Shape.get(), &vec))
                     {
-                        ints++;
+                        if (static_Phys[i].data.on_Overlap != nullptr)
+                            callbacks.push_back(std::bind(static_Phys[i].data.on_Overlap, CollisionEvent{static_Entities[i], dynamic_Entities[j], vec, previous_Intersection}));
+                        if (dynamic_Phys[j].data.on_Overlap != nullptr)
+                            callbacks.push_back(std::bind(dynamic_Phys[j].data.on_Overlap, CollisionEvent{dynamic_Entities[j], static_Entities[i], -vec, previous_Intersection}));
+
                         if (!static_Phys[i].data.check({static_Entities[i], dynamic_Entities[j], vec, previous_Intersection}) || !dynamic_Phys[j].data.check({dynamic_Entities[j], static_Entities[i], -vec, previous_Intersection}))
                             continue;
 

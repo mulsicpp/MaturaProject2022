@@ -91,8 +91,8 @@ void MyGame::on_Startup(void)
     animation_Comp.offset = {-32, -32, 0};
     animation_Comp.parallax_Factor = 1;
     animation_Comp.palette = palettes[0];
-    animation_Comp.type = AnimationType::FORWARD;
-    animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/eis_jumping_besser.gear");
+    animation_Comp.type = AnimationType::LOOP;
+    animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/eis_idle.gear");
     animation_Comp.frame_Offset = 0;
     animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
 
@@ -114,8 +114,9 @@ void MyGame::on_Startup(void)
                                           eis_Physics_Check,
                                           nullptr,
                                           nullptr,
+                                          nullptr,
                                           {0, 0},
-                                          {0, 1000},
+                                          {0, 1200},
                                           {-10000, 10000},
                                           {-1200, 360},
                                           10});
@@ -130,7 +131,6 @@ void MyGame::on_Startup(void)
     animation_Comp.palette = palettes[3];
 
     new_Eis = m_Scene->create_Entity();
-    animation_Comp.type = AnimationType::PING_PONG;
     new_Eis.add<AnimationComponent>(animation_Comp);
     new_Eis.add<TransformComponent>({{100, -40}, {1, 1}, 0});
     // physics.collider
@@ -141,6 +141,7 @@ void MyGame::on_Startup(void)
                                               Circle{{11, -3}, 3}),
                                           0,
                                           eis_Physics_Check,
+                                          nullptr,
                                           nullptr,
                                           nullptr,
                                           {0, 0},

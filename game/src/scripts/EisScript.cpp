@@ -63,6 +63,12 @@ bool projectile_Physics_Check(CollisionEvent e)
     return false;
 }
 
+void projectile_Physics_On_Overlap(CollisionEvent e)
+{
+    if(e.get_Other_Entity().get_Entity_ID() != 0 && e.get_Other_Entity().get_Entity_ID() != 1)
+        Scene::get(e.get_Other_Entity().get_Scene_ID())->remove_Entity(e.get_Entity());
+}
+
 static void spawn_Projectile(Entity e)
 {
     Scene *scene = Scene::get(e.get_Scene_ID());
@@ -76,11 +82,7 @@ static void spawn_Projectile(Entity e)
     physics.acceleration = {0, 0};
     physics.restitution = 1;
     physics.check = projectile_Physics_Check;
-    physics.on_Collision = [=](CollisionEvent e2)
-    {
-        if (e2.get_Other_Entity().get_Entity_ID() == 1)
-            scene->remove_Entity(projectile);
-    };
+    physics.on_Overlap = projectile_Physics_On_Overlap;
     projectile.add<DynamicPhysicsComponent>(physics);
 
     class ProjectileScript : gear::ScriptableEntity

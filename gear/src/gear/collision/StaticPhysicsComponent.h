@@ -16,6 +16,8 @@ struct StaticPhysicsComponent {
   std::function<bool(CollisionEvent)> check = default_Physics_Check;
   std::function<void(CollisionEvent)> on_Collision;
   std::function<void(CollisionEvent)> on_Collision_Resolved;
+
+  std::function<void(CollisionEvent)> on_Overlap;
 };
 
 _GEAR_END
