@@ -226,7 +226,7 @@ public:
     @param T the type of the component
     @return a pointer to the component if it exists, else a null pointer
     */
-    T *get(void)
+    T *get(void) const
     {
         return &(ComponentManager<T>::get_Instance(m_Scene_ID).find(m_Entity_ID)->data);
     }

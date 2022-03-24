@@ -54,6 +54,10 @@ bool eis_Physics_Check(gear::CollisionEvent e)
     return true;
 }
 
+Ref<Shape> get_Random_Shape() {
+    return Ref<Shape>(new Rect({0, 0}, {1, 1}));
+}
+
 void MyGame::on_Startup(void)
 {
     m_Window->set_Title("Game Window!");
@@ -94,6 +98,9 @@ void MyGame::on_Startup(void)
     animation_Comp.type = AnimationType::LOOP;
     animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/eis_idle.gear");
     animation_Comp.frame_Offset = 0;
+    animation_Comp.on_Change = [](AnimationEvent e) {
+        GEAR_DEBUG_LOG("frame offset: %f", e.get_Offset());
+    };
     animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
 
     Entity new_Eis = m_Scene->create_Entity();

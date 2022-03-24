@@ -66,7 +66,7 @@ bool projectile_Physics_Check(CollisionEvent e)
 void projectile_Physics_On_Overlap(CollisionEvent e)
 {
     if(e.get_Other_Entity().get_Entity_ID() != 0 && e.get_Other_Entity().get_Entity_ID() != 1)
-        Scene::get(e.get_Other_Entity().get_Scene_ID())->remove_Entity(e.get_Entity());
+        Scene::get(e.get_Other_Entity().get_Scene_ID())->remove_Entity(e.get_Other_Entity());
 }
 
 static void spawn_Projectile(Entity e)
