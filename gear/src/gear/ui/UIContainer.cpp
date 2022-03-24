@@ -12,5 +12,5 @@ gear::UIContainer::~UIContainer()
 
 gear::Ref<gear::UIContainer> gear::UIContainer::create(uint8_t id)
 {
-    return Ref<UIContainer>(new UIContainer(id));   
+    return Ref<UIContainer>(new UIContainer(id));
 }
