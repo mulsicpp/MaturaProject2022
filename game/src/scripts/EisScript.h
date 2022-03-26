@@ -5,7 +5,7 @@
 #include <gear/input/abstract_input/AbstractButton.h>
 #include <gear/input/abstract_input/AbstractAxis.h>
 
-GEAR_ABSTRACT_INPUT(FighterInput, KFighterInput, CFighterInput, GEAR_BUTTONS(left, right, up, down, attack, flash) GEAR_AXES(x_Axis));
+GEAR_ABSTRACT_INPUT(EisInput, KEisInput, CEisInput, GEAR_BUTTONS(left, right, up, down, attack, flash) GEAR_AXES(x_Axis));
 
 class EisScript : public gear::ScriptableEntity
 {
@@ -13,7 +13,7 @@ class EisScript : public gear::ScriptableEntity
     bool ground = false;
     gear::Ref<gear::Hitbox> attack;
 
-    gear::Ref<FighterInput> m_Input;
+    gear::Ref<EisInput> m_Input;
 public:
     EisScript() = default;
     EisScript(gear::InputDevice device);

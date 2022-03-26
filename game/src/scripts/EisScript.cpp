@@ -34,7 +34,7 @@
 
 using namespace gear;
 
-KFighterInput::KFighterInput(void)
+KEisInput::KEisInput(void)
 {
     left = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::A), GEAR_CREATE_BUTTON(AKeyboardButton, Key::LEFT));
     right = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::D), GEAR_CREATE_BUTTON(AKeyboardButton, Key::RIGHT));
@@ -46,7 +46,7 @@ KFighterInput::KFighterInput(void)
     x_Axis = GEAR_CREATE_OR_AXIS(GEAR_CREATE_AXIS(AKeyboardAxis, Key::A, Key::D), GEAR_CREATE_AXIS(AKeyboardAxis, Key::LEFT, Key::RIGHT));
 }
 
-CFighterInput::CFighterInput(int id) : AbstractControllerInput(id)
+CEisInput::CEisInput(int id) : AbstractControllerInput(id)
 {
     left = GEAR_CREATE_BUTTON(AControllerAxisButton, id, ControllerAxis::LEFT_STICK_X, -1, -0.4);
     right = GEAR_CREATE_BUTTON(AControllerAxisButton, id, ControllerAxis::LEFT_STICK_X, 0.4, 1);
@@ -66,7 +66,7 @@ bool projectile_Physics_Check(CollisionEvent e)
 void projectile_Physics_On_Overlap(CollisionEvent e)
 {
     if(e.get_Other_Entity().get_Entity_ID() != 0 && e.get_Other_Entity().get_Entity_ID() != 1)
-        Scene::get(e.get_Other_Entity().get_Scene_ID())->remove_Entity(e.get_Other_Entity());
+        Scene::get(e.get_Other_Entity().get_Scene_ID())->remove_Entity(e.get_Entity());
 }
 
 static void spawn_Projectile(Entity e)
@@ -108,7 +108,7 @@ static void spawn_Projectile(Entity e)
 
 EisScript::EisScript(InputDevice device)
 {
-    m_Input = FighterInput::create_From(device);
+    m_Input = EisInput::create_From(device);
 }
 
 void EisScript::on_Create(void)
