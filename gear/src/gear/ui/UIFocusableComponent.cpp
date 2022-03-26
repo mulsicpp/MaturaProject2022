@@ -1,4 +1,5 @@
 #include "UIFocusableComponent.h"
+#include "UIUser.h"
 
 bool gear::UIFocusableComponent::is_Focusable(void) const
 {

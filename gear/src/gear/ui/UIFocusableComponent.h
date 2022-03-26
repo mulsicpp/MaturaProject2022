@@ -3,9 +3,11 @@
 #include <gear/core/core.h>
 #include <gear/math/Vector.h>
 #include "UIDirection.h"
-#include "UIUser.h"
+#include "UIComponent.h"
 
 _GEAR_START
+
+class UIUser;
 
 class UIFocusableComponent : public UIComponent
 {
