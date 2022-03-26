@@ -12,7 +12,7 @@ public:
     if(device == InputDevice::KEYBOARD)
       return Ref<I>(new K);
     else
-      return Ref<I>(new C((int)device));
+      return Ref<I>(new C((int)device - 1));
   }
 };
 
