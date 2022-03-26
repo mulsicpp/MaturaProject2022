@@ -24,9 +24,9 @@ uint8_t gear::Entity::get_Scene_ID(void) const
 
 void gear::Entity::update_Transformation(void)
 {
-  auto transform = get<TransformComponent>();
-  if(transform)
+  if(has<TransformComponent>())
   {
+    auto transform = get<TransformComponent>();
     transform->update_Matrix();
 
     if(has<DynamicPhysicsComponent>())
