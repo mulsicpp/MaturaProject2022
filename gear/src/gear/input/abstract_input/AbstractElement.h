@@ -6,12 +6,13 @@
 
 _GEAR_START
 
+template<class T>
 class AbstractElement {
 protected:
-  std::function<void(Action)> m_Callback;
+  std::function<void(T)> m_Callback;
 public:
-  void set_Callback(const std::function<void(Action)> &callback);
-  std::function<void(Action)> get_Callback(void) const;
+  void set_Callback(const std::function<void(T)> &callback) { m_Callback = callback; }
+  std::function<void(T)> get_Callback(void) const { return m_Callback; }
 };
 
 _GEAR_END
