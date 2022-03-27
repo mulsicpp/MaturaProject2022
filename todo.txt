@@ -1,0 +1,6 @@
+//Michi
+-> eliminate EventQueu
+
+
+//Mulsi
+-> change Game class
