@@ -61,22 +61,10 @@ Ref<Shape> get_Random_Shape() {
 
 void MyGame::on_Startup(void)
 {
-    m_Window->set_Title("Game Window!");
-    m_Window->set_Resizable(false);
-    m_Window->set_Size(1280, 720);
-    // m_Window->set_Fullscreen();
-    m_Window->set_Visible(true);
-
-    Renderer::create(640, 360);
-    Renderer::set_V_Sync(true);
+    gear::Game::on_Startup();
 
     GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
     GEAR_DEBUG_LOG("Opened application");
-
-    allow_Gear_Components();
-
-    m_Scene = Scene::get(0);
-    m_Scene->create();
 
     palettes[0] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_yellow.gear");
     palettes[1] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_pink.gear");
@@ -104,7 +92,8 @@ void MyGame::on_Startup(void)
     // };
     animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
 
-    Entity new_Eis = m_Scene->create_Entity();
+    Entity new_Eis = main_Scene->create_Entity();
+    GEAR_DEBUG_LOG("created first entity");
     // GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
     
 
@@ -135,11 +124,13 @@ void MyGame::on_Startup(void)
     h.hitboxes[0]->on_Collision_Begin([](HitboxEvent e) { 
         e.get_Other_Entity().get<TransformComponent>()->position[0] += e.get_Entity().get<TransformComponent>()->state & GEAR_MIRROR_X ? 20 : -20; });
     new_Eis.add<HitboxComponent>(h);
+    GEAR_DEBUG_LOG("pre script");
     new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::KEYBOARD));
+    GEAR_DEBUG_LOG("post script");
 
     animation_Comp.palette = palettes[3];
 
-    new_Eis = m_Scene->create_Entity();
+    new_Eis = main_Scene->create_Entity();
     new_Eis.add<AnimationComponent>(animation_Comp);
     new_Eis.add<TransformComponent>({{100, -40}, {1, 1}, 0});
     // physics.collider
@@ -171,7 +162,7 @@ void MyGame::on_Startup(void)
     sprite.palette = ResourceManager::get<Palette>("assets/test_sprites/platform_palette.gear");
     sprite.sprite = ResourceManager::get<Sprite>("assets/test_sprites/platform.gear");
 
-    Entity platform = m_Scene->create_Entity();
+    Entity platform = main_Scene->create_Entity();
     platform.add<TransformComponent>({{0, 80}, {1, 1}, 0});
     platform.add<SpriteComponent>(sprite);
 
@@ -186,25 +177,25 @@ void MyGame::on_Startup(void)
     sprite.offset = {-35, -3, 0.1};
     sprite.sprite = ResourceManager::get<Sprite>("assets/test_sprites/platform2.gear");
 
-    Entity platform2 = m_Scene->create_Entity();
+    Entity platform2 = main_Scene->create_Entity();
     platform2.add<TransformComponent>({{-100, 20}, {1, 1}, 0});
     platform2.add<SpriteComponent>(sprite);
     physics.collider = Collider::create(Rect{{-35, 0}, {35, 5}});
     platform2.add<StaticPhysicsComponent>(physics);
 
-    Entity platform3 = m_Scene->create_Entity();
+    Entity platform3 = main_Scene->create_Entity();
     platform3.add<TransformComponent>({{100, 20}, {1, 1}, 0});
     platform3.add<SpriteComponent>(sprite);
     physics.collider = Collider::create(Rect{{-35, 0}, {35, 5}});
     platform3.add<StaticPhysicsComponent>(physics);
 
-    Entity platform4 = m_Scene->create_Entity();
+    Entity platform4 = main_Scene->create_Entity();
     platform4.add<TransformComponent>({{0, -30}, {1, 1}, 0});
     platform4.add<SpriteComponent>(sprite);
     physics.collider = Collider::create(Rect{{-35, 0}, {35, 5}});
     platform4.add<StaticPhysicsComponent>(physics);
 
-    Entity base_Fighter = m_Scene->create_Entity();
+    Entity base_Fighter = main_Scene->create_Entity();
     base_Fighter.add<ScriptComponent>(ScriptComponent().bind<BaseFighterScript>(InputDevice::KEYBOARD));
 
     GEAR_DEBUG_LOG("finished scene");
@@ -214,33 +205,16 @@ void MyGame::on_Startup(void)
     Renderer::set_Camera(&cam);
 }
 
-void MyGame::per_Frame(void)
-{
-    if (m_Window->should_Close())
-        this->close(0);
-    Input::dispatch_Events(m_Scene);
-
-    m_Scene->update_Transformation();
-    call_Script_Update(m_Scene);
-
-    physics_Timed_Step(m_Scene);
-
-    hitbox_Collision_Check(m_Scene);
-
+void MyGame::render(void) {
     cam_Pos = (Entity{0, 0}.get<TransformComponent>()->position + Entity{1, 0}.get<TransformComponent>()->position) / 2;
 
     cam.follow_Target();
-    Renderer::start_New_Frame();
-    Renderer::render_Scene(m_Scene);
-    //Renderer::render_All_Hitboxes(m_Scene);
-    Renderer::show_Frame();
+    gear::Game::render();
 }
 
 void MyGame::on_Shutdown(void)
 {
-    Renderer::destroy();
-    GEAR_DEBUG_LOG("destroy scene");
-    m_Scene->destroy();
+    gear::Game::on_Shutdown();
     for (int i = 0; i < 7; i++)
         palettes[i] = nullptr;
     GEAR_DEBUG_LOG("unloaded resources: %i", ResourceManager::unload());

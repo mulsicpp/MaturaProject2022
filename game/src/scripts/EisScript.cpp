@@ -89,7 +89,7 @@ static void spawn_Projectile(Entity e)
     {
     private:
         double time_To_Live = 1;
-        virtual void on_Update(void) override
+        virtual void post_Input(void) override
         {
             time_To_Live -= gear::Game::get_Delta_Time();
             if (time_To_Live <= 0)
@@ -111,7 +111,7 @@ EisScript::EisScript(InputDevice device)
     m_Input = EisInput::create_From(device);
 }
 
-void EisScript::on_Create(void)
+void EisScript::init(void)
 {
     attack = m_Entity.get<HitboxComponent>()->hitboxes[0];
 
@@ -167,7 +167,7 @@ void EisScript::on_Create(void)
     };
 }
 
-void EisScript::on_Update(void)
+void EisScript::post_Input(void)
 {
     auto transform = m_Entity.get<TransformComponent>();
     auto physics = m_Entity.get<DynamicPhysicsComponent>();
@@ -191,8 +191,4 @@ void EisScript::on_Update(void)
     }
 
     m_Entity.update_Transformation();
-}
-
-void EisScript::on_Destroy(void)
-{
 }

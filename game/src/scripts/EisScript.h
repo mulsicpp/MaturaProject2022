@@ -18,7 +18,7 @@ public:
     EisScript() = default;
     EisScript(gear::InputDevice device);
 
-    virtual void on_Create(void) override;
-    virtual void on_Update(void) override;
-    virtual void on_Destroy(void) override;
+    virtual void init(void) override;
+
+    virtual void post_Input(void);
 };
