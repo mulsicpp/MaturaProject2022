@@ -16,4 +16,14 @@ public:
   virtual float get_Value(void) const = 0;
 };
 
+class AbstractOrAxis : public AbstractAxis
+{
+protected:
+    std::vector<Ref<AbstractAxis>> m_Axes;
+
+public:
+    AbstractOrAxis(const std::vector<Ref<AbstractAxis>> &axes);
+    float get_Value(void) const override;
+};
+
 _GEAR_END
