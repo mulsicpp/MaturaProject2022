@@ -65,6 +65,10 @@ void MyGame::on_Startup(void)
 
     window->set_Fullscreen();
 
+    GEAR_DEBUG_LOG("width: %i height: %i", window->get_Width(), window->get_Height());
+    
+    Renderer::set_Viewport({0, 0}, {window->get_Width(), window->get_Height()});
+
     GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
     GEAR_DEBUG_LOG("Opened application");
 

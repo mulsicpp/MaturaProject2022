@@ -20,130 +20,140 @@ class Renderer;
 
 class Window
 {
-  friend class gear::Game;
-  friend class gear::Renderer;
+    friend class gear::Game;
+    friend class gear::Renderer;
 
 private:
-  GLFWwindow *m_Window;
+    GLFWwindow *m_Window;
 
-  /*
-  Default Constructor
-  */
-  Window(void);
+    /*
+    Default Constructor
+    */
+    Window(void);
 
 public:
-  /*
-  Creates a Window
-  @param name name of the Window
-  @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
-  @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
-  */
-  static Window *create_Window(const char *name, int width, int height);
+    /*
+    Creates a Window
+    @param name name of the Window
+    @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
+    @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
+    */
+    static Window *create_Window(const char *name, int width, int height);
 
-  /*
-  Creates a Window
-  @param name name of the Window
-  @param x The x-coordinate of the upper-left corner of the content area.
-  @param y The y-coordinate of the upper-left corner of the content area.
-  @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
-  @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
-  */
-  static Window *create_Window(const char *name, int x, int y, int width, int height);
+    /*
+    Creates a Window
+    @param name name of the Window
+    @param x The x-coordinate of the upper-left corner of the content area.
+    @param y The y-coordinate of the upper-left corner of the content area.
+    @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
+    @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
+    */
+    static Window *create_Window(const char *name, int x, int y, int width, int height);
 
-  /*
-  Creates a full screen Window
-  @param name name of the Window
-  */
-  static Window *create_Fullscreen_Window(const char *name);
+    /*
+    Creates a full screen Window
+    @param name name of the Window
+    */
+    static Window *create_Fullscreen_Window(const char *name);
 
-  /*
-  Destroys the window and its context.
-  */
-  void destroy(void);
+    /*
+    Destroys the window and its context.
+    */
+    void destroy(void);
 
-  /*
-  This function returns the value of the close flag of the window.
-  */
-  bool should_Close(void);
+    /*
+    This function returns the value of the close flag of the window.
+    */
+    bool should_Close(void);
 
-  /*
-  Makes the window renderable.
-  @param width the width of the backbuffer
-  @param height the height of the backbuffer
-  */
-  void make_Renderable(uint16_t width, uint16_t height);
+    /*
+    Makes the window renderable.
+    @param width the width of the backbuffer
+    @param height the height of the backbuffer
+    */
+    void make_Renderable(uint16_t width, uint16_t height);
 
-  /*
-  Make the window visible or invisible.
-  @param visible visibility of window
-  */
-  void set_Visible(bool visible);
+    /*
+    Make the window visible or invisible.
+    @param visible visibility of window
+    */
+    void set_Visible(bool visible);
 
-  /*
-  Make the window resizable or not resizable.
-  @param resizable sets window resizable if true, if false non resizable
-  */
-  void set_Resizable(bool resizable);
+    /*
+    Make the window resizable or not resizable.
+    @param resizable sets window resizable if true, if false non resizable
+    */
+    void set_Resizable(bool resizable);
 
-  /*
-  Sets the window full screen.
-  */
-  void set_Fullscreen();
+    /*
+    Sets the window full screen.
+    */
+    void set_Fullscreen();
 
-  /*
-  Sets the window to windowed mode
-  @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
-  @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
-  */
-  void set_Windowed(int width, int height);
+    /*
+    Sets the window to windowed mode
+    @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
+    @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
+    */
+    void set_Windowed(int width, int height);
 
-  /*
-  Sets the title of the window.
-  @param title title of window
-  */
-  void set_Title(const char *title);
+    /*
+    Sets the title of the window.
+    @param title title of window
+    */
+    void set_Title(const char *title);
 
-  /*
-  Sets the size and position of the window. For full screen windows, this function updates the resolution of its desired video mode and switches to the video mode closest to it, without affecting the window's context.
-  @param x The x-coordinate of the upper-left corner of the content area.
-  @param y The y-coordinate of the upper-left corner of the content area.
-  @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
-  @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
-  */
-  void set_Bounds(int x, int y, int width, int height);
+    /*
+    Sets the size and position of the window. For full screen windows, this function updates the resolution of its desired video mode and switches to the video mode closest to it, without affecting the window's context.
+    @param x The x-coordinate of the upper-left corner of the content area.
+    @param y The y-coordinate of the upper-left corner of the content area.
+    @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
+    @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
+    */
+    void set_Bounds(int x, int y, int width, int height);
 
-  /*
-  Sets the size of the window
-  @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
-  @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
-  */
-  void set_Size(int width, int height);
+    /*
+    Sets the size of the window
+    @param width The desired width, in screen coordinates, of the window. This must be greater than zero.
+    @param height The desired height, in screen coordinates, of the window. This must be greater than zero.
+    */
+    void set_Size(int width, int height);
 
-  /*
-  Sets the position of the window. If the window is a full screen window, this function does nothing.
-  @param x The x-coordinate of the upper-left corner of the content area.
-  @param y The y-coordinate of the upper-left corner of the content area.
-  */
-  void set_Position(int x, int y);
+    /*
+    Sets the position of the window. If the window is a full screen window, this function does nothing.
+    @param x The x-coordinate of the upper-left corner of the content area.
+    @param y The y-coordinate of the upper-left corner of the content area.
+    */
+    void set_Position(int x, int y);
 
-  /*
-  Swaps the front and back buffers of the specified window.
-  */
-  void swap_Buffers(void);
+    /*
+    @return the width of the window
+    */
+    int get_Width();
 
-  /*
-  Processes all pending events. This function processes only those events that are already in the event queue.
-  */
-  void poll_Events(void);
+    /*
+    @return the height of the window
+    */
+    int get_Height();
 
-  /*
-  Sets the window as the current render context.
-  */
-  void make_Render_Context_Current(void);
+    /*
+    Swaps the front and back buffers of the specified window.
+    */
+    void swap_Buffers(void);
 
-  bool window_Is_Focused();
+    /*
+    Processes all pending events. This function processes only those events that are already in the event queue.
+    */
+    void poll_Events(void);
 
-  bool window_Is_Iconified();
+    /*
+    Sets the window as the current render context.
+    */
+    void make_Render_Context_Current(void);
+
+    bool window_Is_Focused();
+
+    bool window_Is_Iconified();
 };
 
 _GEAR_END

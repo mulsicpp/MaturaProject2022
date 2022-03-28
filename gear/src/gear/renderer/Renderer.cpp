@@ -21,14 +21,16 @@ gear::Framebuffer gear::Renderer::m_Framebuffer;
 gear::Camera *gear::Renderer::m_Camera = nullptr;
 
 GLFWwindow *gear::Renderer::m_Window = nullptr;
-int gear::Renderer::m_Window_Width;
-int gear::Renderer::m_Window_Height;
+
+gear::Vector<int, 2> gear::Renderer::m_Top_Left;
+gear::Vector<int, 2> gear::Renderer::m_Bottom_Right;
 
 void gear::Renderer::create(int width, int height)
 {
     m_Window = glfwGetCurrentContext();
-    glfwGetWindowSize(m_Window, &m_Window_Width, &m_Window_Height);
-    glViewport(0, 0, m_Window_Width, m_Window_Height);
+    int window_Width, window_Height;
+    glfwGetWindowSize(m_Window, &window_Width, &window_Height);
+    glViewport(0, 0, window_Width, window_Height);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_GEQUAL);
@@ -73,14 +75,22 @@ void gear::Renderer::start_New_Frame(void)
 void gear::Renderer::show_Frame(void)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, m_Window_Width, m_Window_Height);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_Framebuffer.m_Texture);
     UpscalePipeline::get_Instance().bind();
+    int window_Width, window_Height;
+    glfwGetWindowSize(m_Window, &window_Width, &window_Height);
+    glViewport(m_Top_Left[0], window_Height - m_Top_Left[1] - m_Bottom_Right[1], m_Bottom_Right[0] - m_Top_Left[0], m_Bottom_Right[1] - m_Top_Left[1]);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers(m_Window);
+}
+
+void gear::Renderer::set_Viewport(Vector<int, 2> top_Left, Vector<int, 2> bottom_Right)
+{
+    m_Top_Left = top_Left;
+    m_Bottom_Right = bottom_Right;
 }
 
 void gear::Renderer::render_Scene(gear::Scene *scene)
