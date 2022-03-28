@@ -24,6 +24,7 @@ private:
   static GLFWwindow *m_Window;
 
   static Vector<int, 2> m_Top_Left, m_Bottom_Right;
+  static Vector<float, 4> m_Clear_Color;
 
 public:
   static void create(int width, int height);
@@ -42,6 +43,9 @@ public:
   static void show_Frame(void);
 
   static void set_Viewport(Vector<int, 2> top_Left, Vector<int, 2> bottom_Right);
+
+  static void set_Clear_Color(Vector<float, 4> color);
+  static Vector<float, 4> get_Clear_Color(void);
 
   static void render_Scene(Scene *scene);
   static void render_Shape(const Shape *shape, const Vector<float, 4> &color);

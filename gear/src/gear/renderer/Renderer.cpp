@@ -24,6 +24,7 @@ GLFWwindow *gear::Renderer::m_Window = nullptr;
 
 gear::Vector<int, 2> gear::Renderer::m_Top_Left;
 gear::Vector<int, 2> gear::Renderer::m_Bottom_Right;
+gear::Vector<float, 4> gear::Renderer::m_Clear_Color;
 
 void gear::Renderer::create(int width, int height)
 {
@@ -66,6 +67,7 @@ void gear::Renderer::set_V_Sync(bool v_sync)
 
 void gear::Renderer::start_New_Frame(void)
 {
+    glClearColor(m_Clear_Color[0], m_Clear_Color[1], m_Clear_Color[2], m_Clear_Color[3]);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer.m_Framebuffer);
@@ -91,6 +93,14 @@ void gear::Renderer::set_Viewport(Vector<int, 2> top_Left, Vector<int, 2> bottom
 {
     m_Top_Left = top_Left;
     m_Bottom_Right = bottom_Right;
+}
+
+void gear::Renderer::set_Clear_Color(Vector<float, 4> color) {
+    m_Clear_Color = color;
+}
+  
+gear::Vector<float, 4> gear::Renderer::get_Clear_Color(void) {
+    return m_Clear_Color;
 }
 
 void gear::Renderer::render_Scene(gear::Scene *scene)

@@ -68,6 +68,7 @@ void MyGame::on_Startup(void)
     GEAR_DEBUG_LOG("width: %i height: %i", window->get_Width(), window->get_Height());
     
     Renderer::set_Viewport({0, 0}, {window->get_Width(), window->get_Height()});
+    Renderer::set_Clear_Color({0.1, 0.7, 1, 1});
 
     GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
     GEAR_DEBUG_LOG("Opened application");
@@ -220,7 +221,7 @@ void MyGame::render(void) {
     cam.follow_Target();
     Renderer::start_New_Frame();
     Renderer::render_Scene(main_Scene);
-    Renderer::render_All_Hitboxes(main_Scene);
+    //Renderer::render_All_Hitboxes(main_Scene);
     Renderer::show_Frame();
 }
 
