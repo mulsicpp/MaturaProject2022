@@ -105,13 +105,13 @@ void gear::Renderer::render_Shape(const gear::Shape *shape, const Vector<float, 
         return;
     m_Framebuffer.bind();
     ShapePipeline::get_Instance().bind(shape->get_Type());
-    glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Width"), m_Framebuffer.m_Width);
-    glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
+    glUniform1i(glGetUniformLocation(ShapePipeline::get_Instance().m_Shader, "u_Frame_Width"), m_Framebuffer.m_Width);
+    glUniform1i(glGetUniformLocation(ShapePipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
 
     if (m_Camera != nullptr)
-        glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), m_Camera->get_Position()[0], m_Camera->get_Position()[1]);
+        glUniform2f(glGetUniformLocation(ShapePipeline::get_Instance().m_Shader, "u_Camera_Pos"), m_Camera->get_Position()[0], m_Camera->get_Position()[1]);
     else
-        glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), 0, 0);
+        glUniform2f(glGetUniformLocation(ShapePipeline::get_Instance().m_Shader, "u_Camera_Pos"), 0, 0);
     ShapePipeline::get_Instance().render_Shape(shape, color);
 }
 

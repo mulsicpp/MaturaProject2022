@@ -129,6 +129,7 @@ void MyGame::on_Startup(void)
     GEAR_DEBUG_LOG("post script");
 
     animation_Comp.palette = palettes[3];
+    animation_Comp.frame_Offset = 1;
 
     new_Eis = main_Scene->create_Entity();
     new_Eis.add<AnimationComponent>(animation_Comp);
@@ -198,6 +199,8 @@ void MyGame::on_Startup(void)
     Entity base_Fighter = main_Scene->create_Entity();
     base_Fighter.add<ScriptComponent>(ScriptComponent().bind<BaseFighterScript>(InputDevice::KEYBOARD));
 
+    main_Scene->update_Transformation();
+
     GEAR_DEBUG_LOG("finished scene");
 
     cam_Pos = {0, 0};
@@ -209,7 +212,10 @@ void MyGame::render(void) {
     cam_Pos = (Entity{0, 0}.get<TransformComponent>()->position + Entity{1, 0}.get<TransformComponent>()->position) / 2;
 
     cam.follow_Target();
-    gear::Game::render();
+    Renderer::start_New_Frame();
+    Renderer::render_Scene(main_Scene);
+    Renderer::render_All_Hitboxes(main_Scene);
+    Renderer::show_Frame();
 }
 
 void MyGame::on_Shutdown(void)
