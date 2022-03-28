@@ -21,7 +21,6 @@ void gear::ShapePipeline::init(void)
 
   validate_Program(m_Shader);
   RenderPipeline::bind();
-  glUniform1i(glGetUniformLocation(m_Shader, "u_Texture"), 0);
   GEAR_DEBUG_LOG("opengl program: %i", m_Shader);
 
   glDeleteShader(vertex_Shader);

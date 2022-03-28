@@ -63,6 +63,8 @@ void MyGame::on_Startup(void)
 {
     gear::Game::on_Startup();
 
+    window->set_Fullscreen();
+
     GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
     GEAR_DEBUG_LOG("Opened application");
 

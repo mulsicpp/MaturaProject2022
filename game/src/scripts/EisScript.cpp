@@ -60,13 +60,14 @@ CEisInput::CEisInput(int id) : AbstractControllerInput(id)
 
 bool projectile_Physics_Check(CollisionEvent e)
 {
-    return false;
+    if (e.get_Other_Entity().get_Entity_ID() == 0 || e.get_Other_Entity().get_Entity_ID() == 1)
+        return false;
+    return true;
 }
 
-void projectile_Physics_On_Overlap(CollisionEvent e)
+void projectile_Physics_On_Collision(CollisionEvent e)
 {
-    if(e.get_Other_Entity().get_Entity_ID() != 0 && e.get_Other_Entity().get_Entity_ID() != 1)
-        Scene::get(e.get_Other_Entity().get_Scene_ID())->remove_Entity(e.get_Entity());
+    Scene::get(e.get_Other_Entity().get_Scene_ID())->remove_Entity(e.get_Entity());
 }
 
 static void spawn_Projectile(Entity e)
@@ -76,14 +77,28 @@ static void spawn_Projectile(Entity e)
     auto transform = e.get<TransformComponent>();
     auto pos = transform->get_Matrix() * Vector<double, 3>{-17, 15, 1};
     projectile.add<TransformComponent>({pos.use_As<2>(), {1, 1}, transform->state});
+
     DynamicPhysicsComponent physics;
     physics.collider = Collider::create(Circle{{0, 0}, 5});
     physics.velocity = transform->state & GEAR_MIRROR_X ? 720 : -720;
     physics.acceleration = {0, 0};
     physics.restitution = 1;
     physics.check = projectile_Physics_Check;
-    physics.on_Overlap = projectile_Physics_On_Overlap;
+    physics.on_Collision = projectile_Physics_On_Collision;
     projectile.add<DynamicPhysicsComponent>(physics);
+
+    HitboxComponent hitbox;
+    hitbox.hitboxes = {Hitbox::create(1, Circle{{0, 0}, 5})};
+    hitbox.hitboxes[0]->on_Collision_Begin(
+        [](HitboxEvent e) {
+            Entity entity = e.get_Entity();
+            Entity other_Entity = e.get_Other_Entity();
+            other_Entity.get<TransformComponent>()->position[0] += entity.get<DynamicPhysicsComponent>()->velocity[0] * 0.01;
+            Scene::get(entity.get_Scene_ID())->remove_Entity(entity);
+            other_Entity.update_Transformation();
+        }
+    );
+    projectile.add(hitbox);
 
     class ProjectileScript : gear::ScriptableEntity
     {
@@ -155,7 +170,7 @@ void EisScript::init(void)
                 }
             }
         });
-    
+
     DynamicPhysicsComponent *physics = m_Entity.get<DynamicPhysicsComponent>();
     physics->on_Collision = [this](CollisionEvent e)
     {
