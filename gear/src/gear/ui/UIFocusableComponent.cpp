@@ -21,37 +21,41 @@ void gear::UIFocusableComponent::set_Navigation_Component(UIDirection direction,
     m_Navigation_Components[(int)direction] = component;
 }
 
-gear::Ref<gear::UIFocusableComponent> gear::UIFocusableComponent::get_Navigation_Component(UIDirection direction) const
+gear::Ref<gear::UIFocusableComponent> gear::UIFocusableComponent::get_Navigation_Component(UIDirection direction, int user_ID) const
 {
-    return m_Navigation_Components[(int)direction];
+    if (!m_Navigation_Components[(int)direction])
+        return nullptr;
+    if (m_Navigation_Components[(int)direction]->has_Access(user_ID))
+        return m_Navigation_Components[(int)direction];
+    return m_Navigation_Components[(int)direction]->get_Navigation_Component(direction, user_ID);
 }
 
-void gear::UIFocusableComponent::allow_Access(UIUser user)
+void gear::UIFocusableComponent::allow_Access(int user_ID)
 {
-    m_Access_Flags |= (1 << user.getID());
+    m_Access_Flags |= (1 << user_ID);
 }
 
-void gear::UIFocusableComponent::deny_Access(UIUser user)
+void gear::UIFocusableComponent::deny_Access(int user_ID)
 {
-    m_Access_Flags &= ~(1 << user.getID());
+    m_Access_Flags &= ~(1 << user_ID);
 }
 
-bool gear::UIFocusableComponent::has_Access(UIUser user) const
+bool gear::UIFocusableComponent::has_Access(int user_ID) const
 {
-    return m_Access_Flags & (1 << user.getID());
+    return m_Access_Flags & (1 << user_ID);
 }
 
-void gear::UIFocusableComponent::focus_From(UIUser user)
+void gear::UIFocusableComponent::focus_From(int user_ID)
 {
-    m_Focus_Flags |= (1 << user.getID());
+    m_Focus_Flags |= (1 << user_ID);
 }
 
-void gear::UIFocusableComponent::unfocus_From(UIUser user)
+void gear::UIFocusableComponent::unfocus_From(int user_ID)
 {
-    m_Focus_Flags &= ~(1 << user.getID());
+    m_Focus_Flags &= ~(1 << user_ID);
 }
 
-bool gear::UIFocusableComponent::is_Focused_By(UIUser user) const
+bool gear::UIFocusableComponent::is_Focused_By(int user_ID) const
 {
-    return m_Focus_Flags & (1 << user.getID());
+    return m_Focus_Flags & (1 << user_ID);
 }

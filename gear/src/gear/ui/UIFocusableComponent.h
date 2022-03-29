@@ -24,15 +24,17 @@ public:
     Vector<int, 2> get_Grid_Pos(void) const;
 
     void set_Navigation_Component(UIDirection direction, Ref<UIFocusableComponent> component);
-    Ref<UIFocusableComponent> get_Navigation_Component(UIDirection direction) const;
+    Ref<UIFocusableComponent> get_Navigation_Component(UIDirection direction, int user_ID) const;
 
-    void allow_Access(UIUser user);
-    void deny_Access(UIUser user);
-    bool has_Access(UIUser user) const;
+    void allow_Access(int user_ID);
+    void deny_Access(int user_ID);
+    bool has_Access(int user_ID) const;
 
-    void focus_From(UIUser user);
-    void unfocus_From(UIUser user);
-    bool is_Focused_By(UIUser user) const;
+    void focus_From(int user_ID);
+    void unfocus_From(int user_ID);
+    bool is_Focused_By(int user_ID) const;
+
+    virtual void submit(void) = 0;
 };
 
 _GEAR_END
