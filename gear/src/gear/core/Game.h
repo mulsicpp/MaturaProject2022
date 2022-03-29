@@ -27,6 +27,15 @@ private:
 
     void gear_Terminate(void);
 
+    void call_Script_Pre_Input(void);
+    void call_Script_Post_Input(void);
+    void call_Script_Pre_Physics(void);
+    void call_Script_Post_Physics(void);
+    void call_Script_Pre_Hitbox_Check(void);
+    void call_Script_Post_Hitbox_Check(void);
+    void call_Script_Pre_Render(void);
+    void call_Script_Post_Render(void);
+
 protected:
     gear::Window *window = nullptr;
     Scene *main_Scene;
@@ -42,15 +51,6 @@ public:
     virtual void physics(void);
     virtual void hitbox_Check(void);
     virtual void render(void);
-
-    void call_Script_Pre_Input(void);
-    void call_Script_Post_Input(void);
-    void call_Script_Pre_Physics(void);
-    void call_Script_Post_Physics(void);
-    void call_Script_Pre_Hitbox_Check(void);
-    void call_Script_Post_Hitbox_Check(void);
-    void call_Script_Pre_Render(void);
-    void call_Script_Post_Render(void);
 
     void close(int exit_code);
 

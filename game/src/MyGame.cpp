@@ -55,10 +55,6 @@ bool eis_Physics_Check(gear::CollisionEvent e)
     return true;
 }
 
-Ref<Shape> get_Random_Shape() {
-    return Ref<Shape>(new Rect({0, 0}, {1, 1}));
-}
-
 void MyGame::on_Startup(void)
 {
     gear::Game::on_Startup();
