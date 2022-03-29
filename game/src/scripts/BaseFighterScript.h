@@ -35,24 +35,25 @@ protected:
         a_Sground,
         a_Uground,
         a_Dground,
-        a_Sspecial,
-        a_Uspecial,
-        a_Dspecial,
         a_Sair,
         a_Uair,
         a_Dair,
+        a_Sspecial,
+        a_Uspecial,
+        a_Dspecial,
         a_Ult,
         a_Damaged,
+        a_Shield,
         a_Ledge_Grab,
-        a_Get_Up,
-        a_Shield;
+        a_Hanging,
+        a_Get_Up;
 
 public:
     BaseFighterScript(gear::InputDevice device);
     ~BaseFighterScript();
 
     virtual void init_Input(void);
-    // virtual void init_Animations(const char *base_Path);
+    virtual void init_Animations(const char *base_Path, const char *palette_Path);
     // virtual void init_Animation_Events(void);
 
     // virtual void damage(double damage);

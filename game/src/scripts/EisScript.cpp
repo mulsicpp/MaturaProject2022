@@ -75,7 +75,7 @@ static void spawn_Projectile(Entity e)
     Scene *scene = Scene::get(e.get_Scene_ID());
     Entity projectile = scene->create_Entity();
     auto transform = e.get<TransformComponent>();
-    auto pos = transform->get_Matrix() * Vector<double, 3>{-17, 15, 1};
+    auto pos = transform->get_Matrix() * Vector<double, 3>{-15, 20, 1};
     projectile.add<TransformComponent>({pos.use_As<2>(), {1, 1}, transform->state});
 
     DynamicPhysicsComponent physics;
