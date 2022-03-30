@@ -1,0 +1,10 @@
+animation run.png ../palettes/default.png
+
+img run.png
+palette ../palettes/default.png
+
+background 0000ffff
+
+frame_rate 5
+frame_alignment v
+frame_count 4

@@ -200,7 +200,7 @@ void MyGame::on_Startup(void)
     platform4.add<StaticPhysicsComponent>(physics);
 
     Entity base_Fighter = main_Scene->create_Entity();
-    base_Fighter.add<ScriptComponent>(ScriptComponent().bind<BaseFighterScript>(InputDevice::KEYBOARD));
+    base_Fighter.add<ScriptComponent>(ScriptComponent().bind<BaseFighterScript>(InputDevice::KEYBOARD, "assets/fighters/medusa"));
 
     main_Scene->update_Transformation();
 

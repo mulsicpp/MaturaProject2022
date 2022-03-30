@@ -4,14 +4,19 @@
 
 using namespace gear;
 
-BaseFighterScript::BaseFighterScript(InputDevice device)
+BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
 {
     input = FighterInput::create_From(device);
 
     init_Input();
+    init_Animations(base_Path);
 }
 
 BaseFighterScript::~BaseFighterScript() {}
+
+void BaseFighterScript::init(void) {
+
+}
 
 void BaseFighterScript::init_Input(void)
 {
@@ -28,8 +33,6 @@ void BaseFighterScript::init_Input(void)
                     GEAR_DEBUG_LOG("uground");
                 else if (input->down->get_State() == State::PRESSED)
                     GEAR_DEBUG_LOG("dground");
-                else
-                    GEAR_DEBUG_LOG("nground");
             }
         });
 }
@@ -46,33 +49,37 @@ static void init_Animation(AnimationComponent *animation, std::string path, Ref<
     animation->frame_Rate = animation->animation->get_Default_Frame_Rate();
 }
 
-void BaseFighterScript::init_Animations(const char *base_Path, const char *palette_Path)
+void BaseFighterScript::init_Animations(const char *base_Path)
 {
-    Ref<Palette> palette = ResourceManager::get<Palette>(palette_Path);
     std::string path = base_Path;
+    Ref<Palette> palette = ResourceManager::get<Palette>(path + "/palettes/default.gear");
 
-    init_Animation(&a_Idle, path + "/idle.gear", palette, AnimationType::LOOP);
-    init_Animation(&a_Run, path + "/run.gear", palette, AnimationType::LOOP);
-    init_Animation(&a_Jump, path + "/jump.gear", palette, AnimationType::FORWARD);
+    init_Animation(&a_Idle, path + "/animations/idle.gear", palette, AnimationType::LOOP);
+    init_Animation(&a_Run, path + "/animations/run.gear", palette, AnimationType::LOOP);
+    init_Animation(&a_Jump, path + "/animations/jump.gear", palette, AnimationType::FORWARD);
 
-    init_Animation(&a_Sground, path + "/sground.gear", palette, AnimationType::FORWARD);
-    init_Animation(&a_Uground, path + "/uground.gear", palette, AnimationType::FORWARD);
-    init_Animation(&a_Dground, path + "/dground.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Sground, path + "/animations/sground.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Uground, path + "/animations/uground.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Dground, path + "/animations/dground.gear", palette, AnimationType::FORWARD);
 
-    init_Animation(&a_Sair, path + "/sair.gear", palette, AnimationType::FORWARD);
-    init_Animation(&a_Uair, path + "/uair.gear", palette, AnimationType::FORWARD);
-    init_Animation(&a_Dair, path + "/dair.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Sair, path + "/animations/sair.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Uair, path + "/animations/uair.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Dair, path + "/animations/dair.gear", palette, AnimationType::FORWARD);
 
-    init_Animation(&a_Sspecial, path + "/sspecial.gear", palette, AnimationType::FORWARD);
-    init_Animation(&a_Uspecial, path + "/uspecial.gear", palette, AnimationType::FORWARD);
-    init_Animation(&a_Dspecial, path + "/dspecial.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Sspecial, path + "/animations/sspecial.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Uspecial, path + "/animations/uspecial.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Dspecial, path + "/animations/dspecial.gear", palette, AnimationType::FORWARD);
 
-    init_Animation(&a_Ult, path + "/ult.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Ult, path + "/ult.gear", palette, AnimationType::FORWARD);
 
-    init_Animation(&a_Damaged, path + "/damaged.gear", palette, AnimationType::FORWARD);
-    init_Animation(&a_Shield, path + "/shield.gear", palette, AnimationType::LOOP);
+    // init_Animation(&a_Damaged, path + "/damaged.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Shield, path + "/shield.gear", palette, AnimationType::LOOP);
 
-    init_Animation(&a_Ledge_Grab, path + "/ledge_grab.gear", palette, AnimationType::FORWARD);
-    init_Animation(&a_Hanging, path + "/hanging.gear", palette, AnimationType::LOOP);
-    init_Animation(&a_Get_Up, path + "/get_up.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Ledge_Grab, path + "/ledge_grab.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Hanging, path + "/hanging.gear", palette, AnimationType::LOOP);
+    // init_Animation(&a_Get_Up, path + "/get_up.gear", palette, AnimationType::FORWARD);
+}
+
+void BaseFighterScript::pre_Input(void) {
+
 }

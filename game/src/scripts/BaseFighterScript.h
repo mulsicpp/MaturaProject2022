@@ -49,11 +49,15 @@ protected:
         a_Get_Up;
 
 public:
-    BaseFighterScript(gear::InputDevice device);
+    BaseFighterScript(gear::InputDevice device, const char *base_Path);
     ~BaseFighterScript();
 
+    virtual void init(void) override;
+
     virtual void init_Input(void);
-    virtual void init_Animations(const char *base_Path, const char *palette_Path);
+    virtual void init_Animations(const char *base_Path);
+
+    virtual void pre_Input(void) override;
     // virtual void init_Animation_Events(void);
 
     // virtual void damage(double damage);
