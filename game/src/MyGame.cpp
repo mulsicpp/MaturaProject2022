@@ -128,7 +128,7 @@ void MyGame::on_Startup(void)
         e.get_Other_Entity().get<TransformComponent>()->position[0] += e.get_Entity().get<TransformComponent>()->state & GEAR_MIRROR_X ? 20 : -20; });
     new_Eis.add<HitboxComponent>(h);
     GEAR_DEBUG_LOG("pre script");
-    //new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::KEYBOARD));
+    new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::CONTROLLER_2));
     GEAR_DEBUG_LOG("post script");
 
     animation_Comp.palette = palettes[3];
@@ -158,7 +158,7 @@ void MyGame::on_Startup(void)
     h = {{Hitbox::create(1, Circle{{-20, 23}, 12, false})}};
     h.hitboxes[0]->on_Collision_Begin([](HitboxEvent e) { e.get_Other_Entity().get<DynamicPhysicsComponent>()->velocity = {0, -4}; });
     new_Eis.add<HitboxComponent>(h);
-    //new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::CONTROLLER_1));
+    new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::CONTROLLER_1));
 
     SpriteComponent sprite;
     sprite.offset = {-183, -3, 0.1};
@@ -217,7 +217,7 @@ void MyGame::render(void) {
     cam.follow_Target();
     Renderer::start_New_Frame();
     Renderer::render_Scene(main_Scene);
-    // Renderer::render_All_Hitboxes(main_Scene);
+    Renderer::render_All_Hitboxes(main_Scene);
     Renderer::show_Frame();
 }
 

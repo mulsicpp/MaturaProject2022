@@ -24,7 +24,7 @@ protected:
 
     int air_Jumps = 1;
     double movement_Speed = 170;
-    double air_Movement_Factor = 0.5;
+    double air_Movement_Factor = 0.8;
     double jump_Strenght = 400;
     double air_Jump_Strength = 300;
 

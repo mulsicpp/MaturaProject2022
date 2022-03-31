@@ -19,6 +19,9 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
         {
             if (real_Val)
             {
+                auto transform = m_Entity.get<TransformComponent>();
+                transform->scale[0] = real_Val;
+                m_Entity.update_Transformation();
                 if (input->special->get_State() == State::PRESSED)
                     GEAR_DEBUG_LOG("side special %i", real_Val);
                 else if (input->attack->get_State() == State::PRESSED)
@@ -103,7 +106,7 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
         {
             int val = axis_As_Int(input->x_Axis->get_Value());
             if (val)
-                    GEAR_DEBUG_LOG("side special %i", val);
+                GEAR_DEBUG_LOG("side special %i", val);
             else if (input->up->get_State() == State::PRESSED)
                 GEAR_DEBUG_LOG("up special");
             else if (input->down->get_State() == State::PRESSED)
@@ -122,7 +125,7 @@ void BaseFighterScript::init(void)
     m_Entity.add<TransformComponent>({{0, 0}, {1, 1}, 0});
     m_Entity.add<AnimationComponent>(a_Idle);
     DynamicPhysicsComponent physics;
-    physics.collider = Collider::create(Rect{{-5, -28}, {7, 25}});
+    physics.collider = Collider::create(Rect{{-6, -28}, {6, 25}});
     physics.acceleration = {0, 1000};
     physics.on_Collision = [this](CollisionEvent e)
     {
