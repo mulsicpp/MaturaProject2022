@@ -2,11 +2,124 @@
 
 #include <gear/resource/ResourceManager.h>
 
+#include <gear/collision/DynamicPhysicsComponent.h>
+#include <gear/collision/shapes/Rect.h>
+
 using namespace gear;
 
 BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
 {
     input = FighterInput::create_From(device);
+
+    up_Callback = [this](Action a)
+    {
+        if (a == Action::PRESSED)
+        {
+            if (input->special->get_State() == State::PRESSED)
+                GEAR_DEBUG_LOG("up special");
+            else if (input->attack->get_State() == State::PRESSED)
+                if (flags & F_GROUND)
+                    GEAR_DEBUG_LOG("up ground");
+                else
+                    GEAR_DEBUG_LOG("up air");
+        }
+    };
+
+    left_Callback = [this](Action a)
+    {
+        if (a == Action::PRESSED)
+        {
+            if (input->special->get_State() == State::PRESSED)
+                GEAR_DEBUG_LOG("side special");
+            else if (input->attack->get_State() == State::PRESSED)
+                if (flags & F_GROUND)
+                    GEAR_DEBUG_LOG("side ground");
+                else
+                    GEAR_DEBUG_LOG("side air");
+        }
+    };
+
+    right_Callback = [this](Action a)
+    {
+        if (a == Action::PRESSED)
+        {
+            if (input->special->get_State() == State::PRESSED)
+                GEAR_DEBUG_LOG("side special");
+            else if (input->attack->get_State() == State::PRESSED)
+                if (flags & F_GROUND)
+                    GEAR_DEBUG_LOG("side ground");
+                else
+                    GEAR_DEBUG_LOG("side air");
+        }
+    };
+
+    down_Callback = [this](Action a)
+    {
+        if (a == Action::PRESSED)
+        {
+            if (input->special->get_State() == State::PRESSED)
+                GEAR_DEBUG_LOG("down special");
+            else if (input->attack->get_State() == State::PRESSED)
+                if (flags & F_GROUND)
+                    GEAR_DEBUG_LOG("down ground");
+                else
+                    GEAR_DEBUG_LOG("down air");
+        }
+    };
+
+    jump_Callback = [this] (Action a) {
+        if(a == Action::PRESSED) {
+            auto physics = m_Entity.get<DynamicPhysicsComponent>();
+            if(flags & F_GROUND)
+                physics->velocity[1] = -this->jump_Strenght;
+            else
+                physics->velocity[1] = -this->air_Jump_Strength;
+        }
+    };
+
+    attack_Callback = [this](Action a)
+    {
+        if (a == Action::PRESSED)
+        {
+            if (flags & F_GROUND)
+            {
+                if (input->left->get_State() == State::PRESSED)
+                    GEAR_DEBUG_LOG("side ground");
+                else if (input->right->get_State() == State::PRESSED)
+                    GEAR_DEBUG_LOG("side ground");
+                else if (input->up->get_State() == State::PRESSED)
+                    GEAR_DEBUG_LOG("up ground");
+                else if (input->down->get_State() == State::PRESSED)
+                    GEAR_DEBUG_LOG("down ground");
+            }
+            else
+            {
+                if (input->left->get_State() == State::PRESSED)
+                    GEAR_DEBUG_LOG("side air");
+                else if (input->right->get_State() == State::PRESSED)
+                    GEAR_DEBUG_LOG("side air");
+                else if (input->up->get_State() == State::PRESSED)
+                    GEAR_DEBUG_LOG("up air");
+                else if (input->down->get_State() == State::PRESSED)
+                    GEAR_DEBUG_LOG("down air");
+            }
+        }
+    };
+
+    special_Callback = [this](Action a)
+    {
+        if (a == Action::PRESSED)
+        {
+            if (input->left->get_State() == State::PRESSED)
+                GEAR_DEBUG_LOG("side special");
+            else if (input->right->get_State() == State::PRESSED)
+                GEAR_DEBUG_LOG("side special");
+            else if (input->up->get_State() == State::PRESSED)
+                GEAR_DEBUG_LOG("up special");
+            else if (input->down->get_State() == State::PRESSED)
+                GEAR_DEBUG_LOG("down special");
+        }
+    };
 
     init_Input();
     init_Animations(base_Path);
@@ -14,30 +127,30 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
 
 BaseFighterScript::~BaseFighterScript() {}
 
-void BaseFighterScript::init(void) {
-
+void BaseFighterScript::init(void)
+{
+    m_Entity.add<TransformComponent>({{0, 0}, {1, 1}, 0});
+    m_Entity.add<AnimationComponent>(a_Idle);
+    DynamicPhysicsComponent physics;
+    physics.collider = Collider::create(Rect{{-5, -28}, {7, 25}});
+    physics.acceleration = {0, 1000};
+    m_Entity.add<DynamicPhysicsComponent>(physics);
 }
 
 void BaseFighterScript::init_Input(void)
 {
-    input->attack->set_Callback(
-        [this](Action a)
-        {
-            if (a == Action::PRESSED)
-            {
-                if (input->left->get_State() == State::PRESSED)
-                    GEAR_DEBUG_LOG("sground");
-                else if (input->right->get_State() == State::PRESSED)
-                    GEAR_DEBUG_LOG("sground");
-                else if (input->up->get_State() == State::PRESSED)
-                    GEAR_DEBUG_LOG("uground");
-                else if (input->down->get_State() == State::PRESSED)
-                    GEAR_DEBUG_LOG("dground");
-            }
-        });
+    input->up->set_Callback(up_Callback);
+    input->right->set_Callback(right_Callback);
+    input->down->set_Callback(down_Callback);
+    input->left->set_Callback(left_Callback);
+    input->jump->set_Callback(jump_Callback);
+    input->attack->set_Callback(attack_Callback);
+    input->special->set_Callback(special_Callback);
+    input->shield->set_Callback(shield_Callback);
 }
 
-static void init_Animation(AnimationComponent *animation, std::string path, Ref<Palette> palette, AnimationType type) {
+static void init_Animation(AnimationComponent *animation, std::string path, Ref<Palette> palette, AnimationType type)
+{
 
     animation->animation = ResourceManager::get<Animation>(path);
     animation->palette = palette;
@@ -80,6 +193,9 @@ void BaseFighterScript::init_Animations(const char *base_Path)
     // init_Animation(&a_Get_Up, path + "/get_up.gear", palette, AnimationType::FORWARD);
 }
 
-void BaseFighterScript::pre_Input(void) {
+void BaseFighterScript::pre_Input(void)
+{
+    auto physics = m_Entity.get<DynamicPhysicsComponent>();
 
+    physics->velocity[0] = 0;
 }

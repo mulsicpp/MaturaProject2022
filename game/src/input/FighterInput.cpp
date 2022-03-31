@@ -15,7 +15,7 @@ KFighterInput::KFighterInput(void)
     up = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::W), GEAR_CREATE_BUTTON(AKeyboardButton, Key::UP));
     down = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::S), GEAR_CREATE_BUTTON(AKeyboardButton, Key::DOWN));
     
-    jump = GEAR_CREATE_OR_BUTTON(up, GEAR_CREATE_BUTTON(AKeyboardButton, Key::SPACE));
+    jump = GEAR_CREATE_BUTTON(AKeyboardButton, Key::SPACE);
 
     attack = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::NP_SUBTRACT), GEAR_CREATE_BUTTON(AMouseButton, MouseButton::LEFT));
     special = GEAR_CREATE_OR_BUTTON(GEAR_CREATE_BUTTON(AKeyboardButton, Key::NP_ADD), GEAR_CREATE_BUTTON(AMouseButton, MouseButton::RIGHT));
@@ -30,7 +30,7 @@ CFighterInput::CFighterInput(int id) : AbstractControllerInput(id)
     up = GEAR_CREATE_BUTTON(AControllerAxisButton, id, ControllerAxis::LEFT_STICK_Y, -1, -0.4);
     down = GEAR_CREATE_BUTTON(AControllerAxisButton, id, ControllerAxis::LEFT_STICK_Y, 0.4, 1);
 
-    jump = GEAR_CREATE_OR_BUTTON(up, GEAR_CREATE_BUTTON(AKeyboardButton, Key::SPACE));
+    jump = GEAR_CREATE_BUTTON(AKeyboardButton, Key::SPACE);
 
     attack = GEAR_CREATE_BUTTON(AControllerButton, id, ControllerButton::B);
     special = GEAR_CREATE_BUTTON(AControllerButton, id, ControllerButton::A);

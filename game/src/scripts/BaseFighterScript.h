@@ -28,6 +28,16 @@ protected:
     double jump_Strenght = 400;
     double air_Jump_Strength = 300;
 
+    std::function<void(gear::Action)>
+        up_Callback,
+        right_Callback,
+        down_Callback,
+        left_Callback,
+        jump_Callback,
+        attack_Callback,
+        special_Callback,
+        shield_Callback;
+
     gear::AnimationComponent
         a_Idle,
         a_Run,
