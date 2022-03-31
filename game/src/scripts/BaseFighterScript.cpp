@@ -188,9 +188,9 @@ int BaseFighterScript::axis_As_Int(float value)
     return value > 0.3 ? 1 : (value < -0.3 ? -1 : 0);
 }
 
-void BaseFighterScript::pre_Input(void)
+void BaseFighterScript::pre_Physics(void)
 {
     auto physics = m_Entity.get<DynamicPhysicsComponent>();
 
-    physics->velocity[0] = 0;
+    physics->velocity[0] = (flags & F_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());
 }

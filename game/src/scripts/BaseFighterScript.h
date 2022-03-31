@@ -69,7 +69,7 @@ public:
 
     static int axis_As_Int(float value);
 
-    virtual void pre_Input(void) override;
+    virtual void pre_Physics(void) override;
     // virtual void init_Animation_Events(void);
 
     // virtual void damage(double damage);
