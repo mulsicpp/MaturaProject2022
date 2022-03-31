@@ -30,13 +30,13 @@ protected:
 
     std::function<void(gear::Action)>
         up_Callback,
-        right_Callback,
         down_Callback,
-        left_Callback,
         jump_Callback,
         attack_Callback,
         special_Callback,
         shield_Callback;
+
+    std::function<void(float)> x_Callback;
 
     gear::AnimationComponent
         a_Idle,
@@ -66,6 +66,8 @@ public:
 
     virtual void init_Input(void);
     virtual void init_Animations(const char *base_Path);
+
+    static int axis_As_Int(float value);
 
     virtual void pre_Input(void) override;
     // virtual void init_Animation_Events(void);

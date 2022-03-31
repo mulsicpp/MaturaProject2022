@@ -11,6 +11,26 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
 {
     input = FighterInput::create_From(device);
 
+    x_Callback = [this](float val)
+    {
+        static int prev_Val = 0;
+        int real_Val = axis_As_Int(val);
+        if (prev_Val != real_Val)
+        {
+            if (real_Val)
+            {
+                if (input->special->get_State() == State::PRESSED)
+                    GEAR_DEBUG_LOG("side special %i", real_Val);
+                else if (input->attack->get_State() == State::PRESSED)
+                    if (flags & F_GROUND)
+                        GEAR_DEBUG_LOG("side ground %i", real_Val);
+                    else
+                        GEAR_DEBUG_LOG("side air %i", real_Val);
+            }
+        }
+        prev_Val = val;
+    };
+
     up_Callback = [this](Action a)
     {
         if (a == Action::PRESSED)
@@ -22,34 +42,6 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
                     GEAR_DEBUG_LOG("up ground");
                 else
                     GEAR_DEBUG_LOG("up air");
-        }
-    };
-
-    left_Callback = [this](Action a)
-    {
-        if (a == Action::PRESSED)
-        {
-            if (input->special->get_State() == State::PRESSED)
-                GEAR_DEBUG_LOG("side special");
-            else if (input->attack->get_State() == State::PRESSED)
-                if (flags & F_GROUND)
-                    GEAR_DEBUG_LOG("side ground");
-                else
-                    GEAR_DEBUG_LOG("side air");
-        }
-    };
-
-    right_Callback = [this](Action a)
-    {
-        if (a == Action::PRESSED)
-        {
-            if (input->special->get_State() == State::PRESSED)
-                GEAR_DEBUG_LOG("side special");
-            else if (input->attack->get_State() == State::PRESSED)
-                if (flags & F_GROUND)
-                    GEAR_DEBUG_LOG("side ground");
-                else
-                    GEAR_DEBUG_LOG("side air");
         }
     };
 
@@ -67,10 +59,12 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
         }
     };
 
-    jump_Callback = [this] (Action a) {
-        if(a == Action::PRESSED) {
+    jump_Callback = [this](Action a)
+    {
+        if (a == Action::PRESSED)
+        {
             auto physics = m_Entity.get<DynamicPhysicsComponent>();
-            if(flags & F_GROUND)
+            if (flags & F_GROUND)
                 physics->velocity[1] = -this->jump_Strenght;
             else
                 physics->velocity[1] = -this->air_Jump_Strength;
@@ -81,12 +75,11 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
     {
         if (a == Action::PRESSED)
         {
+            int val = axis_As_Int(input->x_Axis->get_Value());
             if (flags & F_GROUND)
             {
-                if (input->left->get_State() == State::PRESSED)
-                    GEAR_DEBUG_LOG("side ground");
-                else if (input->right->get_State() == State::PRESSED)
-                    GEAR_DEBUG_LOG("side ground");
+                if (val)
+                    GEAR_DEBUG_LOG("side ground %i", val);
                 else if (input->up->get_State() == State::PRESSED)
                     GEAR_DEBUG_LOG("up ground");
                 else if (input->down->get_State() == State::PRESSED)
@@ -94,10 +87,8 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
             }
             else
             {
-                if (input->left->get_State() == State::PRESSED)
-                    GEAR_DEBUG_LOG("side air");
-                else if (input->right->get_State() == State::PRESSED)
-                    GEAR_DEBUG_LOG("side air");
+                if (val)
+                    GEAR_DEBUG_LOG("side air %i", val);
                 else if (input->up->get_State() == State::PRESSED)
                     GEAR_DEBUG_LOG("up air");
                 else if (input->down->get_State() == State::PRESSED)
@@ -110,10 +101,9 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
     {
         if (a == Action::PRESSED)
         {
-            if (input->left->get_State() == State::PRESSED)
-                GEAR_DEBUG_LOG("side special");
-            else if (input->right->get_State() == State::PRESSED)
-                GEAR_DEBUG_LOG("side special");
+            int val = axis_As_Int(input->x_Axis->get_Value());
+            if (val)
+                    GEAR_DEBUG_LOG("side special %i", val);
             else if (input->up->get_State() == State::PRESSED)
                 GEAR_DEBUG_LOG("up special");
             else if (input->down->get_State() == State::PRESSED)
@@ -140,13 +130,13 @@ void BaseFighterScript::init(void)
 void BaseFighterScript::init_Input(void)
 {
     input->up->set_Callback(up_Callback);
-    input->right->set_Callback(right_Callback);
     input->down->set_Callback(down_Callback);
-    input->left->set_Callback(left_Callback);
     input->jump->set_Callback(jump_Callback);
     input->attack->set_Callback(attack_Callback);
     input->special->set_Callback(special_Callback);
     input->shield->set_Callback(shield_Callback);
+
+    input->x_Axis->set_Callback(x_Callback);
 }
 
 static void init_Animation(AnimationComponent *animation, std::string path, Ref<Palette> palette, AnimationType type)
@@ -191,6 +181,11 @@ void BaseFighterScript::init_Animations(const char *base_Path)
     // init_Animation(&a_Ledge_Grab, path + "/ledge_grab.gear", palette, AnimationType::FORWARD);
     // init_Animation(&a_Hanging, path + "/hanging.gear", palette, AnimationType::LOOP);
     // init_Animation(&a_Get_Up, path + "/get_up.gear", palette, AnimationType::FORWARD);
+}
+
+int BaseFighterScript::axis_As_Int(float value)
+{
+    return value > 0.3 ? 1 : (value < -0.3 ? -1 : 0);
 }
 
 void BaseFighterScript::pre_Input(void)
