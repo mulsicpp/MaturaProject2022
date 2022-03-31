@@ -124,6 +124,13 @@ void BaseFighterScript::init(void)
     DynamicPhysicsComponent physics;
     physics.collider = Collider::create(Rect{{-5, -28}, {7, 25}});
     physics.acceleration = {0, 1000};
+    physics.on_Collision = [this](CollisionEvent e)
+    {
+        if (abs(e.get_Separation_Vector()[0]) < abs(e.get_Separation_Vector()[1]) / 20 && e.get_Separation_Vector()[1] > 0)
+        {
+            flags |= F_GROUND;
+        }
+    };
     m_Entity.add<DynamicPhysicsComponent>(physics);
 }
 
@@ -193,4 +200,6 @@ void BaseFighterScript::pre_Physics(void)
     auto physics = m_Entity.get<DynamicPhysicsComponent>();
 
     physics->velocity[0] = (flags & F_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());
+
+    flags &= ~F_GROUND;
 }
