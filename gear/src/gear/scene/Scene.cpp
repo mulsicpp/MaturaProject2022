@@ -54,6 +54,8 @@ gear::Entity gear::Scene::create_Entity(void)
 {
     GEAR_DEBUG_LOG("creating entity: %i", m_Next_ID);
     m_Comp_Flags[m_Next_ID] = 0;
+    if (m_Default_Construction != nullptr)
+        m_Default_Construction({m_Next_ID, (uint8_t)(this - scenes)});
     return {m_Next_ID++, (uint8_t)(this - scenes)};
 }
 
@@ -91,6 +93,11 @@ void gear::Scene::update_Transformation(void)
     {
         Entity{id, (uint8_t)(this - scenes)}.update_Transformation();
     }
+}
+
+void gear::Scene::default_Entity_Contruction(std::function<void(gear::Entity)> callback)
+{
+    m_Default_Construction = callback;
 }
 
 void gear::Scene::print(void)
