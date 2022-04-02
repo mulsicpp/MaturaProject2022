@@ -1,20 +1,23 @@
+#pragma once
+
 #include <gear/scripting/ScriptableEntity.h>
 
 #include <gear/collision/Hitbox.h>
 #include <gear/collision/Hurtbox.h>
 #include <gear/collision/Collider.h>
 
+#include <gear/collision/DynamicPhysicsComponent.h>
+
 #include <gear/renderer/AnimationComponent.h>
 
 #include "../input/FighterInput.h"
 
-#define F_GROUND 0x01
-#define F_RECEIVE_INPUT 0x02
-#define F_USED_SPECIAL_MOVE 0x04
+#define FIGHTER_GROUND 0x01
+#define FIGHTER_RECEIVE_INPUT 0x02
+#define FIGHTER_USED_SPECIAL_MOVE 0x04
 
 class BaseFighterScript : public gear::ScriptableEntity
 {
-
 protected:
     gear::Ref<FighterInput> input;
 
@@ -23,10 +26,11 @@ protected:
     uint64_t flags;
 
     int air_Jumps = 1;
+    int max_Air_Jumps = 1;
     double movement_Speed = 170;
     double air_Movement_Factor = 0.8;
     double jump_Strenght = 400;
-    double air_Jump_Strength = 300;
+    double air_Jump_Strength = 350;
 
     std::function<void(gear::Action)>
         up_Callback,
@@ -37,6 +41,8 @@ protected:
         shield_Callback;
 
     std::function<void(float)> x_Callback;
+
+    gear::DynamicPhysicsComponent physics;
 
     gear::AnimationComponent
         a_Idle,
@@ -79,5 +85,7 @@ public:
 
     // virtual void reset_Hitboxes(void);
 
-    // virtual void play_Animation(AnimationComponent animation);
+    virtual void play_Animation(gear::AnimationComponent *animation);
+
+    virtual bool is_Phasing(void);
 };

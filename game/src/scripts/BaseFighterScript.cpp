@@ -2,10 +2,18 @@
 
 #include <gear/resource/ResourceManager.h>
 
-#include <gear/collision/DynamicPhysicsComponent.h>
 #include <gear/collision/shapes/Rect.h>
 
+#include "../components/FlagComponent.h"
+
 using namespace gear;
+
+static bool fighter_Physics_Check(gear::CollisionEvent e)
+{
+    if (e.get_Other_Entity().get<FlagComponent>()->flags & FLAG_FIGHTER)
+        return false;
+    return true;
+}
 
 BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
 {
@@ -22,13 +30,16 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
                 auto transform = m_Entity.get<TransformComponent>();
                 transform->scale[0] = real_Val;
                 m_Entity.update_Transformation();
+                play_Animation(&a_Run);
                 if (input->special->get_State() == State::PRESSED)
                     GEAR_DEBUG_LOG("side special %i", real_Val);
                 else if (input->attack->get_State() == State::PRESSED)
-                    if (flags & F_GROUND)
+                    if (flags & FIGHTER_GROUND)
                         GEAR_DEBUG_LOG("side ground %i", real_Val);
                     else
                         GEAR_DEBUG_LOG("side air %i", real_Val);
+            } else {
+                play_Animation(&a_Idle);
             }
         }
         prev_Val = val;
@@ -41,7 +52,7 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
             if (input->special->get_State() == State::PRESSED)
                 GEAR_DEBUG_LOG("up special");
             else if (input->attack->get_State() == State::PRESSED)
-                if (flags & F_GROUND)
+                if (flags & FIGHTER_GROUND)
                     GEAR_DEBUG_LOG("up ground");
                 else
                     GEAR_DEBUG_LOG("up air");
@@ -55,7 +66,7 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
             if (input->special->get_State() == State::PRESSED)
                 GEAR_DEBUG_LOG("down special");
             else if (input->attack->get_State() == State::PRESSED)
-                if (flags & F_GROUND)
+                if (flags & FIGHTER_GROUND)
                     GEAR_DEBUG_LOG("down ground");
                 else
                     GEAR_DEBUG_LOG("down air");
@@ -67,10 +78,12 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
         if (a == Action::PRESSED)
         {
             auto physics = m_Entity.get<DynamicPhysicsComponent>();
-            if (flags & F_GROUND)
+            if (flags & FIGHTER_GROUND)
                 physics->velocity[1] = -this->jump_Strenght;
-            else
+            else if(air_Jumps > 0) {
                 physics->velocity[1] = -this->air_Jump_Strength;
+                air_Jumps--;
+            }
         }
     };
 
@@ -79,7 +92,7 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
         if (a == Action::PRESSED)
         {
             int val = axis_As_Int(input->x_Axis->get_Value());
-            if (flags & F_GROUND)
+            if (flags & FIGHTER_GROUND)
             {
                 if (val)
                     GEAR_DEBUG_LOG("side ground %i", val);
@@ -114,6 +127,18 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
         }
     };
 
+    physics.acceleration = {0, 1000};
+    physics.velocity_Y_Interval[1] = 300;
+    physics.on_Collision = [this](CollisionEvent e)
+    {
+        if (abs(e.get_Separation_Vector()[0]) < abs(e.get_Separation_Vector()[1]) / 20 && e.get_Separation_Vector()[1] > 0)
+        {
+            flags |= FIGHTER_GROUND;
+            air_Jumps = max_Air_Jumps;
+        }
+    };
+    physics.check = fighter_Physics_Check;
+
     init_Input();
     init_Animations(base_Path);
 }
@@ -122,18 +147,8 @@ BaseFighterScript::~BaseFighterScript() {}
 
 void BaseFighterScript::init(void)
 {
-    m_Entity.add<TransformComponent>({{0, 0}, {1, 1}, 0});
+    m_Entity.set<FlagComponent>({FLAG_FIGHTER});
     m_Entity.add<AnimationComponent>(a_Idle);
-    DynamicPhysicsComponent physics;
-    physics.collider = Collider::create(Rect{{-6, -28}, {6, 25}});
-    physics.acceleration = {0, 1000};
-    physics.on_Collision = [this](CollisionEvent e)
-    {
-        if (abs(e.get_Separation_Vector()[0]) < abs(e.get_Separation_Vector()[1]) / 20 && e.get_Separation_Vector()[1] > 0)
-        {
-            flags |= F_GROUND;
-        }
-    };
     m_Entity.add<DynamicPhysicsComponent>(physics);
 }
 
@@ -202,7 +217,16 @@ void BaseFighterScript::pre_Physics(void)
 {
     auto physics = m_Entity.get<DynamicPhysicsComponent>();
 
-    physics->velocity[0] = (flags & F_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());
+    physics->velocity[0] = (flags & FIGHTER_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());
 
-    flags &= ~F_GROUND;
+    flags &= ~FIGHTER_GROUND;
+}
+
+void BaseFighterScript::play_Animation(AnimationComponent *animation)
+{
+    m_Entity.set<AnimationComponent>(*animation);
+}
+
+bool BaseFighterScript::is_Phasing(void) {
+    return input->down->get_State() == State::PRESSED;
 }

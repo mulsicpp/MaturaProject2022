@@ -12,6 +12,7 @@
 #include <gear/collision/HurtboxComponent.h>
 
 #include "scripts/EisScript.h"
+#include "scripts/MedusaScript.h"
 #include "scripts/BaseFighterScript.h"
 
 #include <gear/input/Input.h>
@@ -24,6 +25,8 @@
 #include <gear/resource/Sprite.h>
 #include <gear/resource/Animation.h>
 #include <gear/resource/Palette.h>
+
+#include "components/FlagComponent.h"
 
 using namespace gear;
 
@@ -38,10 +41,12 @@ bool platform_Physics_Check(gear::CollisionEvent e)
 {
     if (!e.did_Intersect())
     {
-        if (e.get_Other_Entity().get_Entity_ID() == 0 && Input::get_Key_State(Key::S) == State::PRESSED)
-            return false;
-        if (e.get_Other_Entity().get_Entity_ID() == 1 && Input::get_Axis_Value(0, ControllerAxis::LEFT_STICK_Y) > 0.4)
-            return false;
+        Entity other = e.get_Other_Entity();
+        if (other.get<FlagComponent>()->flags & FLAG_FIGHTER)
+        {
+            if (((BaseFighterScript *)other.get<ScriptComponent>()->script)->is_Phasing())
+                return false;
+        }
         if (abs(e.get_Separation_Vector()[0]) < abs(e.get_Separation_Vector()[1]) / 20 && e.get_Separation_Vector()[1] < 0)
             return true;
     }
@@ -55,14 +60,24 @@ bool eis_Physics_Check(gear::CollisionEvent e)
     return true;
 }
 
+void construct_Entity(Entity e)
+{
+    e.add<TransformComponent>({{0, 0}, {1, 1}, 0});
+    e.add<FlagComponent>({0});
+}
+
 void MyGame::on_Startup(void)
 {
     gear::Game::on_Startup();
 
-    //window->set_Fullscreen();
+    main_Scene->default_Entity_Contruction(construct_Entity);
+
+    Component<FlagComponent>::allow();
+
+    // window->set_Fullscreen();
 
     GEAR_DEBUG_LOG("width: %i height: %i", window->get_Width(), window->get_Height());
-    
+
     Renderer::set_Viewport({0, 0}, {window->get_Width(), window->get_Height()});
     Renderer::set_Clear_Color({0.1, 0.7, 1, 1});
 
@@ -76,89 +91,6 @@ void MyGame::on_Startup(void)
     palettes[4] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_blue.gear");
     palettes[5] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_vanillia.gear");
     palettes[6] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_brown.gear");
-
-    SpriteComponent sprite_Comp;
-    sprite_Comp.offset = {0, 0};
-    sprite_Comp.parallax_Factor = 1;
-    sprite_Comp.sprite = ResourceManager::get<Sprite>("assets/test_sprites/eis.gear");
-    sprite_Comp.palette = palettes[0];
-
-    AnimationComponent animation_Comp;
-    animation_Comp.offset = {-32, -32, 0};
-    animation_Comp.parallax_Factor = 1;
-    animation_Comp.palette = palettes[0];
-    animation_Comp.type = AnimationType::LOOP;
-    animation_Comp.animation = ResourceManager::get<Animation>("assets/test_sprites/eis_idle.gear");
-    animation_Comp.frame_Offset = 0;
-    // animation_Comp.on_Frame_Changed = [](int offset) {
-    //     GEAR_DEBUG_LOG("frame offset: %i", offset);
-    // };
-    animation_Comp.frame_Rate = animation_Comp.animation->get_Default_Frame_Rate();
-
-    Entity new_Eis = main_Scene->create_Entity();
-    GEAR_DEBUG_LOG("created first entity");
-    // GEAR_DEBUG_LOG("created entity %i %i %p", j, i, new_Eis);
-    
-
-    animation_Comp.parallax_Factor = 1.0f;
-    animation_Comp.offset = {-32, -32, 0};
-
-    animation_Comp.palette = palettes[1];
-    new_Eis.add<AnimationComponent>({animation_Comp});
-    new_Eis.add<TransformComponent>({{-100, -40}, {1, 1}, GEAR_MIRROR_X});
-    new_Eis.add<DynamicPhysicsComponent>({Collider::create(
-                                              Rect{{-12, 14}, {12, 32}},
-                                              Circle{{2, 14}, 9},
-                                              Circle{{7, 5}, 6},
-                                              Circle{{11, -3}, 3}),
-                                          0,
-                                          eis_Physics_Check,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          {0, 0},
-                                          {0, 1200},
-                                          {-10000, 10000},
-                                          {-1200, 360},
-                                          10});
-
-    new_Eis.add<HurtboxComponent>({{Hurtbox::create(1, Circle{{0, 23}, 12})}});
-    HitboxComponent h = {{Hitbox::create(1, Circle{{-20, 23}, 12, false})}};
-    h.hitboxes[0]->on_Collision_Begin([](HitboxEvent e) { 
-        e.get_Other_Entity().get<TransformComponent>()->position[0] += e.get_Entity().get<TransformComponent>()->state & GEAR_MIRROR_X ? 20 : -20; });
-    new_Eis.add<HitboxComponent>(h);
-    GEAR_DEBUG_LOG("pre script");
-    new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::CONTROLLER_2));
-    GEAR_DEBUG_LOG("post script");
-
-    animation_Comp.palette = palettes[3];
-    animation_Comp.frame_Offset = 1;
-
-    new_Eis = main_Scene->create_Entity();
-    new_Eis.add<AnimationComponent>(animation_Comp);
-    new_Eis.add<TransformComponent>({{100, -40}, {1, 1}, 0});
-    // physics.collider
-    new_Eis.add<DynamicPhysicsComponent>({Collider::create(
-                                              Rect{{-12, 14}, {12, 32}},
-                                              Circle{{2, 14}, 9},
-                                              Circle{{7, 5}, 6},
-                                              Circle{{11, -3}, 3}),
-                                          0,
-                                          eis_Physics_Check,
-                                          nullptr,
-                                          nullptr,
-                                          nullptr,
-                                          {0, 0},
-                                          {0, 1000},
-                                          {-10000, 10000},
-                                          {-1200, 360},
-                                          10});
-
-    new_Eis.add<HurtboxComponent>({{Hurtbox::create(1, Circle{{0, 23}, 12})}});
-    h = {{Hitbox::create(1, Circle{{-20, 23}, 12, false})}};
-    h.hitboxes[0]->on_Collision_Begin([](HitboxEvent e) { e.get_Other_Entity().get<DynamicPhysicsComponent>()->velocity = {0, -4}; });
-    new_Eis.add<HitboxComponent>(h);
-    new_Eis.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::CONTROLLER_1));
 
     SpriteComponent sprite;
     sprite.offset = {-183, -3, 0.1};
@@ -199,8 +131,10 @@ void MyGame::on_Startup(void)
     physics.collider = Collider::create(Rect{{-35, 0}, {35, 5}});
     platform4.add<StaticPhysicsComponent>(physics);
 
-    Entity base_Fighter = main_Scene->create_Entity();
-    base_Fighter.add<ScriptComponent>(ScriptComponent().bind<BaseFighterScript>(InputDevice::KEYBOARD, "assets/fighters/medusa"));
+    medusa = main_Scene->create_Entity();
+    medusa.add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::KEYBOARD));
+
+    main_Scene->create_Entity().add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::CONTROLLER_1));
 
     main_Scene->update_Transformation();
 
@@ -211,13 +145,14 @@ void MyGame::on_Startup(void)
     Renderer::set_Camera(&cam);
 }
 
-void MyGame::render(void) {
-    cam_Pos = (Entity{0, 0}.get<TransformComponent>()->position + Entity{1, 0}.get<TransformComponent>()->position) / 2;
+void MyGame::render(void)
+{
+    cam_Pos = medusa.get<TransformComponent>()->position;
 
     cam.follow_Target();
     Renderer::start_New_Frame();
     Renderer::render_Scene(main_Scene);
-    Renderer::render_All_Hitboxes(main_Scene);
+    // Renderer::render_All_Hitboxes(main_Scene);
     Renderer::show_Frame();
 }
 
