@@ -286,14 +286,14 @@ public:
     @param T the types of the components
     @param function the function, that gets called with the components
     */
-    static void for_Each(uint8_t scene_ID, void (*function)(T &...args))
+    static void for_Each(uint8_t scene_ID, void (*function)(Entity parent, T &...args))
     {
         const std::map<unsigned int, uint64_t> &comp_Flags = Scene::get(scene_ID)->m_Comp_Flags;
         reset_Iterators(ComponentManager<T>::get_Instance(scene_ID)...);
         for (const auto &[id, flags] : comp_Flags)
         {
             if (Entity(id, scene_ID).has<T...>()){
-                function(ComponentManager<T>::get_Instance(scene_ID).iterate_To(id)...);
+                function(Entity(id, scene_ID), ComponentManager<T>::get_Instance(scene_ID).iterate_To(id)...);
             }
         }
     }

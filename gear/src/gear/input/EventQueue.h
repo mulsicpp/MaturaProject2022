@@ -48,7 +48,7 @@ private:
   static std::mutex m_Mutex;
   static std::vector<std::function<void(void)>> m_Callbacks;
 
-  static void event_Callback(InputComponent<T> &event_Component)
+  static void event_Callback(Entity parent, InputComponent<T> &event_Component)
   {
     for (T &event : m_Queue)
     {

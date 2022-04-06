@@ -5,12 +5,12 @@
 
 static std::vector<std::function<void(void)>> callbacks;
 
-void gear::animation_Player_Callback(gear::AnimationComponent &animation)
+static void animation_Player_Callback(gear::Entity parent, gear::AnimationComponent &animation)
 {
     int prev_Frame = animation.frame_Offset;
     switch (animation.type)
     {
-    case AnimationType::FORWARD:
+    case gear::AnimationType::FORWARD:
         if (animation.frame_Offset + animation.frame_Rate * gear::Game::get_Delta_Time() < animation.animation->get_Frame_Count())
             animation.frame_Offset += animation.frame_Rate * gear::Game::get_Delta_Time();
         else if (animation.on_Ended != nullptr)
@@ -20,7 +20,7 @@ void gear::animation_Player_Callback(gear::AnimationComponent &animation)
         if (animation.on_Frame_Changed != nullptr && (int)animation.frame_Offset != prev_Frame)
             callbacks.push_back(std::bind(animation.on_Frame_Changed, (int)animation.frame_Offset));
         break;
-    case AnimationType::LOOP:
+    case gear::AnimationType::LOOP:
         if (animation.frame_Offset + animation.frame_Rate * gear::Game::get_Delta_Time() >= animation.animation->get_Frame_Count())
             if (animation.on_Ended != nullptr)
                 callbacks.push_back(animation.on_Ended);
@@ -31,7 +31,7 @@ void gear::animation_Player_Callback(gear::AnimationComponent &animation)
         if (animation.on_Frame_Changed != nullptr && (int)animation.frame_Offset != prev_Frame)
             callbacks.push_back(std::bind(animation.on_Frame_Changed, (int)animation.frame_Offset));
         break;
-    case AnimationType::PING_PONG:
+    case gear::AnimationType::PING_PONG:
         animation.frame_Offset += animation.frame_Rate * gear::Game::get_Delta_Time() * animation.factor;
         while (animation.frame_Offset < 0 || animation.frame_Offset >= animation.animation->get_Frame_Count())
         {
@@ -60,7 +60,7 @@ void gear::animation_Player_Callback(gear::AnimationComponent &animation)
 
 void gear::continue_Animations(gear::Scene *scene)
 {
-    gear::Entity::for_Each(scene->get_ID(), gear::animation_Player_Callback);
+    gear::Entity::for_Each(scene->get_ID(), animation_Player_Callback);
     for (auto &callback : callbacks)
         callback();
     callbacks.clear();

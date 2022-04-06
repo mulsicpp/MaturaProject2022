@@ -11,15 +11,15 @@
 
 _GEAR_START
 
-class SpritePipeline : public RenderPipeline
+class TextPipeline : public RenderPipeline
 {
 private:
   struct Vertex
   {
     Vector<float, 3> pos;
     Vector<float, 2> tex;
-    uint8_t tex_Index;
     float parallax_Factor;
+    Vector<uint8_t, 4> colors[8];
   };
 
   Vertex m_Temp_Vertex_Data[4];
@@ -30,19 +30,15 @@ private:
   int m_Max_Textures = 1;
   uint8_t m_Batch_Index = 0;
 
-  static SpritePipeline instance;
-
-  static void push_Sprite_Quad(Entity parent, TransformComponent &position, SpriteComponent &sprite);
-  static void push_Animation_Quad(Entity parent, TransformComponent &position, AnimationComponent &animation);
+  static TextPipeline instance;
 
 public:
-  static SpritePipeline &get_Instance(void);
+  static TextPipeline &get_Instance(void);
 
   void init(void) override;
   void destroy(void) override;
 
   void render(Scene *scene);
-  void draw_Batch(void);
 };
 
 _GEAR_END

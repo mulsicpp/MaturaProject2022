@@ -135,26 +135,26 @@ void gear::Renderer::render_Shape(const gear::Shape *shape, const Vector<float, 
     ShapePipeline::get_Instance().render_Shape(shape, color);
 }
 
-static void dynamic_Physics_Collider_Render_Callback(gear::DynamicPhysicsComponent &physics_Comp)
+static void dynamic_Physics_Collider_Render_Callback(gear::Entity parent, gear::DynamicPhysicsComponent &physics_Comp)
 {
     for (auto &shape : physics_Comp.collider->get_Shapes())
         gear::Renderer::render_Shape(shape.absolute_Shape.get(), {0, 0.8, 1, 1});
 }
 
-static void static_Physics_Collider_Render_Callback(gear::StaticPhysicsComponent &physics_Comp)
+static void static_Physics_Collider_Render_Callback(gear::Entity parent, gear::StaticPhysicsComponent &physics_Comp)
 {
     for (auto &shape : physics_Comp.collider->get_Shapes())
         gear::Renderer::render_Shape(shape.absolute_Shape.get(), {0.7, 0, 1, 1});
 }
 
-static void hitbox_Render_Callback(gear::HitboxComponent &hitbox_Comp)
+static void hitbox_Render_Callback(gear::Entity parent, gear::HitboxComponent &hitbox_Comp)
 {
     for (auto &hitbox : hitbox_Comp.hitboxes)
         for (auto &shape : hitbox->get_Shapes())
             gear::Renderer::render_Shape(shape.absolute_Shape.get(), {0.8, 0, 0, 1});
 }
 
-static void hurtbox_Render_Callback(gear::HurtboxComponent &hurtbox_Comp)
+static void hurtbox_Render_Callback(gear::Entity parent, gear::HurtboxComponent &hurtbox_Comp)
 {
     for (auto &hitbox : hurtbox_Comp.hurtboxes)
         for (auto &shape : hitbox->get_Shapes())
