@@ -38,7 +38,7 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
                         GEAR_DEBUG_LOG("side ground %i", real_Val);
                     else
                         GEAR_DEBUG_LOG("side air %i", real_Val);
-            } else {
+            } else if(flags & FIGHTER_GROUND) {
                 play_Animation(&a_Idle);
             }
         }
@@ -218,6 +218,22 @@ void BaseFighterScript::pre_Physics(void)
     auto physics = m_Entity.get<DynamicPhysicsComponent>();
 
     physics->velocity[0] = (flags & FIGHTER_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());
+
+    GEAR_DEBUG_LOG("flags: %x", flags);
+    if((flags & FIGHTER_GROUND) == 0) {
+        GEAR_DEBUG_LOG("air animation");
+        if(physics->velocity[1] < -250)
+            a_Jump.frame_Offset = 1;
+        else if(physics->velocity[1] < -100)
+            a_Jump.frame_Offset = 2;
+        else if(physics->velocity[1] < 100)
+            a_Jump.frame_Offset = 3;
+        else if(physics->velocity[1] < 250)
+            a_Jump.frame_Offset = 4;
+        else
+            a_Jump.frame_Offset = 5;
+        m_Entity.set<AnimationComponent>(a_Jump);
+    }
 
     flags &= ~FIGHTER_GROUND;
 }

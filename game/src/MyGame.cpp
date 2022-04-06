@@ -134,7 +134,7 @@ void MyGame::on_Startup(void)
     medusa = main_Scene->create_Entity();
     medusa.add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::KEYBOARD));
 
-    main_Scene->create_Entity().add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::CONTROLLER_1));
+    //main_Scene->create_Entity().add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::CONTROLLER_1));
 
     main_Scene->update_Transformation();
 
