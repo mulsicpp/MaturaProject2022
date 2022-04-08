@@ -84,6 +84,8 @@ void MyGame::on_Startup(void)
     GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
     GEAR_DEBUG_LOG("Opened application");
 
+    ResourceManager::get<Font>("assets/fonts/font1.gear");
+
     palettes[0] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_yellow.gear");
     palettes[1] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_pink.gear");
     palettes[2] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_green.gear");

@@ -186,10 +186,16 @@ void FontConverter::convert(void)
     m_File_Out->put<uint32_t>(data_Size);
 
     m_File_Out->put<uint8_t>(m_Char_Count);
+    m_File_Out->put<uint8_t>(m_Color_Count);
     for (int i = 0; i < m_Char_Count; i++)
     {
         m_File_Out->put<char>(m_Characters[i]);
         m_File_Out->put<uint16_t>(char_Width[i]);
+    }
+
+    for(int i = 0; i < m_Color_Count; i++)
+    {
+        m_File_Out->put<uint32_t>(m_Colors[i + 1]);
     }
 
     uint32_t byte_Data_Size = m_Pixel_Rows[0].size() * m_Row_Height;

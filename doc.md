@@ -101,5 +101,7 @@ Wird der Befehl erneut ausgeführt, so wird die Ausgabedatei nicht neu erstellt.
 | UINT16 | 0x10 | 2 | Höhe | Höhe der Zeichenreihe in Pixel |
 | UINT32 | 0x12 | 4 | Datengröße | Anzahl an Bytes in der Zeichenreihe |
 | UINT8 | 0x16 | 1 | Zeichenanzahl | Anzahl der Zeichen in der Zeichenreihe |
-| {CHAR, UINT16}[] | 0x17 | *Zeichenanzahl* * 3 | ZeichenDaten | Eine Liste von Zeichen mit der dazugehörigen Breite in Pixel |
-| UINT8[] | 0x17 + *Zeichenanzahl* * 3 | *Datengröße* | Daten | Enthält die Daten der Zeichenreihe |
+| UINT8 | 0x17 | 1 | Farbanzahl | Anzahl der Farben in der Schriftart |
+| {CHAR, UINT16}[] | 0x18 | *Zeichenanzahl* * 3 | ZeichenDaten | Eine Liste von Zeichen mit der dazugehörigen Breite in Pixel |
+| UINT8[4][] | 0x18 + *Zeichenanzahl* * 3 | *Farbanzahl* * 4 | FarbdatenDaten | Die Liste von 32-bit RGBA-Farben |
+| UINT8[] | 0x18 + *Zeichenanzahl* * 3 + *Farbanzahl* * 4 | *Datengröße* | Daten | Enthält die Daten der Zeichenreihe |

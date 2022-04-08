@@ -6,6 +6,9 @@
 #include <gear/data/Grid.h>
 #include "Resource.h"
 
+#include <vector>
+#include <gear/math/Vector.h>
+
 _GEAR_START
 
 class Font : public Resource
@@ -25,6 +28,7 @@ private:
   uint16_t m_Width, m_Height;
   unsigned int m_TextureID;
   std::unordered_map<char, CharacterLocation> m_Characters;
+  std::vector<Vector<uint8_t, 4>> m_Colors;
 
 protected:
   int load(FileStream *file_Stream) override;
