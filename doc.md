@@ -26,7 +26,7 @@ Animationen funktionieren ähnlich wie Sprites, nur dass hier mehrere Sprites hi
 
 ### Schriftarten
 
-Die Schriftarten der Engine sind im Vergleich zu anderen Schriftarten sehr einfach aufgebaut. Der Text geht immer von links nach rechts und enthält nur ASCII-Zeichen, was für die englische Sprache in Ordnung ist. Man kann die Anzahl an Pixel zwischen zwei Zeichen und zwischen zwei Zeilen angeben. Eine Schriftart kann aus bis zu 255 Fraben bestehen, von denen die ersten 8 dynamisch veränderbar sind. 
+Die Schriftarten der Engine sind im Vergleich zu anderen Schriftarten sehr einfach aufgebaut. Der Text geht immer von links nach rechts und enthält nur ASCII-Zeichen, was für die englische Sprache in Ordnung ist. Man kann die Anzahl an Pixel zwischen zwei Zeichen und zwischen zwei Zeilen angeben. Eine Schriftart kann aus bis zu 255 Fraben bestehen, von denen die ersten 4 dynamisch veränderbar sind. 
 
 ## GRCV
 

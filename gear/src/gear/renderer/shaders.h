@@ -18,8 +18,8 @@ extern const char *const SHADER_SPRITE_FS;
 extern const char *const SHADER_SHAPE_VS;
 extern const char *const SHADER_SHAPE_FS;
 
-//extern const char *SHADER_TEXT_VS;
-//extern const char *SHADER_TEXT_FS;
+extern const char *const SHADER_TEXT_VS;
+extern const char *const SHADER_TEXT_FS;
 
 template <class... Ts>
 unsigned int get_Shader(const char *shader_Code, unsigned int type, Ts... params)

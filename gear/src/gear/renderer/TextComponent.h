@@ -14,7 +14,8 @@ struct TextComponent {
   bool raw_Text = true;
   const char* text;
   Ref<Font> font;
-  Rect bounding_Box;
+  Vector<double, 3> offset = {0, 0, 0};
+  unsigned int width, height;
 };
 
 _GEAR_END

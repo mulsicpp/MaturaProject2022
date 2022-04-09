@@ -47,6 +47,8 @@ public:
   uint16_t get_Height(void) const;
   unsigned int get_TextureID(void) const;
   const CharacterLocation *get_Char(unsigned int character) const;
+
+  const std::vector<Vector<uint8_t, 4>> &get_Colors(void) const;
 };
 
 _GEAR_END

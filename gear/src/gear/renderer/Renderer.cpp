@@ -9,6 +9,7 @@
 #include "pipelines/UpscalePipeline.h"
 #include "pipelines/SpritePipeline.h"
 #include "pipelines/ShapePipeline.h"
+#include "pipelines/TextPipeline.h"
 
 #include <gear/collision/DynamicPhysicsComponent.h>
 #include <gear/collision/HitboxComponent.h>
@@ -42,6 +43,7 @@ void gear::Renderer::create(int width, int height)
     UpscalePipeline::get_Instance().init();
     SpritePipeline::get_Instance().init();
     ShapePipeline::get_Instance().init();
+    TextPipeline::get_Instance().init();
 }
 
 void gear::Renderer::destroy(void)
@@ -51,6 +53,7 @@ void gear::Renderer::destroy(void)
     UpscalePipeline::get_Instance().destroy();
     SpritePipeline::get_Instance().destroy();
     ShapePipeline::get_Instance().destroy();
+    TextPipeline::get_Instance().destroy();
 
     m_Window = nullptr;
 }
@@ -106,6 +109,7 @@ gear::Vector<float, 4> gear::Renderer::get_Clear_Color(void) {
 void gear::Renderer::render_Scene(gear::Scene *scene)
 {
     m_Framebuffer.bind();
+
     SpritePipeline::get_Instance().bind();
     glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Width"), m_Framebuffer.m_Width);
     glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
@@ -116,6 +120,18 @@ void gear::Renderer::render_Scene(gear::Scene *scene)
         glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), 0, 0);
 
     SpritePipeline::get_Instance().render(scene);
+
+    TextPipeline::get_Instance().bind();
+    glUniform1i(glGetUniformLocation(TextPipeline::get_Instance().m_Shader, "u_Frame_Width"), m_Framebuffer.m_Width);
+    glUniform1i(glGetUniformLocation(TextPipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
+
+    if (m_Camera != nullptr)
+        glUniform2f(glGetUniformLocation(TextPipeline::get_Instance().m_Shader, "u_Camera_Pos"), m_Camera->get_Position()[0], m_Camera->get_Position()[1]);
+    else
+        glUniform2f(glGetUniformLocation(TextPipeline::get_Instance().m_Shader, "u_Camera_Pos"), 0, 0);
+
+    TextPipeline::get_Instance().render(scene);
+
     continue_Animations(scene);
 }
 

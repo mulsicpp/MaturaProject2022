@@ -15,6 +15,8 @@ void gear::SpritePipeline::destroy(void)
 {
   delete[] m_Vertex_Data;
   delete[] m_Index_Data;
+
+  RenderPipeline::destroy();
 }
 
 void gear::SpritePipeline::init(void)

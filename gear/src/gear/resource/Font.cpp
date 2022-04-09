@@ -100,3 +100,7 @@ const gear::Font::CharacterLocation *gear::Font::get_Char(unsigned int character
         return &m_Characters.at(0);
     return &m_Characters.at(character);
 }
+
+const std::vector<gear::Vector<uint8_t, 4>> &gear::Font::get_Colors(void) const {
+    return m_Colors;
+}

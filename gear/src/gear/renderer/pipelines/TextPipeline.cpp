@@ -8,81 +8,118 @@ gear::TextPipeline gear::TextPipeline::instance;
 
 gear::TextPipeline &gear::TextPipeline::get_Instance(void)
 {
-  return instance;
-}
-
-void gear::TextPipeline::destroy(void)
-{
-  delete[] m_Vertex_Data;
-  delete[] m_Index_Data;
+    return instance;
 }
 
 void gear::TextPipeline::init(void)
 {
-  glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_Max_Textures);
-  m_Max_Textures /= 2;
-  if (m_Max_Textures > 64)
-    m_Max_Textures = 64;
-  
-  GEAR_DEBUG_LOG("max textures: %i", m_Max_Textures);
+    unsigned int vertex_Shader = get_Shader(SHADER_TEXT_VS, GL_VERTEX_SHADER);
+    unsigned int fragment_Shader = get_Shader(SHADER_TEXT_FS, GL_FRAGMENT_SHADER);
 
-  unsigned int vertex_Shader = get_Shader(SHADER_SPRITE_VS, GL_VERTEX_SHADER);
-  unsigned int fragment_Shader = get_Shader(SHADER_SPRITE_FS, GL_FRAGMENT_SHADER, m_Max_Textures, m_Max_Textures);
+    create(vertex_Shader, fragment_Shader);
+    bind();
 
-  create(vertex_Shader, fragment_Shader);
-  bind();
+    glUniform1i(glGetUniformLocation(m_Shader, "u_Texture"), 0);
 
-  int texture_Bindings[64];
-  int palette_Bindings[64];
+    validate_Program(m_Shader);
 
-  for (int i = 0; i < m_Max_Textures; i++)
-  {
-    texture_Bindings[i] = 2 * i;
-    palette_Bindings[i] = 2 * i + 1;
-  }
+    GEAR_DEBUG_LOG("opengl program: %i", m_Shader);
 
-  glUniform1iv(glGetUniformLocation(m_Shader, "u_Texture"), m_Max_Textures, texture_Bindings);
-  glUniform1iv(glGetUniformLocation(m_Shader, "u_Palette"), m_Max_Textures, palette_Bindings);
+    glDeleteShader(vertex_Shader);
+    glDeleteShader(fragment_Shader);
 
-  validate_Program(m_Shader);
+    GEAR_DEBUG_LOG("Vertex attribs");
 
-  GEAR_DEBUG_LOG("opengl program: %i", m_Shader);
+    glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
+    glVertexAttribBinding(0, 0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribFormat(1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, tex));
+    glVertexAttribBinding(1, 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribFormat(2, 1, GL_FLOAT, GL_FALSE, offsetof(Vertex, parallax_Factor));
+    glVertexAttribBinding(2, 0);
+    glEnableVertexAttribArray(2);
+    for (int i = 0; i < 4; i++)
+    {
+        glVertexAttribFormat(3 + i, 4, GL_UNSIGNED_BYTE, GL_TRUE, offsetof(Vertex, colors) + 4 * i);
+        glVertexAttribBinding(3 + i, 0);
+        glEnableVertexAttribArray(3 + i);
+    }
 
-  glDeleteShader(vertex_Shader);
-  glDeleteShader(fragment_Shader);
+    glBindVertexBuffer(0, m_Vertexbuffer, 0, sizeof(Vertex));
 
-  m_Vertex_Data = new Vertex[4 * m_Max_Textures];
-  m_Index_Data = new unsigned int[6 * m_Max_Textures];
-  for (int i = 0; i < m_Max_Textures; i++)
-  {
-    m_Index_Data[i * 6 + 0] = 0 + i * 4;
-    m_Index_Data[i * 6 + 1] = 1 + i * 4;
-    m_Index_Data[i * 6 + 2] = 2 + i * 4;
-    m_Index_Data[i * 6 + 3] = 0 + i * 4;
-    m_Index_Data[i * 6 + 4] = 2 + i * 4;
-    m_Index_Data[i * 6 + 5] = 3 + i * 4;
-  }
-
-  glBufferData(GL_ARRAY_BUFFER, m_Max_Textures * 4 * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
-  GEAR_DEBUG_LOG("vbo: %i", m_Vertexbuffer);
-
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Max_Textures * 6 * sizeof(unsigned int), m_Index_Data, GL_STATIC_DRAW);
-  GEAR_DEBUG_LOG("ibo: %i", m_Indexbuffer);
-
-
-  glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
-  glVertexAttribBinding(0, 0);
-  glEnableVertexAttribArray(0);
-  glVertexAttribFormat(1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, tex));
-  glVertexAttribBinding(1, 0);
-  glEnableVertexAttribArray(1);
-  glVertexAttribFormat(2, 1, GL_FLOAT, GL_FALSE, offsetof(Vertex, parallax_Factor));
-  glVertexAttribBinding(2, 0);
-  glEnableVertexAttribArray(2);
-
-  glBindVertexBuffer(0, m_Vertexbuffer, 0, sizeof(Vertex));
+    GEAR_DEBUG_LOG("Finished text pipeline");
 }
 
-void gear::TextPipeline::render(gear::Scene *scene) {
+void gear::TextPipeline::generate_Buffers(CachedText *data)
+{
+    data->char_Count = 1;
+    Vertex vertices[4];
 
+    auto char_Bounds = data->state.font->get_Char(*(data->state.text));
+    auto colors = data->state.font->get_Colors();
+    int width = data->state.font->get_Width(), height = data->state.font->get_Height();
+    vertices[0] = Vertex{{0, 0, 0.5}, {char_Bounds->x_Start / float(width), char_Bounds->y_Start / float(height)}, 1};
+    memcpy<uint8_t>((uint8_t *)vertices->colors, (uint8_t *)colors.data(), 16);
+
+    vertices[1] = Vertex{{0, float(char_Bounds->y_End - char_Bounds->y_Start), 0.5}, {char_Bounds->x_Start / float(width), char_Bounds->y_End / float(height)}, 1};
+    memcpy<uint8_t>((uint8_t *)vertices->colors, (uint8_t *)colors.data(), 16);
+
+    vertices[2] = Vertex{{float(char_Bounds->x_End - char_Bounds->x_Start), float(char_Bounds->y_End - char_Bounds->y_Start), 0.5}, {char_Bounds->x_End / float(width), char_Bounds->y_End / float(height)}, 1};
+    memcpy<uint8_t>((uint8_t *)vertices->colors, (uint8_t *)colors.data(), 16);
+
+    vertices[3] = Vertex{{float(char_Bounds->x_End - char_Bounds->x_Start), 0, 0.5}, {char_Bounds->x_End / float(width), char_Bounds->y_Start / float(height)}, 1};
+    memcpy<uint8_t>((uint8_t *)vertices->colors, (uint8_t *)colors.data(), 16);
+
+    glBindBuffer(GL_ARRAY_BUFFER, data->vertex_Buffer_ID);
+    glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Vertex), vertices, GL_STATIC_DRAW);
+
+    unsigned int indices[6] = {0, 1, 2, 0, 2, 3};
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data->index_Buffer_ID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+}
+
+void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, TransformComponent &transform)
+{
+
+    if (instance.m_Cache[parent.get_Scene_ID()].find(parent.get_Entity_ID()) == instance.m_Cache[parent.get_Scene_ID()].end())
+    {
+        CachedText data;
+        data.state = text;
+        glGenBuffers(1, &data.vertex_Buffer_ID);
+        glGenBuffers(1, &data.index_Buffer_ID);
+
+        instance.generate_Buffers(&data);
+
+        instance.m_Cache[parent.get_Scene_ID()].insert({parent.get_Entity_ID(), data});
+    }
+    else
+    {
+        TextComponent &text_Other = instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()].state;
+        if (text.font != text_Other.font ||
+            text.height != text_Other.height ||
+            text.offset != text_Other.offset ||
+            text.raw_Text != text_Other.raw_Text ||
+            text.width != text_Other.width ||
+            strcmp(text.text, text_Other.text) != 0)
+        {
+            instance.generate_Buffers(&(instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()]));
+        }
+    }
+
+    CachedText &cached_Text = instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()];
+    Matrix<float, 3, 3> mat = transform.get_Matrix().cast_To<float, 3, 3>();
+
+    glUniformMatrix3fv(glGetUniformLocation(instance.m_Shader, "u_Transform"), 9, GL_TRUE, (const float *)&mat);
+
+    glBindBuffer(GL_ARRAY_BUFFER, cached_Text.vertex_Buffer_ID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cached_Text.index_Buffer_ID);
+
+    glDrawElements(GL_TRIANGLES, 6 * cached_Text.char_Count, GL_UNSIGNED_INT, 0);
+}
+
+void gear::TextPipeline::render(gear::Scene *scene)
+{
+    Entity::for_Each(scene->get_ID(), render_Text);
 }
