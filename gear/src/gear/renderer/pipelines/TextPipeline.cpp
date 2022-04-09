@@ -46,13 +46,12 @@ void gear::TextPipeline::init(void)
         glEnableVertexAttribArray(3 + i);
     }
 
-    glBindVertexBuffer(0, m_Vertexbuffer, 0, sizeof(Vertex));
-
     GEAR_DEBUG_LOG("Finished text pipeline");
 }
 
 void gear::TextPipeline::generate_Buffers(CachedText *data)
 {
+    GEAR_DEBUG_LOG("generate buffers");
     data->char_Count = 1;
     Vertex vertices[4];
 
@@ -74,15 +73,19 @@ void gear::TextPipeline::generate_Buffers(CachedText *data)
     glBindBuffer(GL_ARRAY_BUFFER, data->vertex_Buffer_ID);
     glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Vertex), vertices, GL_STATIC_DRAW);
 
+    glBindVertexBuffer(0, data->vertex_Buffer_ID, 0, sizeof(Vertex));
+
     unsigned int indices[6] = {0, 1, 2, 0, 2, 3};
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data->index_Buffer_ID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
+    GEAR_DEBUG_LOG("finished generation");
 }
 
 void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, TransformComponent &transform)
 {
-
+    GEAR_DEBUG_LOG("Rendering text");
     if (instance.m_Cache[parent.get_Scene_ID()].find(parent.get_Entity_ID()) == instance.m_Cache[parent.get_Scene_ID()].end())
     {
         CachedText data;
@@ -108,18 +111,31 @@ void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, Transfo
         }
     }
 
+    GEAR_DEBUG_LOG("getting the fucking shit");
     CachedText &cached_Text = instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()];
     Matrix<float, 3, 3> mat = transform.get_Matrix().cast_To<float, 3, 3>();
 
-    glUniformMatrix3fv(glGetUniformLocation(instance.m_Shader, "u_Transform"), 9, GL_TRUE, (const float *)&mat);
+    GEAR_DEBUG_LOG("the shit got got");
+
+    glUniformMatrix3fv(glGetUniformLocation(instance.m_Shader, "u_Transform"), 1, GL_TRUE, (const float *)&mat);
+
+    GEAR_DEBUG_LOG("setting uniform");
 
     glBindBuffer(GL_ARRAY_BUFFER, cached_Text.vertex_Buffer_ID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cached_Text.index_Buffer_ID);
 
-    glDrawElements(GL_TRIANGLES, 6 * cached_Text.char_Count, GL_UNSIGNED_INT, 0);
+    int size;
+    glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+
+    GEAR_DEBUG_LOG("binding the shit. size: %i", size);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    GEAR_DEBUG_LOG("finished rendering");
 }
 
 void gear::TextPipeline::render(gear::Scene *scene)
 {
+    bind();
     Entity::for_Each(scene->get_ID(), render_Text);
 }

@@ -20,6 +20,7 @@
 #include <gear/renderer/Renderer.h>
 #include <gear/renderer/SpriteComponent.h>
 #include <gear/renderer/AnimationComponent.h>
+#include <gear/renderer/TextComponent.h>
 
 #include <gear/resource/ResourceManager.h>
 #include <gear/resource/Sprite.h>
@@ -84,8 +85,6 @@ void MyGame::on_Startup(void)
     GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
     GEAR_DEBUG_LOG("Opened application");
 
-    ResourceManager::get<Font>("assets/fonts/font1.gear");
-
     palettes[0] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_yellow.gear");
     palettes[1] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_pink.gear");
     palettes[2] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_green.gear");
@@ -136,7 +135,14 @@ void MyGame::on_Startup(void)
     medusa = main_Scene->create_Entity();
     medusa.add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::KEYBOARD));
 
-    //main_Scene->create_Entity().add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::CONTROLLER_1));
+    Entity text_Entity = main_Scene->create_Entity();
+    text_Entity.set<TransformComponent>({{0, 0, 0}, {1, 1}, 0});
+
+    TextComponent text;
+    text.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
+    text.text = "A";
+    text_Entity.add<TextComponent>(text);
+
 
     main_Scene->update_Transformation();
 
