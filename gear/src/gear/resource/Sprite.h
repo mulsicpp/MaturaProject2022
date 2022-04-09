@@ -3,6 +3,8 @@
 #include <gear/core/core.h>
 #include "Resource.h"
 
+#include "Font.h"
+
 _GEAR_START
 
 class Sprite : public Resource
@@ -25,6 +27,8 @@ public:
   uint16_t get_Height(void) const;
 
   unsigned int get_TextureID(void) const;
+
+  static Ref<Sprite> from_Font(Ref<Font> font);
 };
 
 _GEAR_END

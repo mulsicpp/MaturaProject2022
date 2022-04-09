@@ -29,6 +29,8 @@
 
 #include "components/FlagComponent.h"
 
+#include <gear/input/events/TextEvent.h>
+
 using namespace gear;
 
 MyCamera::MyCamera(const Vector<double, 2> *target_Position) : gear::Camera(target_Position) {}
@@ -139,10 +141,15 @@ void MyGame::on_Startup(void)
     text_Entity.set<TransformComponent>({{0, 0, 0}, {1, 1}, 0});
 
     TextComponent text;
-    text.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
+    text.font = ResourceManager::get<Font>("assets/fonts/font2.gear");
     text.text = "A";
     text_Entity.add<TextComponent>(text);
 
+    SpriteComponent text2;
+    text2.palette = palettes[3];
+    text2.offset = {-300, 30, 0.2};
+    text2.sprite = Sprite::from_Font(ResourceManager::get<Font>("assets/fonts/font2.gear"));
+    text_Entity.add<SpriteComponent>(text2);
 
     main_Scene->update_Transformation();
 

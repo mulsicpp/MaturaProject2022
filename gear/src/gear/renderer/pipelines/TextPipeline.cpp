@@ -51,11 +51,13 @@ void gear::TextPipeline::init(void)
 
 void gear::TextPipeline::generate_Buffers(CachedText *data)
 {
-    GEAR_DEBUG_LOG("generate buffers");
     data->char_Count = 1;
     Vertex vertices[4];
 
+    GEAR_DEBUG_LOG("text: %s", data->state.text);
+
     auto char_Bounds = data->state.font->get_Char(*(data->state.text));
+
     auto colors = data->state.font->get_Colors();
     int width = data->state.font->get_Width(), height = data->state.font->get_Height();
     vertices[0] = Vertex{{0, 0, 0.5}, {char_Bounds->x_Start / float(width), char_Bounds->y_Start / float(height)}, 1};
@@ -79,13 +81,10 @@ void gear::TextPipeline::generate_Buffers(CachedText *data)
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data->index_Buffer_ID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
-
-    GEAR_DEBUG_LOG("finished generation");
 }
 
 void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, TransformComponent &transform)
 {
-    GEAR_DEBUG_LOG("Rendering text");
     if (instance.m_Cache[parent.get_Scene_ID()].find(parent.get_Entity_ID()) == instance.m_Cache[parent.get_Scene_ID()].end())
     {
         CachedText data;
@@ -107,19 +106,33 @@ void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, Transfo
             text.width != text_Other.width ||
             strcmp(text.text, text_Other.text) != 0)
         {
+            instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()].state = text;
             instance.generate_Buffers(&(instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()]));
         }
     }
 
-    GEAR_DEBUG_LOG("getting the fucking shit");
     CachedText &cached_Text = instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()];
     Matrix<float, 3, 3> mat = transform.get_Matrix().cast_To<float, 3, 3>();
 
-    GEAR_DEBUG_LOG("the shit got got");
-
     glUniformMatrix3fv(glGetUniformLocation(instance.m_Shader, "u_Transform"), 1, GL_TRUE, (const float *)&mat);
 
-    GEAR_DEBUG_LOG("setting uniform");
+    auto &colors = cached_Text.state.font->get_Colors();
+
+    float *float_Data = new float[colors.size() * 4];
+
+    for(int i = 0; i < colors.size(); i++) {
+        float_Data[i * 4] = colors[i][0] / 255.0f;
+        float_Data[i * 4 + 1] = colors[i][1] / 255.0f;
+        float_Data[i * 4 + 2] = colors[i][2] / 255.0f;
+        float_Data[i * 4 + 3] = colors[i][3] / 255.0f;
+    }
+
+    glUniform4fv(glGetUniformLocation(instance.m_Shader, "u_Palette"), colors.size(), float_Data);
+
+    delete[] float_Data;
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, cached_Text.state.font->get_TextureID());
 
     glBindBuffer(GL_ARRAY_BUFFER, cached_Text.vertex_Buffer_ID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cached_Text.index_Buffer_ID);
@@ -127,11 +140,7 @@ void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, Transfo
     int size;
     glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
 
-    GEAR_DEBUG_LOG("binding the shit. size: %i", size);
-
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    GEAR_DEBUG_LOG("finished rendering");
 }
 
 void gear::TextPipeline::render(gear::Scene *scene)

@@ -154,6 +154,8 @@ uniform vec4 u_Palette[255];
 in vec2 tex_Position;
 in float tex_Index;
 
+out vec4 colors[4];
+
 void main() {
   int index = int(texture(u_Texture, tex_Position).r * 255.0f + 0.5);
   if(index == 0)
@@ -161,7 +163,7 @@ void main() {
     discard;
   }
   else
-  out_Color = u_Palette[index];
+  out_Color = u_Palette[index - 1];
   //out_Color = vec4(vec3(gl_FragCoord.z), 1.0);
 }
 )";

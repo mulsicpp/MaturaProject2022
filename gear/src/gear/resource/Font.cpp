@@ -49,6 +49,7 @@ int gear::Font::load(FileStream *file_Stream)
         file_Stream->get<char>(&character);
         file_Stream->get<uint16_t>(&char_Width);
         m_Characters[character] = {offset, (uint16_t)(offset + char_Width), 0, m_Height};
+        offset += char_Width;
     }
 
     Vector<uint8_t, 4> color;
