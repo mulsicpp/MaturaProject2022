@@ -28,8 +28,6 @@ void gear::TextPipeline::init(void)
     glDeleteShader(vertex_Shader);
     glDeleteShader(fragment_Shader);
 
-    GEAR_DEBUG_LOG("Vertex attribs");
-
     glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
     glVertexAttribBinding(0, 0);
     glEnableVertexAttribArray(0);
@@ -45,14 +43,16 @@ void gear::TextPipeline::init(void)
         glVertexAttribBinding(3 + i, 0);
         glEnableVertexAttribArray(3 + i);
     }
-
-    GEAR_DEBUG_LOG("Finished text pipeline");
 }
 
 void gear::TextPipeline::append_Char(CachedText *data, std::vector<Vertex> *vertices, Vector<int, 2> *cursor, char character) {
     if(character == ' ')
     {
         (*cursor)[0] += 4;
+        return;
+    } else if(character == '\n') {
+        (*cursor)[0] = 0;
+        (*cursor)[1] += data->state.font->get_Height() + data->state.font->get_Line_Gap();
         return;
     }
 
@@ -62,32 +62,27 @@ void gear::TextPipeline::append_Char(CachedText *data, std::vector<Vertex> *vert
 
     int copy_Count = colors.size() < 4 ? colors.size() : 4;
 
-    GEAR_DEBUG_LOG("char_Bounds: %i %i %i %i", char_Bounds->x_Start, char_Bounds->x_End, char_Bounds->y_Start, char_Bounds->y_End);
-
     int width = data->state.font->get_Width(), height = data->state.font->get_Height();
-    vertices->push_back(Vertex{{float((*cursor)[0]), float((*cursor)[1]), 0.5}, {char_Bounds->x_Start / float(width), char_Bounds->y_Start / float(height)}, 1});
+    vertices->push_back(Vertex{{float(data->state.offset[0] + (*cursor)[0]), float(data->state.offset[1] + (*cursor)[1]), data->state.offset[2]}, {char_Bounds->x_Start / float(width), char_Bounds->y_Start / float(height)}, 1});
     memcpy<uint8_t>((uint8_t *)vertices->back().colors, (uint8_t *)colors.data(), 4 * copy_Count);
 
-    vertices->push_back(Vertex{{float((*cursor)[0]), float((*cursor)[1] + char_Bounds->y_End - char_Bounds->y_Start), 0.5}, {char_Bounds->x_Start / float(width), char_Bounds->y_End / float(height)}, 1});
+    vertices->push_back(Vertex{{float(data->state.offset[0] + (*cursor)[0]), float(data->state.offset[1] + (*cursor)[1] + char_Bounds->y_End - char_Bounds->y_Start), data->state.offset[2]}, {char_Bounds->x_Start / float(width), char_Bounds->y_End / float(height)}, 1});
     memcpy<uint8_t>((uint8_t *)vertices->back().colors, (uint8_t *)colors.data(), 4 * copy_Count);
 
-    vertices->push_back(Vertex{{float((*cursor)[0] + char_Bounds->x_End - char_Bounds->x_Start), float((*cursor)[1] + char_Bounds->y_End - char_Bounds->y_Start), 0.5}, {char_Bounds->x_End / float(width), char_Bounds->y_End / float(height)}, 1});
+    vertices->push_back(Vertex{{float(data->state.offset[0] + (*cursor)[0] + char_Bounds->x_End - char_Bounds->x_Start), float(data->state.offset[1] + (*cursor)[1] + char_Bounds->y_End - char_Bounds->y_Start), data->state.offset[2]}, {char_Bounds->x_End / float(width), char_Bounds->y_End / float(height)}, 1});
     memcpy<uint8_t>((uint8_t *)vertices->back().colors, (uint8_t *)colors.data(), 4 * copy_Count);
 
-    vertices->push_back(Vertex{{float((*cursor)[0] + char_Bounds->x_End - char_Bounds->x_Start), float((*cursor)[1]), 0.5}, {char_Bounds->x_End / float(width), char_Bounds->y_Start / float(height)}, 1});
+    vertices->push_back(Vertex{{float(data->state.offset[0] + (*cursor)[0] + char_Bounds->x_End - char_Bounds->x_Start), float(data->state.offset[1] + (*cursor)[1]), data->state.offset[2]}, {char_Bounds->x_End / float(width), char_Bounds->y_Start / float(height)}, 1});
     memcpy<uint8_t>((uint8_t *)vertices->back().colors, (uint8_t *)colors.data(), 4 * copy_Count);
 
     data->char_Count++;
     (*cursor)[0] += char_Bounds->x_End - char_Bounds->x_Start + data->state.font->get_Char_Gap();
-    GEAR_DEBUG_LOG("cursor: %i %i", (*cursor)[0], (*cursor)[1]);
 }
 
 void gear::TextPipeline::generate_Buffers(CachedText *data)
 {
     data->char_Count = 0;
     std::vector<Vertex> vertices;
-
-    GEAR_DEBUG_LOG("text: %s", data->state.text);
 
     Vector<int, 2> cursor;
     for(int i = 0; data->state.text[i] != 0; i++)
@@ -160,8 +155,6 @@ void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, Transfo
 
     delete[] float_Data;
 
-    GEAR_DEBUG_LOG("char count: %i", cached_Text.char_Count);
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, cached_Text.state.font->get_TextureID());
 
@@ -171,8 +164,6 @@ void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, Transfo
     int vertex_Size, index_Size;
     glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &vertex_Size);
     glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &index_Size);
-
-    GEAR_DEBUG_LOG("vertex_Size: %i, index_size: %i", vertex_Size, index_Size);
 
     glDrawElements(GL_TRIANGLES, 6 * cached_Text.char_Count, GL_UNSIGNED_INT, 0);
 }

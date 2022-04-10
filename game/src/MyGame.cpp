@@ -141,8 +141,9 @@ void MyGame::on_Startup(void)
     text_Entity.set<TransformComponent>({{0, 0, 0}, {1, 1}, 0});
 
     TextComponent text;
-    text.font = ResourceManager::get<Font>("assets/fonts/font2.gear");
-    text.text = "Hello World!";
+    text.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
+    text.text = "Hello World!\nHello World!";
+    text.offset = {-100, -11, 0.5};
     text_Entity.add<TextComponent>(text);
 
     SpriteComponent text2;
