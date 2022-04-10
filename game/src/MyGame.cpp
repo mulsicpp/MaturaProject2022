@@ -141,16 +141,14 @@ void MyGame::on_Startup(void)
     text_Entity.set<TransformComponent>({{0, 0, 0}, {1, 1}, 0});
 
     TextComponent text;
-    text.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
-    text.text = "Hello World!\nHello World!";
+    text.font = ResourceManager::get<Font>("assets/fonts/font2.gear");
+    text.text = "Helllllllooo World!!!!";
     text.offset = {-100, -11, 0.5};
+    text.raw_Text = true;
+    text.colors = text.font->get_Colors();
+    text.colors[0] = {0, 127, 255, 255};
+    text.colors[1] = {0, 63, 127, 255};
     text_Entity.add<TextComponent>(text);
-
-    SpriteComponent text2;
-    text2.palette = palettes[3];
-    text2.offset = {-300, 30, 0.2};
-    text2.sprite = Sprite::from_Font(ResourceManager::get<Font>("assets/fonts/font2.gear"));
-    text_Entity.add<SpriteComponent>(text2);
 
     main_Scene->update_Transformation();
 

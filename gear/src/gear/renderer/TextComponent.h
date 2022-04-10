@@ -12,10 +12,11 @@ _GEAR_START
 
 struct TextComponent {
   bool raw_Text = true;
-  const char* text;
+  char* text;
   Ref<Font> font;
   Vector<double, 3> offset = {0, 0, 0};
   unsigned int width, height;
+  std::vector<gear::Vector<uint8_t, 4>> colors;
 };
 
 _GEAR_END

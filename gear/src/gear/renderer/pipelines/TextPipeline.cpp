@@ -58,7 +58,7 @@ void gear::TextPipeline::append_Char(CachedText *data, std::vector<Vertex> *vert
 
     auto char_Bounds = data->state.font->get_Char(character);
 
-    auto colors = data->state.font->get_Colors();
+    auto &colors = data->state.colors;
 
     int copy_Count = colors.size() < 4 ? colors.size() : 4;
 
