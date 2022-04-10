@@ -35,6 +35,7 @@ private:
     static TextPipeline instance;
 
     static void generate_Buffers(CachedText *data);
+    static void append_Char(CachedText *data, std::vector<Vertex> *vertices, Vector<int, 2> *cursor, char character);
     static void render_Text(Entity parent, TextComponent &text, TransformComponent &transform);
 
 public:

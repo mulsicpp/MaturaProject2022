@@ -219,7 +219,7 @@ void BaseFighterScript::pre_Physics(void)
 
     physics->velocity[0] = (flags & FIGHTER_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());
 
-    GEAR_DEBUG_LOG("flags: %x", flags);
+    //GEAR_DEBUG_LOG("flags: %x", flags);
     if((flags & FIGHTER_GROUND) == 0) {
         GEAR_DEBUG_LOG("air animation");
         if(physics->velocity[1] < -250)

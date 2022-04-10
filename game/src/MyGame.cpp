@@ -142,7 +142,7 @@ void MyGame::on_Startup(void)
 
     TextComponent text;
     text.font = ResourceManager::get<Font>("assets/fonts/font2.gear");
-    text.text = "A";
+    text.text = "Hello World!";
     text_Entity.add<TextComponent>(text);
 
     SpriteComponent text2;
