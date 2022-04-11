@@ -221,7 +221,6 @@ void BaseFighterScript::pre_Physics(void)
 
     //GEAR_DEBUG_LOG("flags: %x", flags);
     if((flags & FIGHTER_GROUND) == 0) {
-        GEAR_DEBUG_LOG("air animation");
         if(physics->velocity[1] < -250)
             a_Jump.frame_Offset = 1;
         else if(physics->velocity[1] < -100)

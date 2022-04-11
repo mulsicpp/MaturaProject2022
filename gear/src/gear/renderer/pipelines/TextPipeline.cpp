@@ -81,12 +81,14 @@ void gear::TextPipeline::append_Char(CachedText *data, std::vector<Vertex> *vert
 
 void gear::TextPipeline::generate_Buffers(CachedText *data)
 {
+    GEAR_DEBUG_LOG("generating vertex data");
     data->char_Count = 0;
     std::vector<Vertex> vertices;
 
     Vector<int, 2> cursor;
-    for(int i = 0; data->state.text[i] != 0; i++)
-        append_Char(data, &vertices, &cursor, data->state.text[i]);
+    const char *text_Data = data->state.text.data();
+    for(int i = 0; text_Data[i] != 0; i++)
+        append_Char(data, &vertices, &cursor, text_Data[i]);
 
     glBindBuffer(GL_ARRAY_BUFFER, data->vertex_Buffer_ID);
     glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Vertex) * data->char_Count, vertices.data(), GL_STATIC_DRAW);
@@ -128,7 +130,7 @@ void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, Transfo
             text.offset != text_Other.offset ||
             text.raw_Text != text_Other.raw_Text ||
             text.width != text_Other.width ||
-            strcmp(text.text, text_Other.text) != 0)
+            text.text != text_Other.text)
         {
             instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()].state = text;
             instance.generate_Buffers(&(instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()]));

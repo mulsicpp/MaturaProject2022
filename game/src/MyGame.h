@@ -20,8 +20,6 @@ private:
     int palette_Index = 0;
     gear::Vector<double, 2> m_Target_Pos;
 
-    gear::Collider h;
-
     gear::Vector<double, 2> cam_Pos;
 
     MyCamera cam = &cam_Pos;
