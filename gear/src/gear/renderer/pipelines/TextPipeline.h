@@ -3,12 +3,15 @@
 #include <gear/core/core.h>
 #include "../RenderPipeline.h"
 #include <gear/math/Vector.h>
+
 #include <gear/scene/Scene.h>
 
 #include <gear/scene/TransformComponent.h>
 #include "../TextComponent.h"
 
 #include <unordered_map>
+
+#include <gear/core/debug/log.h>
 
 _GEAR_START
 
@@ -44,6 +47,8 @@ public:
     void init(void) override;
 
     void render(Scene *scene);
+
+    void clear_Cache(unsigned int entityID);
 };
 
 _GEAR_END

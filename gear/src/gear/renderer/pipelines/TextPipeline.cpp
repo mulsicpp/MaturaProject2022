@@ -175,3 +175,11 @@ void gear::TextPipeline::render(gear::Scene *scene)
     bind();
     Entity::for_Each(scene->get_ID(), render_Text);
 }
+
+void gear::TextPipeline::clear_Cache(unsigned int entityID) {
+    m_Cache->erase(entityID);
+}
+
+void gear::_clear_Text_Cache(unsigned int entityID) {
+    TextPipeline::get_Instance().clear_Cache(entityID);
+}

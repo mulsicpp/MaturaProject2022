@@ -138,16 +138,16 @@ void MyGame::on_Startup(void)
     medusa.add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::KEYBOARD));
 
     Entity text_Entity = main_Scene->create_Entity();
-    text_Entity.set<TransformComponent>({{0, 0, 0}, {2, 2}, 0});
+    text_Entity.set<TransformComponent>({{0, 0, 0}, {1, 1}, 0});
 
     TextComponent text;
-    text.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
-    text.text = "Hello";
+    text.font = ResourceManager::get<Font>("assets/fonts/font2.gear");
+    text.text = "$Hallo1234567\n890!\"=?()/&";
     text.offset = {-100, -11, 0.5};
     text.raw_Text = true;
     text.colors = text.font->get_Colors();
-    text.colors[0] = {0, 127, 255, 255};
-    text.colors[1] = {0, 63, 127, 255};
+    text.colors[0] = {127, 0, 127, 255};
+    text.colors[1] = {64, 0, 64, 255};
     text_Entity.add<TextComponent>(text);
 
     main_Scene->update_Transformation();
