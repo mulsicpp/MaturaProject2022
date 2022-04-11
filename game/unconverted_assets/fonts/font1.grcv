@@ -14,6 +14,7 @@ row_height 13
 
 char_gap -1
 line_gap -1
+space_gap 4
 
 char_range ! ~
 char_code 0

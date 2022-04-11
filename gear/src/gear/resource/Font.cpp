@@ -28,6 +28,7 @@ int gear::Font::load(FileStream *file_Stream)
 
     file_Stream->get<int16_t>(&m_Char_Gap);
     file_Stream->get<int16_t>(&m_Line_Gap);
+    file_Stream->get<int16_t>(&m_Space_Gap);
 
     file_Stream->get<uint16_t>(&m_Width);
     file_Stream->get<uint16_t>(&m_Height);
@@ -91,6 +92,7 @@ int gear::Font::load(FileStream *file_Stream)
 uint8_t gear::Font::get_Flags(void) const { return m_Flags; }
 int16_t gear::Font::get_Char_Gap(void) const { return m_Char_Gap; }
 int16_t gear::Font::get_Line_Gap(void) const { return m_Line_Gap; }
+int16_t gear::Font::get_Space_Gap(void) const { return m_Space_Gap; }
 uint16_t gear::Font::get_Width(void) const { return m_Width; }
 uint16_t gear::Font::get_Height(void) const { return m_Height; }
 unsigned int gear::Font::get_TextureID(void) const { return m_TextureID; }

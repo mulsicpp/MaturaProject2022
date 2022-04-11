@@ -48,7 +48,7 @@ void gear::TextPipeline::init(void)
 void gear::TextPipeline::append_Char(CachedText *data, std::vector<Vertex> *vertices, Vector<int, 2> *cursor, char character) {
     if(character == ' ')
     {
-        (*cursor)[0] += 4;
+        (*cursor)[0] += data->state.font->get_Space_Gap();
         return;
     } else if(character == '\n') {
         (*cursor)[0] = 0;

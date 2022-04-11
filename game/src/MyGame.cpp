@@ -142,7 +142,7 @@ void MyGame::on_Startup(void)
 
     TextComponent text;
     text.font = ResourceManager::get<Font>("assets/fonts/font2.gear");
-    text.text = "$Hallo1234567\n890!\"=?()/&";
+    text.text = "Ha ll o";
     text.offset = {-100, -11, 0.5};
     text.raw_Text = true;
     text.colors = text.font->get_Colors();

@@ -25,6 +25,7 @@ private:
   uint8_t m_Flags;
   int16_t m_Char_Gap;
   int16_t m_Line_Gap;
+  int16_t m_Space_Gap;
   uint16_t m_Width, m_Height;
   unsigned int m_TextureID;
   std::unordered_map<char, CharacterLocation> m_Characters;
@@ -43,6 +44,7 @@ public:
   uint8_t get_Flags(void) const;
   int16_t get_Char_Gap(void) const;
   int16_t get_Line_Gap(void) const;
+  int16_t get_Space_Gap(void) const;
   uint16_t get_Width(void) const;
   uint16_t get_Height(void) const;
   unsigned int get_TextureID(void) const;

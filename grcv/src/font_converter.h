@@ -13,7 +13,7 @@ private:
     uint8_t m_Flags = 0;
     uint16_t m_Row_Height = 0;
     std::vector<uint8_t> *m_Pixel_Rows = nullptr;
-    int16_t m_Char_Gap = 0, m_Line_Gap = 0;
+    int16_t m_Char_Gap = 0, m_Line_Gap = 0, m_Space_Gap = 1;
 
     uint8_t m_Char_Count = 0;
     char m_Characters[256];

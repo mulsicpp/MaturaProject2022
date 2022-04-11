@@ -95,13 +95,14 @@ Wird der Befehl erneut ausgeführt, so wird die Ausgabedatei nicht neu erstellt.
 | UINT8 | 0x7 | 1 | Flags | Wird aktuell noch nicht benutzt(in Zukunft für Eigenschaften wie zum Beispiel Blockschrift geplant) |
 | UINT8 | 0x8 | 1 | Farbanzahl | Anzahl der verwendeten Farben der Schriftart |
 | UINT8 | 0x9 | 1 | BitsProPixel | Anzahl der Bits die pro Pixel verwendet werden (kann entweder 1, 2, 4 oder 8 sein)) |
-| UINT16 | 0xa | 2 | Zeichenabstand | Abstand in Pixel zwischen zwei Zeichen |
-| UINT16 | 0xc | 2 | Zeilenabstand | Abstand in Pixel zwischen zwei Zeilen |
-| UINT16 | 0xe | 2 | Breite | Breite der Zeichenreihe in Pixel |
-| UINT16 | 0x10 | 2 | Höhe | Höhe der Zeichenreihe in Pixel |
-| UINT32 | 0x12 | 4 | Datengröße | Anzahl an Bytes in der Zeichenreihe |
-| UINT8 | 0x16 | 1 | Zeichenanzahl | Anzahl der Zeichen in der Zeichenreihe |
-| UINT8 | 0x17 | 1 | Farbanzahl | Anzahl der Farben in der Schriftart |
-| {CHAR, UINT16}[] | 0x18 | *Zeichenanzahl* * 3 | ZeichenDaten | Eine Liste von Zeichen mit der dazugehörigen Breite in Pixel |
-| UINT8[4][] | 0x18 + *Zeichenanzahl* * 3 | *Farbanzahl* * 4 | FarbdatenDaten | Die Liste von 32-bit RGBA-Farben |
-| UINT8[] | 0x18 + *Zeichenanzahl* * 3 + *Farbanzahl* * 4 | *Datengröße* | Daten | Enthält die Daten der Zeichenreihe |
+| INT16 | 0xa | 2 | Zeichenabstand | Abstand in Pixel zwischen zwei Zeichen |
+| INT16 | 0xc | 2 | Zeilenabstand | Abstand in Pixel zwischen zwei Zeilen |
+| INT16 | 0xe | 2 | Zeilenabstand | Abstand in Pixel zwischen zwei Zeilen |
+| UINT16 | 0x10 | 2 | Breite | Breite der Zeichenreihe in Pixel |
+| UINT16 | 0x12 | 2 | Höhe | Höhe der Zeichenreihe in Pixel |
+| UINT32 | 0x14 | 4 | Datengröße | Anzahl an Bytes in der Zeichenreihe |
+| UINT8 | 0x18 | 1 | Zeichenanzahl | Anzahl der Zeichen in der Zeichenreihe |
+| UINT8 | 0x19 | 1 | Farbanzahl | Anzahl der Farben in der Schriftart |
+| {CHAR, UINT16}[] | 0x1a | *Zeichenanzahl* * 3 | ZeichenDaten | Eine Liste von Zeichen mit der dazugehörigen Breite in Pixel |
+| UINT8[4][] | 0x1a + *Zeichenanzahl* * 3 | *Farbanzahl* * 4 | FarbdatenDaten | Die Liste von 32-bit RGBA-Farben |
+| UINT8[] | 0x1a + *Zeichenanzahl* * 3 + *Farbanzahl* * 4 | *Datengröße* | Daten | Enthält die Daten der Zeichenreihe |
