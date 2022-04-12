@@ -141,14 +141,28 @@ void MyGame::on_Startup(void)
     text_Entity.set<TransformComponent>({{0, 0, 0}, {1, 1}, 0});
 
     TextComponent text;
-    text.font = ResourceManager::get<Font>("assets/fonts/font2.gear");
-    text.text = "Ha ll o";
-    text.offset = {-100, -11, 0.5};
+    text.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
+    text.text = R"(aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaa aaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaaaa)";
+    text.offset = {-145, -70, 0.5};
     text.raw_Text = true;
     text.colors = text.font->get_Colors();
-    text.colors[0] = {127, 0, 127, 255};
-    text.colors[1] = {64, 0, 64, 255};
+    text.colors[0] = {255, 255, 255, 255};
+    text.colors[1] = {160, 160, 160, 255};
+    text.width = 290;
+    text.height = 250;
+    text.break_Word = false;
     text_Entity.add<TextComponent>(text);
+
+    text_Entity.add<HitboxComponent>({
+        {Hitbox::create(0, Rect{{-145, -70} , {145, 180}})}
+    });
+
+    Input::add_Global_Callback<KeyEvent>([text_Entity] (KeyEvent e) {
+        if(e.get_Key() == Key::BACKSPACE && e.get_Action() != Action::RELEASED) {
+            TextComponent *text = text_Entity.get<TextComponent>();
+            text->text = text->text.substr(0, text->text.length() - 1);
+        }
+    });
 
     main_Scene->update_Transformation();
 

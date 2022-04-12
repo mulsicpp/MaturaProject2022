@@ -22,6 +22,7 @@ struct TextComponent {
   Vector<double, 3> offset = {0, 0, 0};
   unsigned int width, height;
   std::vector<gear::Vector<uint8_t, 4>> colors;
+  bool break_Word = false;
 };
 
 template<>

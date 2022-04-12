@@ -13,7 +13,7 @@ _GEAR_START
 
 class Font : public Resource
 {
-private:
+public:
   struct CharacterLocation
   {
     uint16_t x_Start;
@@ -21,7 +21,8 @@ private:
     uint16_t y_Start;
     uint16_t y_End;
   };
-
+  
+private:
   uint8_t m_Flags;
   int16_t m_Char_Gap;
   int16_t m_Line_Gap;
