@@ -139,7 +139,7 @@ void gear::TextPipeline::generate_Buffers(CachedText *data)
                 if(start) {
                     virtual_Cursor = cursor;
                     bool nl_Required = false;
-                    for(int j = 0; text_Data[i + j] != ' ' && text_Data[i + j] != '\n' && text_Data[i + j] != '\t'; j++) {
+                    for(int j = 0; text_Data[i + j] != ' ' && text_Data[i + j] != '\n' && text_Data[i + j] != '\t' && text_Data[i + j] != 0; j++) {
                         if(append_Char_Virtual(data, &virtual_Cursor, text_Data[i + j])) {
                             nl_Required = true;
                             break;

@@ -142,7 +142,7 @@ void MyGame::on_Startup(void)
 
     TextComponent text;
     text.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
-    text.text = R"(aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaa aaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaaaa)";
+    text.text = "";
     text.offset = {-145, -70, 0.5};
     text.raw_Text = true;
     text.colors = text.font->get_Colors();
@@ -157,10 +157,19 @@ void MyGame::on_Startup(void)
         {Hitbox::create(0, Rect{{-145, -70} , {145, 180}})}
     });
 
+    Input::add_Global_Callback<TextEvent>([text_Entity] (TextEvent e) {
+        TextComponent *text = text_Entity.get<TextComponent>();
+        text->text += char(e.get_Unicode_Value());
+    });
+
     Input::add_Global_Callback<KeyEvent>([text_Entity] (KeyEvent e) {
         if(e.get_Key() == Key::BACKSPACE && e.get_Action() != Action::RELEASED) {
             TextComponent *text = text_Entity.get<TextComponent>();
             text->text = text->text.substr(0, text->text.length() - 1);
+        }
+        else if(e.get_Key() == Key::ENTER && e.get_Action() != Action::RELEASED) {
+            TextComponent *text = text_Entity.get<TextComponent>();
+            text->text += '\n';
         }
     });
 
