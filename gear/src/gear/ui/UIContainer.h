@@ -20,11 +20,9 @@ public:
     ~UIContainer();
     static Ref<UIContainer> create(uint8_t id);
     template <class T>
-    Ref<T> create_Component(void)
+    void add_Component(Ref<T> component)
     {
-        auto component = std::make_shared<T>();
         m_Components.push_back(component);
-        return component;
     }
 };
 
