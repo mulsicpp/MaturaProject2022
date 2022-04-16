@@ -27,7 +27,7 @@ int gear::Palette::load(gear::FileStream *file_Stream)
 
   glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, 255, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-  GEAR_DEBUG_LOG("Font atlas id: %i", m_TextureID);
+  GEAR_DEBUG_LOG("Palette id: %i", m_TextureID);
 
   return 0;
 }

@@ -3,6 +3,9 @@
 #include "core.h"
 #include "Window.h"
 
+#include <gear/scene/Scene.h>
+#include <vector>
+
 #if defined(GEAR_DEBUG)
 #define GEAR_ROOT_PATH "../../../.."
 #endif
@@ -15,29 +18,48 @@ _GEAR_START
 
 class Game
 {
+private:
+    const char m_Path_To_App[512]{0};
+    static double m_Delta_Time;
+    std::vector<Scene *> m_Scripting_Scenes;
+
+    void gear_Init(void);
+
+    void gear_Terminate(void);
+
+    void call_Script_Pre_Input(void);
+    void call_Script_Post_Input(void);
+    void call_Script_Pre_Physics(void);
+    void call_Script_Post_Physics(void);
+    void call_Script_Pre_Hitbox_Check(void);
+    void call_Script_Post_Hitbox_Check(void);
+    void call_Script_Pre_Render(void);
+    void call_Script_Post_Render(void);
+
 protected:
-  gear::Window *m_Window = nullptr;
-  const char m_Path_To_App[512]{0};
-  gear::Window *main_Window;
-  static double m_Delta_Time;
-
-  void gear_Init(void);
-
-  void gear_Terminate(void);
+    gear::Window *window = nullptr;
+    Scene *main_Scene;
 
 public:
-  Game(void);
-  void run(void);
+    Game(void);
+    void run(void);
 
-  virtual void on_Startup(void) = 0;
-  virtual void on_Shutdown(void) = 0;
-  virtual void per_Frame(void) = 0;
+    virtual void on_Startup(void);
+    virtual void on_Shutdown(void);
 
-  void close(int exit_code);
+    virtual void poll_Input(void);
+    virtual void physics(void);
+    virtual void hitbox_Check(void);
+    virtual void render(void);
 
-  const char *get_App_Path(void) const;
+    void close(int exit_code);
 
-  static double get_Delta_Time(void);
+    void enable_Scripting_For(Scene *scene);
+    void disable_Scripting_For(Scene *scene);
+
+    const char *get_App_Path(void) const;
+
+    static double get_Delta_Time(void);
 };
 
 _GEAR_END

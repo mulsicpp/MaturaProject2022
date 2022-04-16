@@ -7,6 +7,8 @@
 
 gear::Ref<gear::Resource> gear::Resource::load_Resource(const char *filename) {
   gear::FileStream* file_Stream = gear::FileStream::open(filename, "rb");
+  if(!file_Stream)
+    return nullptr;
   char signature[7];
   file_Stream->get<char>(signature, 7);
   Ref<Resource> ret;

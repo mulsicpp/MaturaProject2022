@@ -40,3 +40,12 @@ uint16_t gear::Sprite::get_Width(void) const { return m_Width; }
 uint16_t gear::Sprite::get_Height(void) const { return m_Height; }
 
 unsigned int gear::Sprite::get_TextureID(void) const { return m_TextureID; }
+
+gear::Ref<gear::Sprite> gear::Sprite::from_Font(Ref<Font> font) {
+    Ref<Sprite> ret(new Sprite());
+    ret->m_Width = font->get_Width();
+    ret->m_Height = font->get_Height();
+    ret->m_TextureID = font->get_TextureID();
+
+    return ret;
+}

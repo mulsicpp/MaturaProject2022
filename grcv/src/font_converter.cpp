@@ -44,6 +44,10 @@ void FontConverter::command(int argc, char **argv)
         {
             m_Line_Gap = atoi(argv[1]);
         }
+        else if (strcmp(argv[0], "space_gap") == 0 && argc == 2)
+        {
+            m_Space_Gap = atoi(argv[1]);
+        }
         else if (strcmp(argv[0], "char") == 0 && argc == 2)
         {
             m_Characters[m_Char_Count++] = argv[1][0];
@@ -178,6 +182,7 @@ void FontConverter::convert(void)
 
     m_File_Out->put<int16_t>(m_Char_Gap);
     m_File_Out->put<int16_t>(m_Line_Gap);
+    m_File_Out->put<int16_t>(m_Space_Gap);
 
     m_File_Out->put<uint16_t>(m_Pixel_Rows[0].size());
     m_File_Out->put<uint16_t>(m_Row_Height);
@@ -186,10 +191,16 @@ void FontConverter::convert(void)
     m_File_Out->put<uint32_t>(data_Size);
 
     m_File_Out->put<uint8_t>(m_Char_Count);
+    m_File_Out->put<uint8_t>(m_Color_Count);
     for (int i = 0; i < m_Char_Count; i++)
     {
         m_File_Out->put<char>(m_Characters[i]);
         m_File_Out->put<uint16_t>(char_Width[i]);
+    }
+
+    for(int i = 0; i < m_Color_Count; i++)
+    {
+        m_File_Out->put<uint32_t>(m_Colors[i + 1]);
     }
 
     uint32_t byte_Data_Size = m_Pixel_Rows[0].size() * m_Row_Height;

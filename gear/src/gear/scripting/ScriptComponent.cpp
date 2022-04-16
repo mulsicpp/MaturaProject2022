@@ -5,13 +5,16 @@
 
 static std::vector<std::function<void(void)>> callbacks(0);
 
-static void script_Callback(gear::ScriptComponent &script)
+static void(gear::ScriptableEntity::*function)(void) = &gear::ScriptableEntity::post_Hitbox_Check;
+
+static void script_Callback(gear::Entity parent, gear::ScriptComponent &script)
 {
-    callbacks.push_back([&]() {script.script->on_Update(); });
+    callbacks.push_back([&]() {(script.script->*function)(); });
 }
 
-void gear::call_Script_Update(gear::Scene *scene)
+void gear::call_Script_Function(void(gear::ScriptableEntity::*member)(void), gear::Scene *scene)
 {
+    function = member;
     gear::Entity::for_Each(scene->get_ID(), script_Callback);
     for(auto &callback : callbacks) {
         callback();

@@ -15,6 +15,8 @@ void gear::SpritePipeline::destroy(void)
 {
   delete[] m_Vertex_Data;
   delete[] m_Index_Data;
+
+  RenderPipeline::destroy();
 }
 
 void gear::SpritePipeline::init(void)
@@ -115,7 +117,7 @@ void gear::SpritePipeline::draw_Batch(void)
   }
 }
 
-void gear::SpritePipeline::push_Sprite_Quad(gear::TransformComponent &position, gear::SpriteComponent &sprite)
+void gear::SpritePipeline::push_Sprite_Quad(gear::Entity parent, gear::TransformComponent &position, gear::SpriteComponent &sprite)
 {
   double x_Left = sprite.offset[0];
   double x_Right = sprite.offset[0] + sprite.sprite->get_Width();
@@ -149,7 +151,7 @@ void gear::SpritePipeline::push_Sprite_Quad(gear::TransformComponent &position, 
   }
 }
 
-void gear::SpritePipeline::push_Animation_Quad(gear::TransformComponent &position, gear::AnimationComponent &animation)
+void gear::SpritePipeline::push_Animation_Quad(gear::Entity parent, gear::TransformComponent &position, gear::AnimationComponent &animation)
 {
   float x_Left = animation.offset[0];
   float x_Right = animation.offset[0] + animation.animation->get_Width();

@@ -32,8 +32,8 @@ private:
 
   static SpritePipeline instance;
 
-  static void push_Sprite_Quad(TransformComponent &position, SpriteComponent &sprite);
-  static void push_Animation_Quad(TransformComponent &position, AnimationComponent &animation);
+  static void push_Sprite_Quad(Entity parent, TransformComponent &position, SpriteComponent &sprite);
+  static void push_Animation_Quad(Entity parent, TransformComponent &position, AnimationComponent &animation);
 
 public:
   static SpritePipeline &get_Instance(void);

@@ -15,14 +15,10 @@ public:
 class MyGame : public gear::Game
 {
 private:
-    gear::Scene *m_Scene;
-    gear::Entity *eis;
-    gear::Entity *eis_Idle;
+    gear::Entity medusa;
     gear::Ref<gear::Palette> palettes[7];
     int palette_Index = 0;
     gear::Vector<double, 2> m_Target_Pos;
-
-    gear::Collider h;
 
     gear::Vector<double, 2> cam_Pos;
 
@@ -31,6 +27,6 @@ private:
 
 public:
     void on_Startup(void) override;
-    void per_Frame(void) override;
+    void render(void) override;
     void on_Shutdown(void) override;
 };

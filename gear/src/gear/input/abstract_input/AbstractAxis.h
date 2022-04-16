@@ -3,33 +3,28 @@
 #include <gear/core/core.h>
 #include <functional>
 
-#define GEAR_AXES(...) \
-public:                \
-    gear::Ref<gear::AbstractAxis> __VA_ARGS__;
+#include "AbstractElement.h"
+
+#define GEAR_AXES(...) public: gear::Ref<gear::AbstractAxis> __VA_ARGS__;
 
 #define GEAR_CREATE_AXIS(type, ...) gear::Ref<gear::AbstractAxis>(new type(__VA_ARGS__))
 
-#define GEAR_CREATE_OR_AXIS(axis1, axis2) gear::Ref<gear::AbstractAxis>(new AbstractOrAxis(axis1, axis2))
+#define GEAR_CREATE_OR_AXIS(...) gear::Ref<gear::AbstractAxis>(new AbstractOrAxis({__VA_ARGS__}))
 
 _GEAR_START
 
-class AbstractAxis
-{
-protected:
-    std::function<void(float)> m_Callback;
-
+class AbstractAxis : public AbstractElement<float> {
 public:
-    virtual float get_Value(void) const = 0;
-    virtual void set_Callback(const std::function<void(float)> &callback);
+  virtual float get_Value(void) const = 0;
 };
 
 class AbstractOrAxis : public AbstractAxis
 {
 protected:
-    Ref<AbstractAxis> m_First, m_Second;
+    std::vector<Ref<AbstractAxis>> m_Axes;
 
 public:
-    AbstractOrAxis(const Ref<AbstractAxis> &first, const Ref<AbstractAxis> &second);
+    AbstractOrAxis(const std::vector<Ref<AbstractAxis>> &axes);
     float get_Value(void) const override;
 };
 

@@ -6,7 +6,7 @@
 #include <gear/resource/Palette.h>
 #include <functional>
 
-#include "AnimationEvent.h"
+#include "AnimationType.h"
 
 _GEAR_START
 
@@ -20,8 +20,9 @@ struct AnimationComponent {
   gear::Vector<float, 3> offset = { 0, 0, 0 };
   float factor = 1;
 
-  std::function<void (AnimationEvent)> on_Change;
-  std::function<void (AnimationEvent)> on_End;
+  std::function<void (float)> on_Changed;
+  std::function<void (void)> on_Ended;
+  std::function<void (int)> on_Frame_Changed;
 };
 
 _GEAR_END
