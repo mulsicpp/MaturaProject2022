@@ -22,3 +22,9 @@ void gear::UIComponent::set_Position(Vector<double, 2> position)
 {
     m_Entity.get<TransformComponent>()->position = position;
 }
+
+void gear::UIComponent::set_Animation(Ref<Animation> animation, Ref<Palette> palette)
+{
+    m_Default_Animation = {animation, palette, AnimationType::LOOP, 0, animation->get_Default_Frame_Rate(), 1, {0, 0, 0}, 1};
+    m_Entity.add<AnimationComponent>(m_Default_Animation);
+}
