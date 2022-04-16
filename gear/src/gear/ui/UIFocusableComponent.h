@@ -20,6 +20,7 @@ private:
     Ref<UIFocusableComponent> m_Navigation_Components[4];
     uint32_t m_Access_Flags;
     uint32_t m_Focus_Flags;
+    AnimationComponent m_Focus_Animation;
 
 public:
     bool is_Focusable(void) const override;
@@ -37,6 +38,8 @@ public:
     void focus_From(int user_ID);
     void unfocus_From(int user_ID);
     bool is_Focused_By(int user_ID) const;
+
+    void gear::UIFocusableComponent::set_Animation(Ref<Animation> animation, Ref<Palette> palette);
 
     virtual void submit(void) = 0;
 };
