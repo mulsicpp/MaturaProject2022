@@ -8,9 +8,13 @@
 _GEAR_START
 
 class UIUser;
+class UIContainer;
 
 class UIFocusableComponent : public UIComponent
 {
+
+friend class UIContainer;
+
 private:
     Vector<int, 2> m_Grid_Pos;
     Ref<UIFocusableComponent> m_Navigation_Components[4];

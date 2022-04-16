@@ -19,6 +19,7 @@ private:
 public:
     ~UIContainer();
     static Ref<UIContainer> create(uint8_t id);
+    void generate_Navigation(void);
     template <class T>
     void add_Component(Ref<T> component)
     {
