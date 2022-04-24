@@ -1,0 +1,6 @@
+sprite main_stage_bg.png main_palette.png
+
+img main_stage_bg.png
+palette main_palette.png
+
+background 0000ffff
