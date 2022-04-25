@@ -96,82 +96,34 @@ void MyGame::on_Startup(void)
     palettes[6] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_brown.gear");
 
     SpriteComponent sprite;
-    sprite.offset = {-183, -3, 0.1};
     sprite.parallax_Factor = 1;
-    sprite.palette = ResourceManager::get<Palette>("assets/test_sprites/platform_palette.gear");
-    sprite.sprite = ResourceManager::get<Sprite>("assets/test_sprites/platform.gear");
+    sprite.palette = ResourceManager::get<Palette>("assets/stages/floating_island/main_palette.gear");
+    sprite.sprite = ResourceManager::get<Sprite>("assets/stages/floating_island/main_stage_bg.gear");
+    sprite.offset = {-sprite.sprite->get_Width() / 2., -sprite.sprite->get_Height() / 2., -0.1};
 
     Entity platform = main_Scene->create_Entity();
-    platform.add<TransformComponent>({{0, 80}, {1, 1}, 0});
+    platform.add<TransformComponent>({{0, 0}, {1, 1}, 0});
     platform.add<SpriteComponent>(sprite);
 
     StaticPhysicsComponent physics;
-    physics.collider = Collider::create(Rect{{-183, 0}, {183, 20}});
+    physics.collider = Collider::create(Rect{{-sprite.sprite->get_Width() / 2. + 16, -sprite.sprite->get_Height() / 2. + 250}, {sprite.sprite->get_Width() / 2. - 10, -sprite.sprite->get_Height() / 2. + 290}});
     physics.check = gear::default_Physics_Check;
     physics.restitution = 1;
     platform.add<StaticPhysicsComponent>(physics);
 
     physics.check = platform_Physics_Check;
 
-    sprite.offset = {-35, -3, 0.1};
-    sprite.sprite = ResourceManager::get<Sprite>("assets/test_sprites/platform2.gear");
+    sprite.sprite = ResourceManager::get<Sprite>("assets/stages/floating_island/main_stage_fg.gear");
+    sprite.offset = {-sprite.sprite->get_Width() / 2., -sprite.sprite->get_Height() / 2., 0.1};
 
     Entity platform2 = main_Scene->create_Entity();
-    platform2.add<TransformComponent>({{-100, 20}, {1, 1}, 0});
+    platform2.add<TransformComponent>({{0, 0}, {1, 1}, 0});
     platform2.add<SpriteComponent>(sprite);
-    physics.collider = Collider::create(Rect{{-35, 0}, {35, 5}});
-    platform2.add<StaticPhysicsComponent>(physics);
-
-    Entity platform3 = main_Scene->create_Entity();
-    platform3.add<TransformComponent>({{100, 20}, {1, 1}, 0});
-    platform3.add<SpriteComponent>(sprite);
-    physics.collider = Collider::create(Rect{{-35, 0}, {35, 5}});
-    platform3.add<StaticPhysicsComponent>(physics);
-
-    Entity platform4 = main_Scene->create_Entity();
-    platform4.add<TransformComponent>({{0, -30}, {1, 1}, 0});
-    platform4.add<SpriteComponent>(sprite);
-    physics.collider = Collider::create(Rect{{-35, 0}, {35, 5}});
-    platform4.add<StaticPhysicsComponent>(physics);
+    //physics.collider = Collider::create(Rect{{-sprite.sprite->get_Width() / 2. + 250, -sprite.sprite->get_Height() / 2. + 11}, {-sprite.sprite->get_Width() / 2. + 280, sprite.sprite->get_Height() / 2. - 7}});
+    //platform2.add<StaticPhysicsComponent>(physics);
 
     medusa = main_Scene->create_Entity();
     medusa.add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::KEYBOARD));
-
-    Entity text_Entity = main_Scene->create_Entity();
-    text_Entity.set<TransformComponent>({{0, 0, 0}, {1, 1}, 0});
-
-    TextComponent text;
-    text.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
-    text.text = "";
-    text.offset = {-145, -70, 0.5};
-    text.raw_Text = true;
-    text.colors = text.font->get_Colors();
-    text.colors[0] = {255, 255, 255, 255};
-    text.colors[1] = {160, 160, 160, 255};
-    text.width = 290;
-    text.height = 250;
-    text.break_Word = false;
-    text_Entity.add<TextComponent>(text);
-
-    text_Entity.add<HitboxComponent>({
-        {Hitbox::create(0, Rect{{-145, -70} , {145, 180}})}
-    });
-
-    Input::add_Global_Callback<TextEvent>([text_Entity] (TextEvent e) {
-        TextComponent *text = text_Entity.get<TextComponent>();
-        text->text += char(e.get_Unicode_Value());
-    });
-
-    Input::add_Global_Callback<KeyEvent>([text_Entity] (KeyEvent e) {
-        if(e.get_Key() == Key::BACKSPACE && e.get_Action() != Action::RELEASED) {
-            TextComponent *text = text_Entity.get<TextComponent>();
-            text->text = text->text.substr(0, text->text.length() - 1);
-        }
-        else if(e.get_Key() == Key::ENTER && e.get_Action() != Action::RELEASED) {
-            TextComponent *text = text_Entity.get<TextComponent>();
-            text->text += '\n';
-        }
-    });
 
     main_Scene->update_Transformation();
 
@@ -189,7 +141,7 @@ void MyGame::render(void)
     cam.follow_Target();
     Renderer::start_New_Frame();
     Renderer::render_Scene(main_Scene);
-    // Renderer::render_All_Hitboxes(main_Scene);
+    Renderer::render_All_Hitboxes(main_Scene);
     Renderer::show_Frame();
 }
 
