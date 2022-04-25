@@ -1,0 +1,4 @@
+sprite default.png palette.png
+
+img default.png
+palette palette.png
