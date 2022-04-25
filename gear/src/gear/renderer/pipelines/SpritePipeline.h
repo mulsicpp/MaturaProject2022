@@ -9,6 +9,9 @@
 #include "../AnimationComponent.h"
 #include "../SpriteComponent.h"
 
+#include <gear/ui/UIContainer.h>
+#include <gear/ui/UIComponent.h>
+
 _GEAR_START
 
 class SpritePipeline : public RenderPipeline
@@ -35,6 +38,8 @@ private:
   static void push_Sprite_Quad(Entity parent, TransformComponent &position, SpriteComponent &sprite);
   static void push_Animation_Quad(Entity parent, TransformComponent &position, AnimationComponent &animation);
 
+  static void push_UI_Quad(Ref<UIComponent> component);
+
 public:
   static SpritePipeline &get_Instance(void);
 
@@ -42,6 +47,7 @@ public:
   void destroy(void) override;
 
   void render(Scene *scene);
+  void render_UI(Ref<UIContainer> container);
   void draw_Batch(void);
 };
 

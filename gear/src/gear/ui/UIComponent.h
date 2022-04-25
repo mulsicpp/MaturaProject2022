@@ -4,12 +4,18 @@
 #include <gear/math/Vector.h>
 #include <gear/scene/Entity.h>
 #include <gear/renderer/AnimationComponent.h>
+#include <gear/scene/TransformComponent.h>
 
 _GEAR_START
 
+class SpritePipeline;
+
 class UIComponent
 {
+    friend class SpritePipeline;
 private:
+    TransformComponent m_Transform;
+    AnimationComponent m_Displayed_Animation;
     AnimationComponent m_Default_Animation;
     Entity m_Entity;
     UIComponent(Entity entity, Ref<Animation> animation, Ref<Palette> palette, Vector<double, 2> position);

@@ -96,23 +96,20 @@ void gear::SpritePipeline::render(gear::Scene *scene)
   draw_Batch();
 }
 
+void gear::SpritePipeline::render_UI(gear::Ref<gear::UIContainer> container)
+{
+  bind();
+  for(auto &comp : container->m_Components)
+    push_UI_Quad(comp);
+  draw_Batch();
+}
+
 void gear::SpritePipeline::draw_Batch(void)
 {
   if (m_Batch_Index > 0)
   {
     glBufferSubData(GL_ARRAY_BUFFER, 0, m_Batch_Index * 4 * sizeof(Vertex), m_Vertex_Data);
     glDrawElements(GL_TRIANGLES, 6 * m_Batch_Index, GL_UNSIGNED_INT, nullptr);
-  /*
-    for(int i = 0; i < m_Batch_Index; i++)
-      GEAR_DEBUG_LOG("{%f, %f, %f} {%f, %f} %i", 
-      m_Vertex_Data[i].pos[0], 
-      m_Vertex_Data[i].pos[1], 
-      m_Vertex_Data[i].pos[2],
-      m_Vertex_Data[i].tex[0],
-      m_Vertex_Data[i].tex[1],
-      m_Vertex_Data[i].tex_Index);
-    GEAR_DEBUG_LOG("draw batch %i", m_Batch_Index);
-    */
     m_Batch_Index = 0;
   }
 }
@@ -180,6 +177,45 @@ void gear::SpritePipeline::push_Animation_Quad(gear::Entity parent, gear::Transf
   glBindTexture(GL_TEXTURE_2D, animation.animation->get_TextureID());
   glActiveTexture(GL_TEXTURE1 + 2 * instance.m_Batch_Index);
   glBindTexture(GL_TEXTURE_1D, animation.palette->get_TextureID());
+
+  memcpy(instance.m_Vertex_Data + (4 * instance.m_Batch_Index), instance.m_Temp_Vertex_Data, 4);
+
+  instance.m_Batch_Index++;
+  if (instance.m_Batch_Index == instance.m_Max_Textures)
+  {
+    instance.draw_Batch();
+  }
+}
+
+void gear::SpritePipeline::push_UI_Quad(gear::Ref<gear::UIComponent> component)
+{
+  float x_Left = component->m_Displayed_Animation.offset[0];
+  float x_Right = component->m_Displayed_Animation.offset[0] + component->m_Displayed_Animation.animation->get_Width();
+  float y_Top = component->m_Displayed_Animation.offset[1];
+  float y_Bottom = component->m_Displayed_Animation.offset[1] + component->m_Displayed_Animation.animation->get_Height();
+
+  float depth = component->m_Displayed_Animation.offset[2];
+
+  int frame_Index = component->m_Displayed_Animation.frame_Offset;
+
+  float tex_Top = float(frame_Index) / component->m_Displayed_Animation.animation->get_Frame_Count();
+  float tex_Bottom = float(frame_Index + 1) / component->m_Displayed_Animation.animation->get_Frame_Count();
+
+  auto mat = component->m_Transform.get_Matrix();
+
+  Vector<float, 3> pos = (mat * Vector<double, 3>{x_Left, y_Top, 1}).cast_To<float, 3>();
+  instance.m_Temp_Vertex_Data[0] = {{pos[0], pos[1], depth}, {0, tex_Top}, instance.m_Batch_Index, component->m_Displayed_Animation.parallax_Factor};
+  pos = (mat * Vector<double, 3>{x_Right, y_Top, 1}).cast_To<float, 3>();
+  instance.m_Temp_Vertex_Data[1] = {{pos[0], pos[1], depth}, {1, tex_Top}, instance.m_Batch_Index, component->m_Displayed_Animation.parallax_Factor};
+  pos = (mat * Vector<double, 3>{x_Right, y_Bottom, 1}).cast_To<float, 3>();
+  instance.m_Temp_Vertex_Data[2] = {{pos[0], pos[1], depth}, {1, tex_Bottom}, instance.m_Batch_Index, component->m_Displayed_Animation.parallax_Factor};
+  pos = (mat * Vector<double, 3>{x_Left, y_Bottom, 1}).cast_To<float, 3>();
+  instance.m_Temp_Vertex_Data[3] = {{pos[0], pos[1], depth}, {0, tex_Bottom}, instance.m_Batch_Index, component->m_Displayed_Animation.parallax_Factor};
+
+  glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
+  glBindTexture(GL_TEXTURE_2D, component->m_Displayed_Animation.animation->get_TextureID());
+  glActiveTexture(GL_TEXTURE1 + 2 * instance.m_Batch_Index);
+  glBindTexture(GL_TEXTURE_1D, component->m_Displayed_Animation.palette->get_TextureID());
 
   memcpy(instance.m_Vertex_Data + (4 * instance.m_Batch_Index), instance.m_Temp_Vertex_Data, 4);
 
