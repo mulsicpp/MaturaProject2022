@@ -1,7 +1,7 @@
 #include "UIContainer.h"
 #include "UIFocusableComponent.h"
 
-gear::UIContainer::UIContainer(uint8_t id)
+gear::UIContainer::UIContainer(void)
 {
     
 }
@@ -9,9 +9,9 @@ gear::UIContainer::~UIContainer()
 {
 }
 
-gear::Ref<gear::UIContainer> gear::UIContainer::create(uint8_t id)
+gear::Ref<gear::UIContainer> gear::UIContainer::create(void)
 {
-    return Ref<UIContainer>(new UIContainer(id));
+    return Ref<UIContainer>(new UIContainer());
 }
 
 void gear::UIContainer::generate_Navigation(void)

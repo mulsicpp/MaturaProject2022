@@ -149,7 +149,7 @@ void gear::Renderer::render_UI(void)
     glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Width"), m_Framebuffer.m_Width);
     glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
     
-    glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), -m_Framebuffer.m_Width / 2, -m_Framebuffer.m_Height / 2);
+    glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), m_Framebuffer.m_Width / 2, m_Framebuffer.m_Height / 2);
 
     SpritePipeline::get_Instance().render_UI(container);
 

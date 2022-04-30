@@ -31,6 +31,8 @@
 
 #include <gear/input/events/TextEvent.h>
 
+#include <gear/ui/UI.h>
+
 using namespace gear;
 
 MyCamera::MyCamera(const Vector<double, 2> *target_Position) : gear::Camera(target_Position) {}
@@ -77,7 +79,7 @@ void MyGame::on_Startup(void)
 
     Component<FlagComponent>::allow();
 
-    window->set_Fullscreen();
+    // window->set_Fullscreen();
 
     GEAR_DEBUG_LOG("width: %i height: %i", window->get_Width(), window->get_Height());
 
@@ -132,6 +134,12 @@ void MyGame::on_Startup(void)
     cam_Pos = {0, 0};
 
     Renderer::set_Camera(&cam);
+
+    Ref<UIContainer> main_Container = UIContainer::create();
+
+    main_Container->add_Component<UIComponent>({{{0, 0}}, {gear::ResourceManager::get<Animation>("assets/ui/test_button/default.gear"), gear::ResourceManager::get<Palette>("assets/ui/test_button/palette.gear"), 0, 0, 1, {0, 0, 1}}});
+
+    UI::set_Container(main_Container);
 }
 
 void MyGame::render(void)
@@ -141,7 +149,8 @@ void MyGame::render(void)
     cam.follow_Target();
     Renderer::start_New_Frame();
     Renderer::render_Scene(main_Scene);
-    Renderer::render_All_Hitboxes(main_Scene);
+    // Renderer::render_All_Hitboxes(main_Scene);
+    Renderer::render_UI();
     Renderer::show_Frame();
 }
 

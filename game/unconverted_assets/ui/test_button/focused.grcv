@@ -1,4 +1,7 @@
-sprite focused.png palette.png
+animation focused.png palette.png
 
 img focused.png
 palette palette.png
+
+frame_count 1
+frame_rate 0
