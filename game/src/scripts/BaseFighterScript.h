@@ -23,7 +23,7 @@ protected:
 
     gear::Ref<gear::Collider> collider;
     gear::Ref<gear::Hurtbox> hurtbox;
-    uint64_t flags;
+    uint64_t flags = 0, prev_Flags = 0;
 
     int air_Jumps = 1;
     int max_Air_Jumps = 1;
@@ -45,24 +45,24 @@ protected:
     gear::DynamicPhysicsComponent physics;
 
     gear::AnimationComponent
-        a_Idle,
-        a_Run,
-        a_Jump,
-        a_Sground,
-        a_Uground,
-        a_Dground,
-        a_Sair,
-        a_Uair,
-        a_Dair,
-        a_Sspecial,
-        a_Uspecial,
-        a_Dspecial,
-        a_Ult,
-        a_Damaged,
-        a_Shield,
-        a_Ledge_Grab,
-        a_Hanging,
-        a_Get_Up;
+        a_Idle[2],
+        a_Run[2],
+        a_Jump[2],
+        a_Sground[2],
+        a_Uground[2],
+        a_Dground[2],
+        a_Sair[2],
+        a_Uair[2],
+        a_Dair[2],
+        a_Sspecial[2],
+        a_Uspecial[2],
+        a_Dspecial[2],
+        a_Ult[2],
+        a_Damaged[2],
+        a_Shield[2],
+        a_Ledge_Grab[2],
+        a_Hanging[2],
+        a_Get_Up[2];
 
 public:
     BaseFighterScript(gear::InputDevice device, const char *base_Path);

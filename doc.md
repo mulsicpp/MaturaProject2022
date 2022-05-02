@@ -107,3 +107,20 @@ Wird der Befehl erneut ausgeführt, so wird die Ausgabedatei nicht neu erstellt.
 | {CHAR, UINT16}[] | 0x1a | *Zeichenanzahl* * 3 | ZeichenDaten | Eine Liste von Zeichen mit der dazugehörigen Breite in Pixel |
 | UINT8[4][] | 0x1a + *Zeichenanzahl* * 3 | *Farbanzahl* * 4 | FarbdatenDaten | Die Liste von 32-bit RGBA-Farben |
 | UINT8[] | 0x1a + *Zeichenanzahl* * 3 + *Farbanzahl* * 4 | *Datengröße* | Daten | Enthält die Daten der Zeichenreihe |
+
+## Rendering
+
+Die funktionen des Renderers können über die **Renderer**-Klasse aufgerufen werden. Dieser wird verwended, um verschiedene Sachen auf die Oberfläche des Spielefensters zu zeichnen. Der Renderer verfügt intern über verschiedene Render-Pipeline. Eine Render-Pipeline ist eine Abfolge von verschiedenen Schritten, die mit den Daten in der CPU beginnt und mit dem zeichnen eines Ojektes auf dem Bildschirm endet. Folgende Render-Pipeline enthält der Renderer:
+
+- **Sprite-Pipeline**: Diese Pipeline kümmert sich um das zeichnen von Sprites und einzelnen Bildern einer Animation, aber auch um das rendern von UI-Elementen.
+- **Text-Pipeline**: Ist zuständig für das rendern von Text.
+- **Upscale-Pipeline**: Nachdem das Bild fertig im Hintergrund gerendert wurde, wird es im Fenster in der gewünschten Größe angezeigt.
+- **Shape-Pipeline**: Wird verwendet um Figuren zu zeichnen. Sollte nur zu Debug-Zwecken genutzt werden (rendern von Hitboxen, Hurtboxen, usw.).
+
+### Render-Komponenten
+
+**SpriteComponent**
+
+
+
+## 

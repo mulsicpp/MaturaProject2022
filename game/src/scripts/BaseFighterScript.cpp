@@ -30,7 +30,7 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
                 auto transform = m_Entity.get<TransformComponent>();
                 transform->scale[0] = real_Val;
                 m_Entity.update_Transformation();
-                play_Animation(&a_Run);
+                play_Animation(&a_Run[0]);
                 if (input->special->get_State() == State::PRESSED)
                     GEAR_DEBUG_LOG("side special %i", real_Val);
                 else if (input->attack->get_State() == State::PRESSED)
@@ -38,8 +38,10 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
                         GEAR_DEBUG_LOG("side ground %i", real_Val);
                     else
                         GEAR_DEBUG_LOG("side air %i", real_Val);
-            } else if(flags & FIGHTER_GROUND) {
-                play_Animation(&a_Idle);
+            }
+            else if (flags & FIGHTER_GROUND)
+            {
+                play_Animation(&a_Idle[0]);
             }
         }
         prev_Val = val;
@@ -80,7 +82,8 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
             auto physics = m_Entity.get<DynamicPhysicsComponent>();
             if (flags & FIGHTER_GROUND)
                 physics->velocity[1] = -this->jump_Strenght;
-            else if(air_Jumps > 0) {
+            else if (air_Jumps > 0)
+            {
                 physics->velocity[1] = -this->air_Jump_Strength;
                 air_Jumps--;
             }
@@ -148,7 +151,7 @@ BaseFighterScript::~BaseFighterScript() {}
 void BaseFighterScript::init(void)
 {
     m_Entity.set<FlagComponent>({FLAG_FIGHTER});
-    m_Entity.add<AnimationComponent>(a_Idle);
+    m_Entity.add<AnimationComponent>(a_Idle[0]);
     m_Entity.add<DynamicPhysicsComponent>(physics);
 }
 
@@ -181,30 +184,30 @@ void BaseFighterScript::init_Animations(const char *base_Path)
     std::string path = base_Path;
     Ref<Palette> palette = ResourceManager::get<Palette>(path + "/palettes/default.gear");
 
-    init_Animation(&a_Idle, path + "/animations/idle.gear", palette);
-    init_Animation(&a_Run, path + "/animations/run.gear", palette);
-    init_Animation(&a_Jump, path + "/animations/jump.gear", palette);
+    init_Animation(&a_Idle[0], path + "/animations/right/idle.gear", palette);
+    init_Animation(&a_Run[0], path + "/animations/right/run.gear", palette);
+    init_Animation(&a_Jump[0], path + "/animations/right/jump.gear", palette);
 
-    // init_Animation(&a_Sground, path + "/animations/sground.gear", palette);
-    // init_Animation(&a_Uground, path + "/animations/uground.gear", palette);
-    // init_Animation(&a_Dground, path + "/animations/dground.gear", palette);
+    // init_Animation(&a_Sground[0], path + "/animations/right/sground.gear", palette);
+    // init_Animation(&a_Uground[0], path + "/animations/right/uground.gear", palette);
+    // init_Animation(&a_Dground[0], path + "/animations/right/dground.gear", palette);
 
-    // init_Animation(&a_Sair, path + "/animations/sair.gear", palette);
-    // init_Animation(&a_Uair, path + "/animations/uair.gear", palette);
-    // init_Animation(&a_Dair, path + "/animations/dair.gear", palette);
+    // init_Animation(&a_Sair[0], path + "/animations/right/sair.gear", palette);
+    // init_Animation(&a_Uair[0], path + "/animations/right/uair.gear", palette);
+    // init_Animation(&a_Dair[0], path + "/animations/right/dair.gear", palette);
 
-    // init_Animation(&a_Sspecial, path + "/animations/sspecial.gear", palette);
-    // init_Animation(&a_Uspecial, path + "/animations/uspecial.gear", palette);
-    // init_Animation(&a_Dspecial, path + "/animations/dspecial.gear", palette);
+    // init_Animation(&a_Sspecial[0], path + "/animations/right/sspecial.gear", palette);
+    // init_Animation(&a_Uspecial[0], path + "/animations/right/uspecial.gear", palette);
+    // init_Animation(&a_Dspecial[0], path + "/animations/right/dspecial.gear", palette);
 
-    // init_Animation(&a_Ult, path + "/ult.gear", palette);
+    // init_Animation(&a_Ult[0], path + "/animations/right/ult.gear", palette);
 
-    // init_Animation(&a_Damaged, path + "/damaged.gear", palette);
-    // init_Animation(&a_Shield, path + "/shield.gear", palette);
+    // init_Animation(&a_Damaged[0], path + "/animations/right/damaged.gear", palette);
+    // init_Animation(&a_Shield[0], path + "/animations/right/shield.gear", palette);
 
-    // init_Animation(&a_Ledge_Grab, path + "/ledge_grab.gear", palette);
-    // init_Animation(&a_Hanging, path + "/hanging.gear", palette);
-    // init_Animation(&a_Get_Up, path + "/get_up.gear", palette);
+    // init_Animation(&a_Ledge_Grab[0], path + "/animations/right/ledge_grab.gear", palette);
+    // init_Animation(&a_Hanging[0], path + "/animations/right/hanging.gear", palette);
+    // init_Animation(&a_Get_Up[0], path + "/animations/right/get_up.gear", palette);
 }
 
 int BaseFighterScript::axis_As_Int(float value)
@@ -218,21 +221,34 @@ void BaseFighterScript::pre_Physics(void)
 
     physics->velocity[0] = (flags & FIGHTER_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());
 
-    //GEAR_DEBUG_LOG("flags: %x", flags);
-    if((flags & FIGHTER_GROUND) == 0) {
-        if(physics->velocity[1] < -250)
-            a_Jump.frame_Offset = 1;
-        else if(physics->velocity[1] < -100)
-            a_Jump.frame_Offset = 2;
-        else if(physics->velocity[1] < 100)
-            a_Jump.frame_Offset = 3;
-        else if(physics->velocity[1] < 250)
-            a_Jump.frame_Offset = 4;
+    // GEAR_DEBUG_LOG("flags: %x", flags);
+    if ((flags & FIGHTER_GROUND) == 0)
+    {
+        if (physics->velocity[1] < -250)
+            a_Jump[0].frame_Offset = 1;
+        else if (physics->velocity[1] < -100)
+            a_Jump[0].frame_Offset = 2;
+        else if (physics->velocity[1] < 100)
+            a_Jump[0].frame_Offset = 3;
+        else if (physics->velocity[1] < 250)
+            a_Jump[0].frame_Offset = 4;
         else
-            a_Jump.frame_Offset = 5;
-        m_Entity.set<AnimationComponent>(a_Jump);
+            a_Jump[0].frame_Offset = 5;
+        m_Entity.set<AnimationComponent>(a_Jump[0]);
+    }
+    else
+    {
+        if((prev_Flags & FIGHTER_GROUND) == 0)
+        {
+            if(axis_As_Int(input->x_Axis->get_Value()) == 0)
+                m_Entity.set<AnimationComponent>(a_Idle[0]);
+            else {
+                m_Entity.set<AnimationComponent>(a_Run[0]);
+            }
+        }
     }
 
+    prev_Flags = flags;
     flags &= ~FIGHTER_GROUND;
 }
 
@@ -241,6 +257,7 @@ void BaseFighterScript::play_Animation(AnimationComponent *animation)
     m_Entity.set<AnimationComponent>(*animation);
 }
 
-bool BaseFighterScript::is_Phasing(void) {
+bool BaseFighterScript::is_Phasing(void)
+{
     return input->down->get_State() == State::PRESSED;
 }
