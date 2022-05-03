@@ -224,13 +224,13 @@ void BaseFighterScript::pre_Physics(void)
     // GEAR_DEBUG_LOG("flags: %x", flags);
     if ((flags & FIGHTER_GROUND) == 0)
     {
-        if (physics->velocity[1] < -250)
+        if (physics->velocity[1] < -300)
             a_Jump[0].frame_Offset = 1;
         else if (physics->velocity[1] < -100)
             a_Jump[0].frame_Offset = 2;
         else if (physics->velocity[1] < 100)
             a_Jump[0].frame_Offset = 3;
-        else if (physics->velocity[1] < 250)
+        else if (physics->velocity[1] < 300)
             a_Jump[0].frame_Offset = 4;
         else
             a_Jump[0].frame_Offset = 5;

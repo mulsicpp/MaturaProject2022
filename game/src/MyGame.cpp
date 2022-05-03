@@ -87,14 +87,6 @@ void MyGame::on_Startup(void)
     GEAR_DEBUG_LOG_SET_OUTPUT(GEAR_CONSOLE);
     GEAR_DEBUG_LOG("Opened application");
 
-    palettes[0] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_yellow.gear");
-    palettes[1] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_pink.gear");
-    palettes[2] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_green.gear");
-    palettes[3] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_dark.gear");
-    palettes[4] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_blue.gear");
-    palettes[5] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_vanillia.gear");
-    palettes[6] = ResourceManager::get<Palette>("assets/test_sprites/eis_palette_brown.gear");
-
     SpriteComponent sprite;
     sprite.parallax_Factor = 1;
     sprite.palette = ResourceManager::get<Palette>("assets/stages/floating_island/main_palette.gear");
@@ -123,7 +115,7 @@ void MyGame::on_Startup(void)
     //platform2.add<StaticPhysicsComponent>(physics);
 
     medusa = main_Scene->create_Entity();
-    medusa.add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::KEYBOARD));
+    medusa.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::KEYBOARD));
 
     main_Scene->update_Transformation();
 

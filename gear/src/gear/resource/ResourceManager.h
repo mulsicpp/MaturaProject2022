@@ -24,8 +24,10 @@ public:
             auto resource = Resource::load_Resource(key.c_str());
             if (resource != nullptr)
                 return std::dynamic_pointer_cast<T, Resource>(m_Resources[key] = resource);
-            else
+            else {
+                GEAR_DEBUG_LOG("resource \'%s\' couldn't be loaded", key.c_str());
                 return nullptr;
+            }
         }
         return std::dynamic_pointer_cast<T, Resource>(m_Resources[key]);
     }

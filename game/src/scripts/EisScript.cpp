@@ -4,6 +4,6 @@
 
 using namespace gear;
 
-EisScript::EisScript(InputDevice device) : BaseFighterScript(device, "assets/fighters/medusa") {
-    physics.collider = Collider::create(Rect{{-12, 14}, {12, 32}});
+EisScript::EisScript(InputDevice device) : BaseFighterScript(device, "assets/fighters/eis") {
+    physics.collider = Collider::create(Rect{{-12, 10}, {12, 28}});
 }
