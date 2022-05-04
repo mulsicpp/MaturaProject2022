@@ -1,0 +1,12 @@
+animation error.png error_palette.png
+
+img error.png
+palette error_palette.png
+
+background 0000ffff
+
+type forward
+
+frame_rate 2
+frame_alignment v
+frame_count 1
