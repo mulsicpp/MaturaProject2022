@@ -8,6 +8,8 @@ gear::AKeyboardAxis::AKeyboardAxis(Key min_Key, Key max_Key)
 }
 float gear::AKeyboardAxis::get_Value(void) const
 {
+    if (!m_Enabled)
+        return 0;
     float ret = 0;
     if (Input::get_Key_State(m_Max_Key) == State::PRESSED)
         ret++;
@@ -17,21 +19,24 @@ float gear::AKeyboardAxis::get_Value(void) const
 }
 void gear::AKeyboardAxis::handle_Event(KeyEvent event)
 {
-    float value = 0;
-    if (event.get_Key() == m_Max_Key)
+    if (m_Enabled)
     {
-        if (event.get_Action() == Action::PRESSED)
-            value++;
-        if (Input::get_Key_State(m_Min_Key) == State::PRESSED)
-            value--;
+        float value = 0;
+        if (event.get_Key() == m_Max_Key)
+        {
+            if (event.get_Action() == Action::PRESSED)
+                value++;
+            if (Input::get_Key_State(m_Min_Key) == State::PRESSED)
+                value--;
+        }
+        else if (event.get_Key() == m_Min_Key)
+        {
+            if (event.get_Action() == Action::PRESSED)
+                value--;
+            if (Input::get_Key_State(m_Max_Key) == State::PRESSED)
+                value++;
+        }
+        if (m_Callback != nullptr)
+            m_Callback(value);
     }
-    else if (event.get_Key() == m_Min_Key)
-    {
-        if (event.get_Action() == Action::PRESSED)
-            value--;
-        if (Input::get_Key_State(m_Max_Key) == State::PRESSED)
-            value++;
-    }
-    if (m_Callback != nullptr)
-        m_Callback(value);
 }

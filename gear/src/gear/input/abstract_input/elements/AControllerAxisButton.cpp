@@ -10,12 +10,12 @@ gear::AControllerAxisButton::AControllerAxisButton(int controller_ID, Controller
 
 gear::State gear::AControllerAxisButton::get_State(void) const
 {
-    return m_State;
+    return m_Enabled ? m_State : State::RELEASED;
 }
 
 void gear::AControllerAxisButton::handle_Event(gear::ControllerAxisEvent event)
 {
-    if (event.get_Controller_Id() == m_Controller_ID && event.get_Axis() == m_Button)
+    if (m_Enabled && event.get_Controller_Id() == m_Controller_ID && event.get_Axis() == m_Button)
         if (Input::get_Axis_Value(m_Controller_ID, m_Button) <= m_Intervall_Max && Input::get_Axis_Value(m_Controller_ID, m_Button) >= m_Intervall_Min)
         {
             if (m_State == State::RELEASED && m_Callback != nullptr)

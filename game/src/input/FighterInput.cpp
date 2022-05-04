@@ -10,6 +10,21 @@
 
 using namespace gear;
 
+void FighterInput::set_Enabled_All(Ref<FighterInput> input, bool enabled)
+{
+    input->x_Axis->set_Enabled(enabled);
+
+    input->up->set_Enabled(enabled);
+    input->down->set_Enabled(enabled);
+
+    input->attack->set_Enabled(enabled);
+    input->special->set_Enabled(enabled);
+
+    input->jump->set_Enabled(enabled);
+
+    input->shield->set_Enabled(enabled);
+}
+
 KFighterInput::KFighterInput(void)
 {
     x_Axis = GEAR_CREATE_OR_AXIS(GEAR_CREATE_AXIS(AKeyboardAxis, Key::A, Key::D), GEAR_CREATE_AXIS(AKeyboardAxis, Key::LEFT, Key::RIGHT));

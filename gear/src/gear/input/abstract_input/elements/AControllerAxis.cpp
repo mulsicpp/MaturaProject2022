@@ -8,11 +8,11 @@ gear::AControllerAxis::AControllerAxis(int controller_ID, ControllerAxis axis)
 }
 float gear::AControllerAxis::get_Value(void) const
 {
-    return Input::get_Axis_Value(m_Controller_ID, m_Axis);
+    return m_Enabled ? Input::get_Axis_Value(m_Controller_ID, m_Axis) : 0;
 }
 void gear::AControllerAxis::handle_Event(ControllerAxisEvent event)
 {
-    if (event.get_Controller_Id() == m_Controller_ID && event.get_Axis() == m_Axis && m_Callback != nullptr)
+    if (m_Enabled && event.get_Controller_Id() == m_Controller_ID && event.get_Axis() == m_Axis && m_Callback != nullptr)
     {
         m_Callback(event.get_Value());
     }

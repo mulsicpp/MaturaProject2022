@@ -8,6 +8,9 @@
 
 using namespace gear;
 
+gear::Ref<gear::Animation> BaseFighterScript::error_Animation = nullptr; // ResourceManager::get<Animation>("assets/fighters/_error/error.gear");
+gear::Ref<gear::Palette> BaseFighterScript::error_Palette = nullptr;     // ResourceManager::get<Palette>("assets/fighters/_error/error_palette.gear");
+
 static bool fighter_Physics_Check(gear::CollisionEvent e)
 {
     if (e.get_Other_Entity().get<FlagComponent>()->flags & FLAG_FIGHTER)
@@ -17,6 +20,11 @@ static bool fighter_Physics_Check(gear::CollisionEvent e)
 
 BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
 {
+    if (!error_Animation)
+        error_Animation = ResourceManager::get<Animation>("assets/fighters/_error/error.gear");
+    if (!error_Palette)
+        error_Palette = ResourceManager::get<Palette>("assets/fighters/_error/error_palette.gear");
+
     input = FighterInput::create_From(device);
 
     x_Callback = [this](float val)
@@ -27,9 +35,7 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
         {
             if (real_Val)
             {
-                auto transform = m_Entity.get<TransformComponent>();
-                transform->scale[0] = real_Val;
-                m_Entity.update_Transformation();
+                set_Direction(real_Val);
                 play_Animation(&a_Run[0]);
                 if (input->special->get_State() == State::PRESSED)
                     GEAR_DEBUG_LOG("side special %i", real_Val);
@@ -98,11 +104,21 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
             if (flags & FIGHTER_GROUND)
             {
                 if (val)
+                {
+                    set_Direction(val);
+                    play_Animation(a_Sground);
                     GEAR_DEBUG_LOG("side ground %i", val);
+                }
                 else if (input->up->get_State() == State::PRESSED)
+                {
+                    play_Animation(a_Uground);
                     GEAR_DEBUG_LOG("up ground");
+                }
                 else if (input->down->get_State() == State::PRESSED)
+                {
+                    play_Animation(a_Dground);
                     GEAR_DEBUG_LOG("down ground");
+                }
             }
             else
             {
@@ -167,11 +183,19 @@ void BaseFighterScript::init_Input(void)
     input->x_Axis->set_Callback(x_Callback);
 }
 
-static void init_Animation(AnimationComponent *animation, std::string path, Ref<Palette> palette)
+void BaseFighterScript::init_Animation(AnimationComponent *animation, std::string path, Ref<Palette> palette)
 {
-
-    animation->animation = ResourceManager::get<Animation>(path);
-    animation->palette = palette;
+    Ref<Animation> a = ResourceManager::get<Animation>(path);
+    if (a.get())
+    {
+        animation->animation = a;
+        animation->palette = palette;
+    }
+    else
+    {
+        animation->animation = error_Animation;
+        animation->palette = error_Palette;
+    }
 
     animation->offset = {-40, -40, 0};
     animation->parallax_Factor = 1;
@@ -188,26 +212,26 @@ void BaseFighterScript::init_Animations(const char *base_Path)
     init_Animation(&a_Run[0], path + "/animations/right/run.gear", palette);
     init_Animation(&a_Jump[0], path + "/animations/right/jump.gear", palette);
 
-    // init_Animation(&a_Sground[0], path + "/animations/right/sground.gear", palette);
-    // init_Animation(&a_Uground[0], path + "/animations/right/uground.gear", palette);
-    // init_Animation(&a_Dground[0], path + "/animations/right/dground.gear", palette);
+    init_Animation(&a_Sground[0], path + "/animations/right/sground.gear", palette);
+    init_Animation(&a_Uground[0], path + "/animations/right/uground.gear", palette);
+    init_Animation(&a_Dground[0], path + "/animations/right/dground.gear", palette);
 
-    // init_Animation(&a_Sair[0], path + "/animations/right/sair.gear", palette);
-    // init_Animation(&a_Uair[0], path + "/animations/right/uair.gear", palette);
-    // init_Animation(&a_Dair[0], path + "/animations/right/dair.gear", palette);
+    init_Animation(&a_Sair[0], path + "/animations/right/sair.gear", palette);
+    init_Animation(&a_Uair[0], path + "/animations/right/uair.gear", palette);
+    init_Animation(&a_Dair[0], path + "/animations/right/dair.gear", palette);
 
-    // init_Animation(&a_Sspecial[0], path + "/animations/right/sspecial.gear", palette);
-    // init_Animation(&a_Uspecial[0], path + "/animations/right/uspecial.gear", palette);
-    // init_Animation(&a_Dspecial[0], path + "/animations/right/dspecial.gear", palette);
+    init_Animation(&a_Sspecial[0], path + "/animations/right/sspecial.gear", palette);
+    init_Animation(&a_Uspecial[0], path + "/animations/right/uspecial.gear", palette);
+    init_Animation(&a_Dspecial[0], path + "/animations/right/dspecial.gear", palette);
 
-    // init_Animation(&a_Ult[0], path + "/animations/right/ult.gear", palette);
+    init_Animation(&a_Ult[0], path + "/animations/right/ult.gear", palette);
 
-    // init_Animation(&a_Damaged[0], path + "/animations/right/damaged.gear", palette);
-    // init_Animation(&a_Shield[0], path + "/animations/right/shield.gear", palette);
+    init_Animation(&a_Damaged[0], path + "/animations/right/damaged.gear", palette);
+    init_Animation(&a_Shield[0], path + "/animations/right/shield.gear", palette);
 
-    // init_Animation(&a_Ledge_Grab[0], path + "/animations/right/ledge_grab.gear", palette);
-    // init_Animation(&a_Hanging[0], path + "/animations/right/hanging.gear", palette);
-    // init_Animation(&a_Get_Up[0], path + "/animations/right/get_up.gear", palette);
+    init_Animation(&a_Ledge_Grab[0], path + "/animations/right/ledge_grab.gear", palette);
+    init_Animation(&a_Hanging[0], path + "/animations/right/hanging.gear", palette);
+    init_Animation(&a_Get_Up[0], path + "/animations/right/get_up.gear", palette);
 }
 
 int BaseFighterScript::axis_As_Int(float value)
@@ -222,28 +246,32 @@ void BaseFighterScript::pre_Physics(void)
     physics->velocity[0] = (flags & FIGHTER_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());
 
     // GEAR_DEBUG_LOG("flags: %x", flags);
-    if ((flags & FIGHTER_GROUND) == 0)
+    if ((flags & FIGHTER_ATTACKING) == 0)
     {
-        if (physics->velocity[1] < -300)
-            a_Jump[0].frame_Offset = 1;
-        else if (physics->velocity[1] < -100)
-            a_Jump[0].frame_Offset = 2;
-        else if (physics->velocity[1] < 100)
-            a_Jump[0].frame_Offset = 3;
-        else if (physics->velocity[1] < 300)
-            a_Jump[0].frame_Offset = 4;
-        else
-            a_Jump[0].frame_Offset = 5;
-        m_Entity.set<AnimationComponent>(a_Jump[0]);
-    }
-    else
-    {
-        if((prev_Flags & FIGHTER_GROUND) == 0)
+        if ((flags & FIGHTER_GROUND) == 0)
         {
-            if(axis_As_Int(input->x_Axis->get_Value()) == 0)
-                m_Entity.set<AnimationComponent>(a_Idle[0]);
-            else {
-                m_Entity.set<AnimationComponent>(a_Run[0]);
+            if (physics->velocity[1] < -300)
+                a_Jump[0].frame_Offset = 1;
+            else if (physics->velocity[1] < -100)
+                a_Jump[0].frame_Offset = 2;
+            else if (physics->velocity[1] < 100)
+                a_Jump[0].frame_Offset = 3;
+            else if (physics->velocity[1] < 300)
+                a_Jump[0].frame_Offset = 4;
+            else
+                a_Jump[0].frame_Offset = 5;
+            m_Entity.set<AnimationComponent>(a_Jump[0]);
+        }
+        else
+        {
+            if ((prev_Flags & FIGHTER_GROUND) == 0)
+            {
+                if (axis_As_Int(input->x_Axis->get_Value()) == 0)
+                    m_Entity.set<AnimationComponent>(a_Idle[0]);
+                else
+                {
+                    m_Entity.set<AnimationComponent>(a_Run[0]);
+                }
             }
         }
     }
@@ -255,6 +283,16 @@ void BaseFighterScript::pre_Physics(void)
 void BaseFighterScript::play_Animation(AnimationComponent *animation)
 {
     m_Entity.set<AnimationComponent>(*animation);
+}
+
+void BaseFighterScript::set_Direction(int dir)
+{
+    if (dir)
+    {
+        auto transform = m_Entity.get<TransformComponent>();
+        transform->scale[0] = dir;
+        m_Entity.update_Transformation();
+    }
 }
 
 bool BaseFighterScript::is_Phasing(void)

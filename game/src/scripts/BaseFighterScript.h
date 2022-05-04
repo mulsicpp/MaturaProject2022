@@ -13,12 +13,19 @@
 #include "../input/FighterInput.h"
 
 #define FIGHTER_GROUND 0x01
-#define FIGHTER_RECEIVE_INPUT 0x02
-#define FIGHTER_USED_SPECIAL_MOVE 0x04
+#define FIGHTER_INPUT_BLOCKED 0x02
+#define FIGHTER_ATTACKING 0x04
+
+#define FIGHTER_ANIMATION_DEFAULT 0
+#define FIGHTER_ANIMATION_ATTACK 1
+#define FIGHTER_ANIMATION_SPECIAL 2
 
 class BaseFighterScript : public gear::ScriptableEntity
 {
 protected:
+    static gear::Ref<gear::Animation> error_Animation;
+    static gear::Ref<gear::Palette> error_Palette;
+
     gear::Ref<FighterInput> input;
 
     gear::Ref<gear::Collider> collider;
@@ -73,6 +80,8 @@ public:
     virtual void init_Input(void);
     virtual void init_Animations(const char *base_Path);
 
+    static void init_Animation(gear::AnimationComponent *animation, std::string path, gear::Ref<gear::Palette> palette);
+
     static int axis_As_Int(float value);
 
     virtual void pre_Physics(void) override;
@@ -86,6 +95,8 @@ public:
     // virtual void reset_Hitboxes(void);
 
     virtual void play_Animation(gear::AnimationComponent *animation);
+
+    void set_Direction(int dir);
 
     virtual bool is_Phasing(void);
 };
