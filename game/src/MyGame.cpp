@@ -133,7 +133,7 @@ void MyGame::render(void)
     cam.follow_Target();
     Renderer::start_New_Frame();
     Renderer::render_Scene(main_Scene);
-    Renderer::render_All_Hitboxes(main_Scene);
+    // Renderer::render_All_Hitboxes(main_Scene);
     Renderer::show_Frame();
 }
 

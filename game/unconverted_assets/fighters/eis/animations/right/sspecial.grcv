@@ -1,0 +1,12 @@
+animation sspecial.png ../../palettes/default.png
+
+img sspecial.png
+palette ../../palettes/default.png
+
+background 0000ffff
+
+type forward
+
+frame_rate 10
+frame_alignment v
+frame_count 8

@@ -7,5 +7,5 @@
 GEAR_ABSTRACT_INPUT(FighterInput, KFighterInput, CFighterInput, 
 GEAR_BUTTONS(up, down, jump, attack, special, shield)
 GEAR_AXES(x_Axis)
-static void set_Enabled_All(gear::Ref<FighterInput> input, bool enabled);
+void set_Enabled_All(bool enabled);
 );

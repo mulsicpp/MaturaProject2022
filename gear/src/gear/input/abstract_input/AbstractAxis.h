@@ -5,7 +5,9 @@
 
 #include "AbstractElement.h"
 
-#define GEAR_AXES(...) public: gear::Ref<gear::AbstractAxis> __VA_ARGS__;
+#define GEAR_AXES(...) \
+public:                \
+    gear::Ref<gear::AbstractAxis> __VA_ARGS__;
 
 #define GEAR_CREATE_AXIS(type, ...) gear::Ref<gear::AbstractAxis>(new type(__VA_ARGS__))
 
@@ -13,9 +15,11 @@
 
 _GEAR_START
 
-class AbstractAxis : public AbstractElement<float> {
+class AbstractAxis : public AbstractElement<float>
+{
 public:
-  virtual float get_Value(void) const = 0;
+    virtual float get_Value(void) const = 0;
+    virtual void set_Enabled(bool enabled) override;
 };
 
 class AbstractOrAxis : public AbstractAxis
@@ -26,6 +30,7 @@ protected:
 public:
     AbstractOrAxis(const std::vector<Ref<AbstractAxis>> &axes);
     float get_Value(void) const override;
+    virtual void set_Enabled(bool enabled) override;
 };
 
 _GEAR_END

@@ -106,28 +106,38 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
                 if (val)
                 {
                     set_Direction(val);
-                    play_Animation(a_Sground);
+                    play_Animation(a_Sground, FIGHTER_ANIMATION_ATTACK);
                     GEAR_DEBUG_LOG("side ground %i", val);
                 }
                 else if (input->up->get_State() == State::PRESSED)
                 {
-                    play_Animation(a_Uground);
+                    play_Animation(a_Uground, FIGHTER_ANIMATION_ATTACK);
                     GEAR_DEBUG_LOG("up ground");
                 }
                 else if (input->down->get_State() == State::PRESSED)
                 {
-                    play_Animation(a_Dground);
+                    play_Animation(a_Dground, FIGHTER_ANIMATION_ATTACK);
                     GEAR_DEBUG_LOG("down ground");
                 }
             }
             else
             {
                 if (val)
+                {
+                    set_Direction(val);
+                    play_Animation(a_Sair, FIGHTER_ANIMATION_ATTACK);
                     GEAR_DEBUG_LOG("side air %i", val);
+                }
                 else if (input->up->get_State() == State::PRESSED)
+                {
+                    play_Animation(a_Uair, FIGHTER_ANIMATION_ATTACK);
                     GEAR_DEBUG_LOG("up air");
+                }
                 else if (input->down->get_State() == State::PRESSED)
+                {
+                    play_Animation(a_Dair, FIGHTER_ANIMATION_ATTACK);
                     GEAR_DEBUG_LOG("down air");
+                }
             }
         }
     };
@@ -138,11 +148,21 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
         {
             int val = axis_As_Int(input->x_Axis->get_Value());
             if (val)
+            {
+                set_Direction(val);
+                play_Animation(a_Sspecial, FIGHTER_ANIMATION_SPECIAL);
                 GEAR_DEBUG_LOG("side special %i", val);
+            }
             else if (input->up->get_State() == State::PRESSED)
+            {
+                play_Animation(a_Uspecial, FIGHTER_ANIMATION_SPECIAL);
                 GEAR_DEBUG_LOG("up special");
+            }
             else if (input->down->get_State() == State::PRESSED)
+            {
+                play_Animation(a_Dspecial, FIGHTER_ANIMATION_SPECIAL);
                 GEAR_DEBUG_LOG("down special");
+            }
         }
     };
 
@@ -181,6 +201,8 @@ void BaseFighterScript::init_Input(void)
     input->shield->set_Callback(shield_Callback);
 
     input->x_Axis->set_Callback(x_Callback);
+
+    input->set_Enabled_All(false);
 }
 
 void BaseFighterScript::init_Animation(AnimationComponent *animation, std::string path, Ref<Palette> palette)
@@ -201,6 +223,13 @@ void BaseFighterScript::init_Animation(AnimationComponent *animation, std::strin
     animation->parallax_Factor = 1;
     animation->frame_Offset = 0;
     animation->frame_Rate = animation->animation->get_Frame_Rate();
+
+    animation->on_Ended = [this](void)
+    {
+        flags &= ~FIGHTER_PERFORMING_ACTION;
+        input->set_Enabled_All(true);
+        end_Animation();
+    };
 }
 
 void BaseFighterScript::init_Animations(const char *base_Path)
@@ -246,7 +275,7 @@ void BaseFighterScript::pre_Physics(void)
     physics->velocity[0] = (flags & FIGHTER_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());
 
     // GEAR_DEBUG_LOG("flags: %x", flags);
-    if ((flags & FIGHTER_ATTACKING) == 0)
+    if ((flags & FIGHTER_PERFORMING_ACTION) == 0)
     {
         if ((flags & FIGHTER_GROUND) == 0)
         {
@@ -280,9 +309,43 @@ void BaseFighterScript::pre_Physics(void)
     flags &= ~FIGHTER_GROUND;
 }
 
-void BaseFighterScript::play_Animation(AnimationComponent *animation)
+void BaseFighterScript::play_Animation(AnimationComponent *animation, uint8_t type)
 {
+    if (type != FIGHTER_ANIMATION_DEFAULT)
+    {
+        flags |= FIGHTER_PERFORMING_ACTION;
+        input->set_Enabled_All(false);
+    }
     m_Entity.set<AnimationComponent>(*animation);
+}
+
+void BaseFighterScript::end_Animation(void)
+{
+    auto physics = m_Entity.get<DynamicPhysicsComponent>();
+
+    if ((flags & FIGHTER_GROUND) == 0)
+    {
+        if (physics->velocity[1] < -300)
+            a_Jump[0].frame_Offset = 1;
+        else if (physics->velocity[1] < -100)
+            a_Jump[0].frame_Offset = 2;
+        else if (physics->velocity[1] < 100)
+            a_Jump[0].frame_Offset = 3;
+        else if (physics->velocity[1] < 300)
+            a_Jump[0].frame_Offset = 4;
+        else
+            a_Jump[0].frame_Offset = 5;
+        m_Entity.set<AnimationComponent>(a_Jump[0]);
+    }
+    else
+    {
+        if (axis_As_Int(input->x_Axis->get_Value()) == 0)
+            m_Entity.set<AnimationComponent>(a_Idle[0]);
+        else
+        {
+            m_Entity.set<AnimationComponent>(a_Run[0]);
+        }
+    }
 }
 
 void BaseFighterScript::set_Direction(int dir)

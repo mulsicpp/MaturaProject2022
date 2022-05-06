@@ -14,7 +14,7 @@
 
 #define FIGHTER_GROUND 0x01
 #define FIGHTER_INPUT_BLOCKED 0x02
-#define FIGHTER_ATTACKING 0x04
+#define FIGHTER_PERFORMING_ACTION 0x04
 
 #define FIGHTER_ANIMATION_DEFAULT 0
 #define FIGHTER_ANIMATION_ATTACK 1
@@ -80,7 +80,7 @@ public:
     virtual void init_Input(void);
     virtual void init_Animations(const char *base_Path);
 
-    static void init_Animation(gear::AnimationComponent *animation, std::string path, gear::Ref<gear::Palette> palette);
+    void init_Animation(gear::AnimationComponent *animation, std::string path, gear::Ref<gear::Palette> palette);
 
     static int axis_As_Int(float value);
 
@@ -94,7 +94,8 @@ public:
 
     // virtual void reset_Hitboxes(void);
 
-    virtual void play_Animation(gear::AnimationComponent *animation);
+    virtual void play_Animation(gear::AnimationComponent *animation, uint8_t type = FIGHTER_ANIMATION_DEFAULT);
+    virtual void end_Animation(void);
 
     void set_Direction(int dir);
 
