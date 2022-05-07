@@ -51,6 +51,8 @@ protected:
 
     gear::DynamicPhysicsComponent physics;
 
+    gear::Ref<gear::Palette> palette;
+
     gear::AnimationComponent
         a_Idle[2],
         a_Run[2],
@@ -85,7 +87,7 @@ public:
     static int axis_As_Int(float value);
 
     virtual void pre_Physics(void) override;
-    // virtual void init_Animation_Events(void);
+    virtual void init_Animation_Events(void) = 0;
 
     // virtual void damage(double damage);
 

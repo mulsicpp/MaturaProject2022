@@ -1,0 +1,10 @@
+animation projectile.png ../../palettes/default.png
+
+img projectile.png
+palette ../../palettes/default.png
+
+background 0000ffff
+
+frame_rate 5
+frame_alignment v
+frame_count 3

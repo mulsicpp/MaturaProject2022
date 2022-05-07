@@ -186,6 +186,8 @@ BaseFighterScript::~BaseFighterScript() {}
 
 void BaseFighterScript::init(void)
 {
+    init_Animation_Events();
+
     m_Entity.set<FlagComponent>({FLAG_FIGHTER});
     m_Entity.add<AnimationComponent>(a_Idle[0]);
     m_Entity.add<DynamicPhysicsComponent>(physics);
@@ -201,8 +203,6 @@ void BaseFighterScript::init_Input(void)
     input->shield->set_Callback(shield_Callback);
 
     input->x_Axis->set_Callback(x_Callback);
-
-    input->set_Enabled_All(false);
 }
 
 void BaseFighterScript::init_Animation(AnimationComponent *animation, std::string path, Ref<Palette> palette)
@@ -235,7 +235,7 @@ void BaseFighterScript::init_Animation(AnimationComponent *animation, std::strin
 void BaseFighterScript::init_Animations(const char *base_Path)
 {
     std::string path = base_Path;
-    Ref<Palette> palette = ResourceManager::get<Palette>(path + "/palettes/default.gear");
+    palette = ResourceManager::get<Palette>(path + "/palettes/default.gear");
 
     init_Animation(&a_Idle[0], path + "/animations/right/idle.gear", palette);
     init_Animation(&a_Run[0], path + "/animations/right/run.gear", palette);
@@ -262,6 +262,8 @@ void BaseFighterScript::init_Animations(const char *base_Path)
     init_Animation(&a_Hanging[0], path + "/animations/right/hanging.gear", palette);
     init_Animation(&a_Get_Up[0], path + "/animations/right/get_up.gear", palette);
 }
+
+void BaseFighterScript::init_Animation_Events(void) {}
 
 int BaseFighterScript::axis_As_Int(float value)
 {
