@@ -1,5 +1,6 @@
 #include "UIFocusableComponent.h"
 #include "UIUser.h"
+#include "UI.h"
 
 bool gear::UIFocusableComponent::is_Focusable(void) const
 {
@@ -48,11 +49,25 @@ bool gear::UIFocusableComponent::has_Access(int user_ID) const
 void gear::UIFocusableComponent::focus_From(int user_ID)
 {
     m_Focus_Flags |= (1 << user_ID);
+    m_Displayed_Animation = m_Focus_Animation;
+    if (m_User_Palette[user_ID] != nullptr)
+
+        m_Used_Palette = m_User_Palette[user_ID];
 }
 
 void gear::UIFocusableComponent::unfocus_From(int user_ID)
 {
     m_Focus_Flags &= ~(1 << user_ID);
+    m_Used_Palette = m_Default_Palette;
+    m_Displayed_Animation = m_Default_Animation;
+    for (auto user : UI::get_Users())
+        if (is_Focused_By(user->getID()))
+        {
+            m_Displayed_Animation = m_Focus_Animation;
+            if (m_User_Palette[user_ID] != nullptr)
+                m_Used_Palette = m_User_Palette[user_ID];
+            break;
+        }
 }
 
 bool gear::UIFocusableComponent::is_Focused_By(int user_ID) const
@@ -60,7 +75,17 @@ bool gear::UIFocusableComponent::is_Focused_By(int user_ID) const
     return m_Focus_Flags & (1 << user_ID);
 }
 
-void gear::UIFocusableComponent::set_Animation(Ref<Animation> animation, Ref<Palette> palette)
+void gear::UIFocusableComponent::set_Animation(Ref<Animation> animation)
 {
-    m_Focus_Animation = {animation, palette, 0, animation->get_Frame_Rate(), 1, {0, 0, 0}, 1};
+    m_Focus_Animation = animation;
+}
+
+void gear::UIFocusableComponent::set_User_Palette(int user_ID, Ref<Palette> palette)
+{
+    m_User_Palette[user_ID] = palette;
+}
+
+gear::Ref<gear::Palette> gear::UIFocusableComponent::get_User_Palette(int user_ID)
+{
+    return m_User_Palette[user_ID];
 }
