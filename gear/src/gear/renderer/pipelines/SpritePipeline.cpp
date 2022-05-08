@@ -190,33 +190,33 @@ void gear::SpritePipeline::push_Animation_Quad(gear::Entity parent, gear::Transf
 
 void gear::SpritePipeline::push_UI_Quad(gear::Ref<gear::UIComponent> component)
 {
-    float x_Left = component->m_Displayed_Animation.offset[0];
-    float x_Right = component->m_Displayed_Animation.offset[0] + component->m_Displayed_Animation.animation->get_Width();
-    float y_Top = component->m_Displayed_Animation.offset[1];
-    float y_Bottom = component->m_Displayed_Animation.offset[1] + component->m_Displayed_Animation.animation->get_Height();
+    float x_Left = 0;
+    float x_Right = component->m_Displayed_Animation->get_Width();
+    float y_Top = 0;
+    float y_Bottom = component->m_Displayed_Animation->get_Height();
 
-    float depth = component->m_Displayed_Animation.offset[2];
+    float depth = 1;
 
-    int frame_Index = component->m_Displayed_Animation.frame_Offset;
+    int frame_Index = component->m_Frame_Offset;
 
-    float tex_Top = float(frame_Index) / component->m_Displayed_Animation.animation->get_Frame_Count();
-    float tex_Bottom = float(frame_Index + 1) / component->m_Displayed_Animation.animation->get_Frame_Count();
+    float tex_Top = float(frame_Index) / component->m_Displayed_Animation->get_Frame_Count();
+    float tex_Bottom = float(frame_Index + 1) / component->m_Displayed_Animation->get_Frame_Count();
 
     auto mat = component->m_Transform.get_Matrix();
 
     Vector<float, 3> pos = (mat * Vector<double, 3>{x_Left, y_Top, 1}).cast_To<float, 3>();
-    instance.m_Temp_Vertex_Data[0] = {{pos[0], pos[1], depth}, {0, tex_Top}, instance.m_Batch_Index, component->m_Displayed_Animation.parallax_Factor};
+    instance.m_Temp_Vertex_Data[0] = {{pos[0], pos[1], depth}, {0, tex_Top}, instance.m_Batch_Index, 1};
     pos = (mat * Vector<double, 3>{x_Right, y_Top, 1}).cast_To<float, 3>();
-    instance.m_Temp_Vertex_Data[1] = {{pos[0], pos[1], depth}, {1, tex_Top}, instance.m_Batch_Index, component->m_Displayed_Animation.parallax_Factor};
+    instance.m_Temp_Vertex_Data[1] = {{pos[0], pos[1], depth}, {1, tex_Top}, instance.m_Batch_Index, 1};
     pos = (mat * Vector<double, 3>{x_Right, y_Bottom, 1}).cast_To<float, 3>();
-    instance.m_Temp_Vertex_Data[2] = {{pos[0], pos[1], depth}, {1, tex_Bottom}, instance.m_Batch_Index, component->m_Displayed_Animation.parallax_Factor};
+    instance.m_Temp_Vertex_Data[2] = {{pos[0], pos[1], depth}, {1, tex_Bottom}, instance.m_Batch_Index, 1};
     pos = (mat * Vector<double, 3>{x_Left, y_Bottom, 1}).cast_To<float, 3>();
-    instance.m_Temp_Vertex_Data[3] = {{pos[0], pos[1], depth}, {0, tex_Bottom}, instance.m_Batch_Index, component->m_Displayed_Animation.parallax_Factor};
+    instance.m_Temp_Vertex_Data[3] = {{pos[0], pos[1], depth}, {0, tex_Bottom}, instance.m_Batch_Index, 1};
 
     glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
-    glBindTexture(GL_TEXTURE_2D, component->m_Displayed_Animation.animation->get_TextureID());
+    glBindTexture(GL_TEXTURE_2D, component->m_Displayed_Animation->get_TextureID());
     glActiveTexture(GL_TEXTURE1 + 2 * instance.m_Batch_Index);
-    glBindTexture(GL_TEXTURE_1D, component->m_Displayed_Animation.palette->get_TextureID());
+    glBindTexture(GL_TEXTURE_1D, component->m_Palette->get_TextureID());
 
     memcpy(instance.m_Vertex_Data + (4 * instance.m_Batch_Index), instance.m_Temp_Vertex_Data, 4);
 
