@@ -40,7 +40,7 @@ public:
     void unfocus_From(int user_ID);
     bool is_Focused_By(int user_ID) const;
 
-    void set_Animation(Ref<Animation> animation);
+    void set_Focused_Animation(Ref<Animation> animation);
 
     void set_User_Palette(int user_ID, Ref<Palette> palette);
     Ref<Palette> get_User_Palette(int user_ID);

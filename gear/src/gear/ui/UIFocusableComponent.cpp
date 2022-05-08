@@ -75,7 +75,7 @@ bool gear::UIFocusableComponent::is_Focused_By(int user_ID) const
     return m_Focus_Flags & (1 << user_ID);
 }
 
-void gear::UIFocusableComponent::set_Animation(Ref<Animation> animation)
+void gear::UIFocusableComponent::set_Focused_Animation(Ref<Animation> animation)
 {
     m_Focus_Animation = animation;
 }
