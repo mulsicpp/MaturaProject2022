@@ -9,13 +9,14 @@ class UIButton : UIFocusableComponent
 {
 private:
     std::function<void(void)> m_Submit_Callback;
-    AnimationComponent m_Pressed_Animation;
-    AnimationComponent m_Released_Animation;
+    Ref<Animation> m_Pressed_Animation;
 
 public:
-    void submit(void);
     void set_Callback(std::function<void(void)> callback);
     std::function<void(void)> get_Callback(void);
+    void set_Pressed_Animation(Ref<Animation> animation);
+    void submit(void);
+
 };
 
 _GEAR_END
