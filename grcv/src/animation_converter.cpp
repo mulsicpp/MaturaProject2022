@@ -26,6 +26,18 @@ void AnimationConverter::command(int argc, char **argv)
             for (int i = 0; i < 4; i++)
                 color_Bytes[i] = 16 * (argv[1][2 * i] >= 'a' ? (argv[1][2 * i] - 'a' + 10) : (argv[1][2 * i] - '0')) + (argv[1][2 * i + 1] >= 'a' ? (argv[1][2 * i + 1] - 'a' + 10) : (argv[1][2 * i + 1] - '0'));
         }
+        else if (strcmp(argv[0], "type") == 0 && argc == 2)
+        {
+            if(strcmp(argv[1], "loop") == 0) {
+                m_Type = 0;
+            }
+            else if(strcmp(argv[1], "forward") == 0) {
+                m_Type = 1;
+            }
+            else if(strcmp(argv[1], "ping_pong") == 0) {
+                m_Type = 2;
+            }
+        }
         else if (strcmp(argv[0], "frame_rate") == 0 && argc == 2)
         {
             m_Frame_Rate = atof(argv[1]);
@@ -79,6 +91,7 @@ void AnimationConverter::convert(void)
     m_File_Out->put<uint16_t>(width);
     m_File_Out->put<uint16_t>(height);
     m_File_Out->put<uint16_t>(m_Frame_Count);
+    m_File_Out->put<uint8_t>(m_Type);
     m_File_Out->put<float>(m_Frame_Rate);
 
     if (m_Vertical)

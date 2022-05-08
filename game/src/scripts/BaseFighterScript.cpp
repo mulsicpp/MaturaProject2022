@@ -164,17 +164,16 @@ void BaseFighterScript::init_Input(void)
     input->x_Axis->set_Callback(x_Callback);
 }
 
-static void init_Animation(AnimationComponent *animation, std::string path, Ref<Palette> palette, AnimationType type)
+static void init_Animation(AnimationComponent *animation, std::string path, Ref<Palette> palette)
 {
 
     animation->animation = ResourceManager::get<Animation>(path);
     animation->palette = palette;
-    animation->type = type;
 
     animation->offset = {-40, -40, 0};
     animation->parallax_Factor = 1;
     animation->frame_Offset = 0;
-    animation->frame_Rate = animation->animation->get_Default_Frame_Rate();
+    animation->frame_Rate = animation->animation->get_Frame_Rate();
 }
 
 void BaseFighterScript::init_Animations(const char *base_Path)
@@ -182,30 +181,30 @@ void BaseFighterScript::init_Animations(const char *base_Path)
     std::string path = base_Path;
     Ref<Palette> palette = ResourceManager::get<Palette>(path + "/palettes/default.gear");
 
-    init_Animation(&a_Idle, path + "/animations/idle.gear", palette, AnimationType::LOOP);
-    init_Animation(&a_Run, path + "/animations/run.gear", palette, AnimationType::LOOP);
-    init_Animation(&a_Jump, path + "/animations/jump.gear", palette, AnimationType::FORWARD);
+    init_Animation(&a_Idle, path + "/animations/idle.gear", palette);
+    init_Animation(&a_Run, path + "/animations/run.gear", palette);
+    init_Animation(&a_Jump, path + "/animations/jump.gear", palette);
 
-    // init_Animation(&a_Sground, path + "/animations/sground.gear", palette, AnimationType::FORWARD);
-    // init_Animation(&a_Uground, path + "/animations/uground.gear", palette, AnimationType::FORWARD);
-    // init_Animation(&a_Dground, path + "/animations/dground.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Sground, path + "/animations/sground.gear", palette);
+    // init_Animation(&a_Uground, path + "/animations/uground.gear", palette);
+    // init_Animation(&a_Dground, path + "/animations/dground.gear", palette);
 
-    // init_Animation(&a_Sair, path + "/animations/sair.gear", palette, AnimationType::FORWARD);
-    // init_Animation(&a_Uair, path + "/animations/uair.gear", palette, AnimationType::FORWARD);
-    // init_Animation(&a_Dair, path + "/animations/dair.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Sair, path + "/animations/sair.gear", palette);
+    // init_Animation(&a_Uair, path + "/animations/uair.gear", palette);
+    // init_Animation(&a_Dair, path + "/animations/dair.gear", palette);
 
-    // init_Animation(&a_Sspecial, path + "/animations/sspecial.gear", palette, AnimationType::FORWARD);
-    // init_Animation(&a_Uspecial, path + "/animations/uspecial.gear", palette, AnimationType::FORWARD);
-    // init_Animation(&a_Dspecial, path + "/animations/dspecial.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Sspecial, path + "/animations/sspecial.gear", palette);
+    // init_Animation(&a_Uspecial, path + "/animations/uspecial.gear", palette);
+    // init_Animation(&a_Dspecial, path + "/animations/dspecial.gear", palette);
 
-    // init_Animation(&a_Ult, path + "/ult.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Ult, path + "/ult.gear", palette);
 
-    // init_Animation(&a_Damaged, path + "/damaged.gear", palette, AnimationType::FORWARD);
-    // init_Animation(&a_Shield, path + "/shield.gear", palette, AnimationType::LOOP);
+    // init_Animation(&a_Damaged, path + "/damaged.gear", palette);
+    // init_Animation(&a_Shield, path + "/shield.gear", palette);
 
-    // init_Animation(&a_Ledge_Grab, path + "/ledge_grab.gear", palette, AnimationType::FORWARD);
-    // init_Animation(&a_Hanging, path + "/hanging.gear", palette, AnimationType::LOOP);
-    // init_Animation(&a_Get_Up, path + "/get_up.gear", palette, AnimationType::FORWARD);
+    // init_Animation(&a_Ledge_Grab, path + "/ledge_grab.gear", palette);
+    // init_Animation(&a_Hanging, path + "/hanging.gear", palette);
+    // init_Animation(&a_Get_Up, path + "/get_up.gear", palette);
 }
 
 int BaseFighterScript::axis_As_Int(float value)

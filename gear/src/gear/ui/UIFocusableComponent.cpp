@@ -62,5 +62,5 @@ bool gear::UIFocusableComponent::is_Focused_By(int user_ID) const
 
 void gear::UIFocusableComponent::set_Animation(Ref<Animation> animation, Ref<Palette> palette)
 {
-    m_Focus_Animation = {animation, palette, AnimationType::FORWARD, 0, animation->get_Default_Frame_Rate(), 1, {0, 0, 0}, 1};
+    m_Focus_Animation = {animation, palette, 0, animation->get_Frame_Rate(), 1, {0, 0, 0}, 1};
 }

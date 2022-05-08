@@ -5,6 +5,8 @@ palette kirby_walk_palette.png
 
 background 00ff00ff
 
+type forward
+
 frame_rate 0
 frame_alignment v
 frame_count 10

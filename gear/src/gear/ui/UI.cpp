@@ -1,7 +1,7 @@
 #include "UI.h"
 
-static std::vector<gear::Ref<gear::UIUser>> m_Users;
-static gear::Ref<gear::UIContainer> m_Container;
+std::vector<gear::Ref<gear::UIUser>> gear::UI::m_Users;
+gear::Ref<gear::UIContainer> gear::UI::m_Container;
 
 gear::Ref<gear::UIUser> gear::UI::create_User(InputDevice device)
 {

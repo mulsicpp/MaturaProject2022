@@ -7,23 +7,29 @@
 
 _GEAR_START
 
+class SpritePipeline;
+
 class UIContainer
 {
+    friend class SpritePipeline;
 private:
-    Scene *m_Scene;
     std::vector<Ref<UIComponent>> m_Components;
-    UIContainer(uint8_t id);
+    UIContainer(void);
     UIContainer(const UIContainer &container) = delete;
     UIContainer &operator=(const UIContainer &container) = delete;
 
 public:
     ~UIContainer();
-    static Ref<UIContainer> create(uint8_t id);
+    static Ref<UIContainer> create(void);
     void generate_Navigation(void);
+
+    std::vector<Ref<UIComponent>> get_Components(void) const;
+
     template <class T>
-    void add_Component(Ref<T> component)
+    void add_Component(T component)
     {
-        m_Components.push_back(component);
+        Ref<UIComponent> comp = Ref<T>(new T(component));
+        m_Components.push_back(comp);
     }
 };
 

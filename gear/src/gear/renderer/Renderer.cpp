@@ -15,6 +15,8 @@
 #include <gear/collision/HitboxComponent.h>
 #include <gear/collision/HurtboxComponent.h>
 
+#include <gear/ui/UI.h>
+
 using SpritePipeline = gear::SpritePipeline;
 
 gear::Framebuffer gear::Renderer::m_Framebuffer;
@@ -98,11 +100,13 @@ void gear::Renderer::set_Viewport(Vector<int, 2> top_Left, Vector<int, 2> bottom
     m_Bottom_Right = bottom_Right;
 }
 
-void gear::Renderer::set_Clear_Color(Vector<float, 4> color) {
+void gear::Renderer::set_Clear_Color(Vector<float, 4> color)
+{
     m_Clear_Color = color;
 }
-  
-gear::Vector<float, 4> gear::Renderer::get_Clear_Color(void) {
+
+gear::Vector<float, 4> gear::Renderer::get_Clear_Color(void)
+{
     return m_Clear_Color;
 }
 
@@ -115,7 +119,7 @@ void gear::Renderer::render_Scene(gear::Scene *scene)
     glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
 
     if (m_Camera != nullptr)
-        glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), int(m_Camera->get_Position()[0] + 0.5), int(m_Camera->get_Position()[1] + 0.5));
+        glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), m_Camera->get_Position()[0], m_Camera->get_Position()[1]);
     else
         glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), 0, 0);
 
@@ -133,6 +137,22 @@ void gear::Renderer::render_Scene(gear::Scene *scene)
     TextPipeline::get_Instance().render(scene);
 
     continue_Animations(scene);
+}
+
+void gear::Renderer::render_UI(void)
+{
+    auto container = gear::UI::get_Container();
+
+    m_Framebuffer.bind();
+
+    SpritePipeline::get_Instance().bind();
+    glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Width"), m_Framebuffer.m_Width);
+    glUniform1i(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Frame_Height"), m_Framebuffer.m_Height);
+    
+    glUniform2f(glGetUniformLocation(SpritePipeline::get_Instance().m_Shader, "u_Camera_Pos"), m_Framebuffer.m_Width / 2, m_Framebuffer.m_Height / 2);
+
+    SpritePipeline::get_Instance().render_UI(container);
+
 }
 
 void gear::Renderer::render_Shape(const gear::Shape *shape, const Vector<float, 4> &color)

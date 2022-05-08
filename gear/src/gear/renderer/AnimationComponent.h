@@ -6,14 +6,11 @@
 #include <gear/resource/Palette.h>
 #include <functional>
 
-#include "AnimationType.h"
-
 _GEAR_START
 
 struct AnimationComponent {
   Ref<Animation> animation;
   Ref<Palette> palette;
-  AnimationType type = AnimationType::LOOP;
   float frame_Offset;
   float frame_Rate;
   float parallax_Factor = 1;

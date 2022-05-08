@@ -1,0 +1,7 @@
+animation default.png palette.png
+
+img default.png
+palette palette.png
+
+frame_count 1
+frame_rate 0

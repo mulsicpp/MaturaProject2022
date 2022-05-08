@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <gear/core/debug/log.h>
 
-gear::Animation::Animation(void) : m_TextureID(0), m_Width(0), m_Height(0), m_Frame_Count(0), m_Default_Frame_Rate(0) {}
+gear::Animation::Animation(void) : m_TextureID(0), m_Width(0), m_Height(0), m_Frame_Count(0), m_Type(Type::LOOP), m_Frame_Rate(0) {}
 
 gear::Animation::~Animation()
 {
@@ -18,7 +18,11 @@ int gear::Animation::load(gear::FileStream *file_Stream)
   file_Stream->get<uint16_t>(&m_Width);
   file_Stream->get<uint16_t>(&m_Height);
   file_Stream->get<uint16_t>(&m_Frame_Count);
-  file_Stream->get<float>(&m_Default_Frame_Rate);
+
+  uint8_t type;
+  file_Stream->get<uint8_t>(&type);
+  m_Type = Type(type);
+  file_Stream->get<float>(&m_Frame_Rate);
 
   uint8_t *data = new uint8_t[m_Width * m_Height * m_Frame_Count];
   file_Stream->get<uint8_t>(data, m_Width * m_Height * m_Frame_Count);
@@ -40,6 +44,8 @@ uint16_t gear::Animation::get_Width(void) const { return m_Width; }
 uint16_t gear::Animation::get_Height(void) const { return m_Height; }
 uint16_t gear::Animation::get_Frame_Count(void) const { return m_Frame_Count; }
 
-float gear::Animation::get_Default_Frame_Rate(void) const { return m_Default_Frame_Rate; }
+gear::Animation::Type gear::Animation::get_Type(void) const { return m_Type; }
+
+float gear::Animation::get_Frame_Rate(void) const { return m_Frame_Rate; }
 
 unsigned int gear::Animation::get_TextureID(void) const { return m_TextureID; }

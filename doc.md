@@ -84,8 +84,9 @@ Wird der Befehl erneut ausgeführt, so wird die Ausgabedatei nicht neu erstellt.
 | UINT16 | 0x7 | 2 | Breite | Breite des Animation in Pixel |
 | UINT16 | 0x9 | 2 | Höhe | Höhe des Animation in Pixel |
 | UINT16 | 0xb | 2 | Anzahl | Anzahl der vorhandenen Bilder |
-| FLOAT | 0xd | 4 | Bildrate | Bildrate der Animation in Bilder pro Sekunde |
-| UINT8[] | 0x11 | *Breite* * *Höhe* * *Anzahl* | Daten | Enthält die 8-bit Pixel der Animation |
+| UINT16 | 0xd | 1 | Typ | Typ der Animation (0 = LOOP, 1 = FORWARD, 2 = PING_PONG) |
+| FLOAT | 0xe | 4 | Bildrate | Bildrate der Animation in Bilder pro Sekunde |
+| UINT8[] | 0x12 | *Breite* * *Höhe* * *Anzahl* | Daten | Enthält die 8-bit Pixel der Animation |
 
 ### Schriftart
 

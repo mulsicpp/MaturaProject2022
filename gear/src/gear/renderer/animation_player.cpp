@@ -8,9 +8,9 @@ static std::vector<std::function<void(void)>> callbacks;
 static void animation_Player_Callback(gear::Entity parent, gear::AnimationComponent &animation)
 {
     int prev_Frame = animation.frame_Offset;
-    switch (animation.type)
+    switch (animation.animation->get_Type())
     {
-    case gear::AnimationType::FORWARD:
+    case gear::Animation::Type::FORWARD:
         if (animation.frame_Offset + animation.frame_Rate * gear::Game::get_Delta_Time() < animation.animation->get_Frame_Count())
             animation.frame_Offset += animation.frame_Rate * gear::Game::get_Delta_Time();
         else if (animation.on_Ended != nullptr)
@@ -20,7 +20,7 @@ static void animation_Player_Callback(gear::Entity parent, gear::AnimationCompon
         if (animation.on_Frame_Changed != nullptr && (int)animation.frame_Offset != prev_Frame)
             callbacks.push_back(std::bind(animation.on_Frame_Changed, (int)animation.frame_Offset));
         break;
-    case gear::AnimationType::LOOP:
+    case gear::Animation::Type::LOOP:
         if (animation.frame_Offset + animation.frame_Rate * gear::Game::get_Delta_Time() >= animation.animation->get_Frame_Count())
             if (animation.on_Ended != nullptr)
                 callbacks.push_back(animation.on_Ended);
@@ -31,7 +31,7 @@ static void animation_Player_Callback(gear::Entity parent, gear::AnimationCompon
         if (animation.on_Frame_Changed != nullptr && (int)animation.frame_Offset != prev_Frame)
             callbacks.push_back(std::bind(animation.on_Frame_Changed, (int)animation.frame_Offset));
         break;
-    case gear::AnimationType::PING_PONG:
+    case gear::Animation::Type::PING_PONG:
         animation.frame_Offset += animation.frame_Rate * gear::Game::get_Delta_Time() * animation.factor;
         while (animation.frame_Offset < 0 || animation.frame_Offset >= animation.animation->get_Frame_Count())
         {

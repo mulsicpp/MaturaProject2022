@@ -1,12 +1,11 @@
 #include "UIComponent.h"
 #include <gear/scene/TransformComponent.h>
 
-gear::UIComponent::UIComponent(Entity entity, Ref<Animation> animation, Ref<Palette> palette, Vector<double, 2> position)
+gear::UIComponent::UIComponent(const TransformComponent &transform, const AnimationComponent &default_Animation)
+    : m_Transform(transform), m_Default_Animation(default_Animation)
 {
-    m_Entity = entity;
-    m_Default_Animation = {animation, palette, AnimationType::LOOP, 0, animation->get_Default_Frame_Rate(), 1, {0, 0, 0}, 1};
-    m_Entity.add<TransformComponent>({position, {1, 1}, 0});
-    m_Entity.add<AnimationComponent>(m_Default_Animation);
+    m_Displayed_Animation = m_Default_Animation;
+    m_Transform.update_Matrix();
 }
 
 bool gear::UIComponent::is_Focusable(void) const
@@ -14,17 +13,24 @@ bool gear::UIComponent::is_Focusable(void) const
     return false;
 }
 
-gear::Vector<double, 2> gear::UIComponent::get_Position(void) const
+gear::TransformComponent gear::UIComponent::get_Transform(void) const
 {
-    return m_Entity.get<TransformComponent>()->position;
-}
-void gear::UIComponent::set_Position(Vector<double, 2> position)
-{
-    m_Entity.get<TransformComponent>()->position = position;
+    return m_Transform;
 }
 
-void gear::UIComponent::set_Animation(Ref<Animation> animation, Ref<Palette> palette)
+void gear::UIComponent::set_Transform(const TransformComponent &transform)
 {
-    m_Default_Animation = {animation, palette, AnimationType::LOOP, 0, animation->get_Default_Frame_Rate(), 1, {0, 0, 0}, 1};
-    m_Entity.add<AnimationComponent>(m_Default_Animation);
+    m_Transform = transform;
+    m_Transform.update_Matrix();
+}
+
+gear::AnimationComponent gear::UIComponent::get_Default_Animation(void) const
+{
+    return m_Default_Animation;
+}
+
+void gear::UIComponent::set_Default_Animation(const AnimationComponent &default_Animation)
+{
+    m_Default_Animation = default_Animation;
+    m_Displayed_Animation = m_Default_Animation;
 }

@@ -15,6 +15,8 @@ private:
     uint16_t m_Frame_Count = 0;
     float m_Frame_Rate = 0;
 
+    uint8_t m_Type = 0;
+
 protected:
     void command(int argc, char **argv);
     void convert(void);
