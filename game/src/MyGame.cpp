@@ -137,7 +137,7 @@ void MyGame::on_Startup(void)
 
     Ref<UIContainer> main_Container = UIContainer::create();
 
-    main_Container->add_Component<UIComponent>({{{0, 0}}, {gear::ResourceManager::get<Animation>("assets/ui/test_button/default.gear"), gear::ResourceManager::get<Palette>("assets/ui/test_button/palette.gear"), 0, 0, 1, {0, 0, 1}}});
+    main_Container->add_Component<UIComponent>({{{0, 0}}, gear::ResourceManager::get<Animation>("assets/ui/test_button/default.gear"), gear::ResourceManager::get<Palette>("assets/ui/test_button/palette.gear"),0});
 
     UI::set_Container(main_Container);
 }
