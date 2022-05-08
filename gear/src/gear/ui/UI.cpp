@@ -3,6 +3,10 @@
 std::vector<gear::Ref<gear::UIUser>> gear::UI::m_Users;
 gear::Ref<gear::UIContainer> gear::UI::m_Container;
 
+std::vector<gear::Ref<gear::UIUser>> gear::UI::get_Users(){
+    return UI::m_Users;
+}
+
 gear::Ref<gear::UIUser> gear::UI::create_User(InputDevice device)
 {
     auto user = Ref<UIUser>(new UIUser(device));
@@ -21,6 +25,7 @@ gear::Ref<gear::UIUser> gear::UI::get_User_At(int index)
 {
     return m_Users.at(index);
 }
+
 
 void gear::UI::remove_User_By_ID(int id)
 {

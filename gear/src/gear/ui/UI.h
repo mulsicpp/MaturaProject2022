@@ -14,6 +14,7 @@ private:
     static std::vector<Ref<UIUser>> m_Users;
     static Ref<UIContainer> m_Container;
 public:
+    static std::vector<Ref<UIUser>> get_Users();
     static Ref<UIUser> create_User(InputDevice device);
     static Ref<UIUser> get_User_By_ID(int id);
     static Ref<UIUser> get_User_At(int index);
