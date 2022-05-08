@@ -1,10 +1,11 @@
 #include "UIComponent.h"
 #include <gear/scene/TransformComponent.h>
 
-gear::UIComponent::UIComponent(const TransformComponent &transform, Ref<Animation> default_Animation, Ref<Palette> palette, float frame_Offset)
-    : m_Transform(transform), m_Default_Animation(default_Animation), m_Palette(palette), m_Frame_Offset(frame_Offset)
+gear::UIComponent::UIComponent(const TransformComponent &transform, Ref<Animation> default_Animation, Ref<Palette> default_Palette, float frame_Offset)
+    : m_Transform(transform), m_Default_Animation(default_Animation), m_Default_Palette(default_Palette), m_Frame_Offset(frame_Offset)
 {
     m_Displayed_Animation = m_Default_Animation;
+    m_Used_Palette = m_Default_Palette;
     m_Transform.update_Matrix();
 }
 
@@ -35,13 +36,13 @@ void gear::UIComponent::set_Default_Animation(Ref<Animation> default_Animation)
     m_Displayed_Animation = m_Default_Animation;
 }
 
-gear::Ref<gear::Palette> gear::UIComponent::get_Palette(void) const
+gear::Ref<gear::Palette> gear::UIComponent::get_Default_Palette(void) const
 {
-    return m_Palette;
+    return m_Default_Palette;
 }
-void gear::UIComponent::set_Palette(Ref<Palette> palette)
+void gear::UIComponent::set_Default_Palette(Ref<Palette> default_Palette)
 {
-    m_Palette = palette;
+    m_Default_Palette = default_Palette;
 }
 float gear::UIComponent::get_Frame_Offset(void) const
 {

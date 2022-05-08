@@ -216,7 +216,7 @@ void gear::SpritePipeline::push_UI_Quad(gear::Ref<gear::UIComponent> component)
     glActiveTexture(GL_TEXTURE0 + 2 * instance.m_Batch_Index);
     glBindTexture(GL_TEXTURE_2D, component->m_Displayed_Animation->get_TextureID());
     glActiveTexture(GL_TEXTURE1 + 2 * instance.m_Batch_Index);
-    glBindTexture(GL_TEXTURE_1D, component->m_Palette->get_TextureID());
+    glBindTexture(GL_TEXTURE_1D, component->m_Used_Palette->get_TextureID());
 
     memcpy(instance.m_Vertex_Data + (4 * instance.m_Batch_Index), instance.m_Temp_Vertex_Data, 4);
 
