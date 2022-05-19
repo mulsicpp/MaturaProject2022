@@ -16,8 +16,8 @@ _GEAR_START
 void _clear_Text_Cache(unsigned int entityID);
 
 struct TextComponent {
-  bool raw_Text = true;
   std::string text;
+  bool raw_Text = true;
   Ref<Font> font;
   Vector<double, 3> offset = {0, 0, 0};
   unsigned int width, height;

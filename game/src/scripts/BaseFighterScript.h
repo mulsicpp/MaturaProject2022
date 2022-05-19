@@ -39,6 +39,9 @@ protected:
     double jump_Strenght = 400;
     double air_Jump_Strength = 350;
 
+    int max_Health = 500;
+    int health = 500;
+
     std::function<void(gear::Action)>
         up_Callback,
         down_Callback,
@@ -74,20 +77,20 @@ protected:
         a_Get_Up[2];
 
 public:
-    BaseFighterScript(gear::InputDevice device, const char *base_Path);
+    BaseFighterScript(gear::InputDevice device, const char *base_Path, std::string palette_Name);
     ~BaseFighterScript();
 
     virtual void init(void) override;
 
     virtual void init_Input(void);
-    virtual void init_Animations(const char *base_Path);
+    virtual void init_Animations(const char *base_Path, std::string palette_Name);
 
     void init_Animation(gear::AnimationComponent *animation, std::string path, gear::Ref<gear::Palette> palette);
 
     static int axis_As_Int(float value);
 
     virtual void pre_Physics(void) override;
-    virtual void init_Animation_Events(void) = 0;
+    virtual void init_Animation_Events(void);
 
     // virtual void damage(double damage);
 

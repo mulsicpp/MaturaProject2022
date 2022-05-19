@@ -77,7 +77,7 @@ void MyGame::on_Startup(void)
 
     Component<FlagComponent>::allow();
 
-    // window->set_Fullscreen();
+    window->set_Fullscreen();
 
     GEAR_DEBUG_LOG("width: %i height: %i", window->get_Width(), window->get_Height());
 
@@ -93,29 +93,74 @@ void MyGame::on_Startup(void)
     sprite.sprite = ResourceManager::get<Sprite>("assets/stages/floating_island/main_stage_bg.gear");
     sprite.offset = {-sprite.sprite->get_Width() / 2., -sprite.sprite->get_Height() / 2., -0.1};
 
-    Entity platform = main_Scene->create_Entity();
-    platform.add<TransformComponent>({{0, 0}, {1, 1}, 0});
-    platform.add<SpriteComponent>(sprite);
+    Entity stage = main_Scene->create_Entity();
+    stage.add<TransformComponent>({{0, 0}, {1, 1}, 0});
+    stage.add<SpriteComponent>(sprite);
 
     StaticPhysicsComponent physics;
     physics.collider = Collider::create(Rect{{-sprite.sprite->get_Width() / 2. + 16, -sprite.sprite->get_Height() / 2. + 250}, {sprite.sprite->get_Width() / 2. - 10, -sprite.sprite->get_Height() / 2. + 290}});
     physics.check = gear::default_Physics_Check;
     physics.restitution = 1;
-    platform.add<StaticPhysicsComponent>(physics);
+    stage.add<StaticPhysicsComponent>(physics);
 
     physics.check = platform_Physics_Check;
 
     sprite.sprite = ResourceManager::get<Sprite>("assets/stages/floating_island/main_stage_fg.gear");
     sprite.offset = {-sprite.sprite->get_Width() / 2., -sprite.sprite->get_Height() / 2., 0.1};
 
-    Entity platform2 = main_Scene->create_Entity();
-    platform2.add<TransformComponent>({{0, 0}, {1, 1}, 0});
-    platform2.add<SpriteComponent>(sprite);
+    Entity stage2 = main_Scene->create_Entity();
+    stage2.add<TransformComponent>({{0, 0}, {1, 1}, 0});
+    stage2.add<SpriteComponent>(sprite);
     //physics.collider = Collider::create(Rect{{-sprite.sprite->get_Width() / 2. + 250, -sprite.sprite->get_Height() / 2. + 11}, {-sprite.sprite->get_Width() / 2. + 280, sprite.sprite->get_Height() / 2. - 7}});
     //platform2.add<StaticPhysicsComponent>(physics);
 
-    medusa = main_Scene->create_Entity();
-    medusa.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::KEYBOARD));
+    p1 = main_Scene->create_Entity();
+    p1.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::KEYBOARD, "vanilla.gear"));
+    p1.set<TransformComponent>({{-100, -30}});
+
+    p2 = main_Scene->create_Entity();
+    p2.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::CONTROLLER_1, "dark.gear"));
+    p2.set<TransformComponent>({{100, -30}});
+
+    StaticPhysicsComponent physics2;
+    physics2.collider = Collider::create(Rect({0, 0}, {100, 6}));
+    physics2.check = platform_Physics_Check;
+
+    Entity platform1 = main_Scene->create_Entity();
+    platform1.set<TransformComponent>({{-sprite.sprite->get_Width() / 2 + 135., -sprite.sprite->get_Height() / 2 + 185.}, {1, 1}, 0});
+    platform1.add<StaticPhysicsComponent>(physics2);
+
+    physics2.collider = Collider::create(Rect({0, 0}, {100, 6}));
+
+    Entity platform2 = main_Scene->create_Entity();
+    platform2.set<TransformComponent>({{-sprite.sprite->get_Width() / 2 + 60., -sprite.sprite->get_Height() / 2 + 118.}, {1, 1}, 0});
+    platform2.add<StaticPhysicsComponent>(physics2);
+
+    physics2.collider = Collider::create(Rect({0, 0}, {100, 6}));
+
+    Entity platform3 = main_Scene->create_Entity();
+    platform3.set<TransformComponent>({{-sprite.sprite->get_Width() / 2 + 267., -sprite.sprite->get_Height() / 2 + 154.}, {1, 1}, 0});
+    platform3.add<StaticPhysicsComponent>(physics2);
+
+    //health_P1 = main_Scene->create_Entity();
+    // TextComponent t;
+    // t.text = "0.0%";
+    // t.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
+    // t.colors = std::vector<Vector<uint8_t, 4>>(t.font->get_Colors());
+    // t.colors[0] = {240, 16, 16, 255};
+    // t.colors[1] = {120,  8,  8, 255};
+    // t.break_Word = true;
+    // t.height = 200;
+    // t.width = 200;
+    // t.offset = {-10, -20};
+    // p1.add<TextComponent>(t);
+
+    // //health_P2 = main_Scene->create_Entity();
+
+    // t.text = "15.0%";
+    // t.colors[0] = {16, 64, 255, 255};
+    // t.colors[1] = { 8, 32, 127, 255};
+    // p2.add<TextComponent>(t);
 
     main_Scene->update_Transformation();
 
@@ -128,9 +173,10 @@ void MyGame::on_Startup(void)
 
 void MyGame::render(void)
 {
-    cam_Pos = medusa.get<TransformComponent>()->position;
+    cam_Pos = (p1.get<TransformComponent>()->position + p2.get<TransformComponent>()->position) / 2;
 
     cam.follow_Target();
+    
     Renderer::start_New_Frame();
     Renderer::render_Scene(main_Scene);
     // Renderer::render_All_Hitboxes(main_Scene);

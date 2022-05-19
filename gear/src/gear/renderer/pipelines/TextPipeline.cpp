@@ -190,6 +190,7 @@ void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, Transfo
         glGenBuffers(1, &data.vertex_Buffer_ID);
         glGenBuffers(1, &data.index_Buffer_ID);
 
+        GEAR_DEBUG_LOG("colors[0]: {%i, %i, %i, %i}", data.state.colors[0][0], data.state.colors[0][1], data.state.colors[0][2], data.state.colors[0][3]);
         instance.generate_Buffers(&data);
 
         instance.m_Cache[parent.get_Scene_ID()].insert({parent.get_Entity_ID(), data});
@@ -207,6 +208,8 @@ void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, Transfo
             text.break_Word != text_Other.break_Word)
         {
             instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()].state = text;
+            auto data = instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()];
+            GEAR_DEBUG_LOG("colors[0]: {%i, %i, %i, %i}", data.state.colors[0][0], data.state.colors[0][1], data.state.colors[0][2], data.state.colors[0][3]);
             instance.generate_Buffers(&(instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()]));
         }
     }

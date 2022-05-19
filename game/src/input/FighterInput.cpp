@@ -12,6 +12,8 @@ using namespace gear;
 
 void FighterInput::set_Enabled_All(bool enabled)
 {
+    GEAR_DEBUG_LOG("enabled all: %i", enabled);
+
     x_Axis->set_Enabled(enabled);
 
     up->set_Enabled(enabled);

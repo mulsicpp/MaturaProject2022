@@ -13,7 +13,7 @@
 
 using namespace gear;
 
-EisScript::EisScript(InputDevice device) : BaseFighterScript(device, "assets/fighters/eis") {
+EisScript::EisScript(InputDevice device, std::string palette_Name) : BaseFighterScript(device, "assets/fighters/eis", palette_Name) {
     physics.collider = Collider::create(Rect{{-12, 10}, {12, 28}});
 }
 
@@ -41,21 +41,21 @@ void EisScript::spawn_Projectile(void) {
     transform.position[0] += 26 * transform.scale[0];
     transform.position[1] += 10;
     proj.set<TransformComponent>(transform);
-    proj.update_Transformation();
 
     proj.add<AnimationComponent>(a_Projectile[0]);
 
     DynamicPhysicsComponent physics;
     physics.acceleration = {0, 0};
     physics.collider = Collider::create(Circle{{0, 0}, 7});
-    physics.velocity = 300 * transform.scale[0];
+    physics.velocity = 100 * transform.scale[0];
     proj.add<DynamicPhysicsComponent>(physics);
+    proj.update_Transformation();
 
     class ProjectileScript : public ScriptableEntity {
     private:
         double time_To_Live = 1;
 
-        void pre_Physics(void) override {
+        void pre_Input(void) override {
             time_To_Live -= Game::get_Delta_Time();
             if(time_To_Live <= 0)
                 Scene::get(m_Entity.get_Scene_ID())->remove_Entity(m_Entity);

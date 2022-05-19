@@ -15,7 +15,8 @@ public:
 class MyGame : public gear::Game
 {
 private:
-    gear::Entity medusa;
+    gear::Entity p1, p2;
+    gear::Entity health_P1, health_P2;
     gear::Ref<gear::Palette> palettes[7];
     int palette_Index = 0;
     gear::Vector<double, 2> m_Target_Pos;

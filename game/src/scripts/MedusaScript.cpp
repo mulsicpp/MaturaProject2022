@@ -4,7 +4,7 @@
 
 using namespace gear;
 
-MedusaScript::MedusaScript(InputDevice device) : BaseFighterScript(device, "assets/fighters/medusa") {
+MedusaScript::MedusaScript(InputDevice device, std::string palette_Name) : BaseFighterScript(device, "assets/fighters/medusa", palette_Name) {
     physics.collider = Collider::create(Rect{{-6, -28}, {6, 25}});
 }
 

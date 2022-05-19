@@ -15,7 +15,7 @@ void gear::Circle::transform(const gear::TransformComponent *transform, gear::Sh
   Circle *s = (Circle *)transformed_Shape;
   s->m_Enabled = m_Enabled;
   s->position = (transform->get_Matrix() * Vector<double, 3>{position[0], position[1], 1}).use_As<2>();
-  s->radius = sqrt(transform->scale[0] * transform->scale[1]) * radius;
+  s->radius = sqrt(abs(transform->scale[0] * transform->scale[1])) * radius;
 }
 
 void gear::Circle::assign(const gear::Shape *other)

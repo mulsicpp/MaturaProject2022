@@ -18,7 +18,7 @@ static bool fighter_Physics_Check(gear::CollisionEvent e)
     return true;
 }
 
-BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
+BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path, std::string palette_Name)
 {
     if (!error_Animation)
         error_Animation = ResourceManager::get<Animation>("assets/fighters/_error/error.gear");
@@ -38,12 +38,12 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
                 set_Direction(real_Val);
                 play_Animation(&a_Run[0]);
                 if (input->special->get_State() == State::PRESSED)
-                    GEAR_DEBUG_LOG("side special %i", real_Val);
+                    play_Animation(a_Sspecial, FIGHTER_ANIMATION_SPECIAL);
                 else if (input->attack->get_State() == State::PRESSED)
                     if (flags & FIGHTER_GROUND)
-                        GEAR_DEBUG_LOG("side ground %i", real_Val);
+                        play_Animation(a_Sground, FIGHTER_ANIMATION_ATTACK);
                     else
-                        GEAR_DEBUG_LOG("side air %i", real_Val);
+                        play_Animation(a_Sair, FIGHTER_ANIMATION_ATTACK);
             }
             else if (flags & FIGHTER_GROUND)
             {
@@ -58,12 +58,12 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
         if (a == Action::PRESSED)
         {
             if (input->special->get_State() == State::PRESSED)
-                GEAR_DEBUG_LOG("up special");
+                play_Animation(a_Uspecial, FIGHTER_ANIMATION_SPECIAL);
             else if (input->attack->get_State() == State::PRESSED)
                 if (flags & FIGHTER_GROUND)
-                    GEAR_DEBUG_LOG("up ground");
+                    play_Animation(a_Uground, FIGHTER_ANIMATION_ATTACK);
                 else
-                    GEAR_DEBUG_LOG("up air");
+                    play_Animation(a_Uair, FIGHTER_ANIMATION_ATTACK);
         }
     };
 
@@ -72,12 +72,12 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
         if (a == Action::PRESSED)
         {
             if (input->special->get_State() == State::PRESSED)
-                GEAR_DEBUG_LOG("down special");
+                play_Animation(a_Dspecial, FIGHTER_ANIMATION_SPECIAL);
             else if (input->attack->get_State() == State::PRESSED)
                 if (flags & FIGHTER_GROUND)
-                    GEAR_DEBUG_LOG("down ground");
+                    play_Animation(a_Dground, FIGHTER_ANIMATION_ATTACK);
                 else
-                    GEAR_DEBUG_LOG("down air");
+                    play_Animation(a_Dair, FIGHTER_ANIMATION_ATTACK);
         }
     };
 
@@ -179,7 +179,7 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path)
     physics.check = fighter_Physics_Check;
 
     init_Input();
-    init_Animations(base_Path);
+    init_Animations(base_Path, palette_Name);
 }
 
 BaseFighterScript::~BaseFighterScript() {}
@@ -232,10 +232,10 @@ void BaseFighterScript::init_Animation(AnimationComponent *animation, std::strin
     };
 }
 
-void BaseFighterScript::init_Animations(const char *base_Path)
+void BaseFighterScript::init_Animations(const char *base_Path, std::string palette_Name)
 {
     std::string path = base_Path;
-    palette = ResourceManager::get<Palette>(path + "/palettes/default.gear");
+    palette = ResourceManager::get<Palette>(path + "/palettes/" + palette_Name);
 
     init_Animation(&a_Idle[0], path + "/animations/right/idle.gear", palette);
     init_Animation(&a_Run[0], path + "/animations/right/run.gear", palette);
