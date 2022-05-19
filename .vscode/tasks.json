@@ -1,0 +1,23 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Game",
+            "type": "shell",
+            "command": "cppbuilder game --var:gear=no",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run Game",
+            "type": "shell",
+            "command": "./game\\out\\debug\\win32\\x64\\game.exe",
+            "problemMatcher": []
+        }
+    ]
+}

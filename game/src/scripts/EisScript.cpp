@@ -50,13 +50,14 @@ void EisScript::spawn_Projectile(void) {
     physics.collider = Collider::create(Circle{{0, 0}, 7});
     physics.velocity = 300 * transform.scale[0];
     proj.add<DynamicPhysicsComponent>(physics);
-
     class ProjectileScript : public ScriptableEntity {
     private:
         double time_To_Live = 1;
 
         void pre_Physics(void) override {
             time_To_Live -= Game::get_Delta_Time();
+            m_Entity.get<DynamicPhysicsComponent>()->velocity[0] = time_To_Live*300*m_Entity.get<TransformComponent>()->scale[0];
+            m_Entity.get<DynamicPhysicsComponent>()->velocity[1] = time_To_Live*300;
             if(time_To_Live <= 0)
                 Scene::get(m_Entity.get_Scene_ID())->remove_Entity(m_Entity);
         }
