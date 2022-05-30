@@ -49,7 +49,7 @@ public:
 
     void render(Scene *scene);
 
-    void clear_Cache(unsigned int entityID);
+    void clear_Cache(uint8_t scene_ID, unsigned int entityID);
 };
 
 _GEAR_END

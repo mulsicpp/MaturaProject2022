@@ -13,7 +13,7 @@
 
 _GEAR_START
 
-void _clear_Text_Cache(unsigned int entityID);
+void _clear_Text_Cache(uint8_t scene_ID, unsigned int entityID);
 
 struct TextComponent {
   std::string text;
@@ -28,7 +28,7 @@ struct TextComponent {
 template<>
 void gear::Component<gear::TextComponent>::on_Component_Remove(Entity entity, TextComponent *component)
 {
-  _clear_Text_Cache(entity.get_Entity_ID());
+  _clear_Text_Cache(entity.get_Scene_ID(), entity.get_Entity_ID());
   GEAR_DEBUG_LOG("cleared text cache %i", entity.get_Entity_ID());
 }
 

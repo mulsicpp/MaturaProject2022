@@ -23,6 +23,8 @@ private:
 
     gear::Vector<double, 2> cam_Pos;
 
+    double time = 0;
+
     MyCamera cam = &cam_Pos;
     double velocity = 1;
 

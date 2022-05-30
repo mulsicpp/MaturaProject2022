@@ -272,6 +272,12 @@ int BaseFighterScript::axis_As_Int(float value)
 
 void BaseFighterScript::pre_Physics(void)
 {
+    auto transform = m_Entity.get<TransformComponent>();
+    if(transform->position[1] > 400) {
+        transform->position = {0, 0};
+        //m_Entity.set<TransformComponent>();
+    }
+
     auto physics = m_Entity.get<DynamicPhysicsComponent>();
 
     physics->velocity[0] = (flags & FIGHTER_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());

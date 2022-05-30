@@ -8,6 +8,7 @@ public:
     EisScript(gear::InputDevice device, std::string palette_Name);
 
     virtual void init_Animation_Events(void) override;
+    virtual void init(void) override;
 
     void spawn_Projectile(void);
 };

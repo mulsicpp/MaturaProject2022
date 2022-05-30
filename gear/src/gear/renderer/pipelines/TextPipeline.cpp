@@ -23,8 +23,6 @@ void gear::TextPipeline::init(void)
 
     validate_Program(m_Shader);
 
-    GEAR_DEBUG_LOG("opengl program: %i", m_Shader);
-
     glDeleteShader(vertex_Shader);
     glDeleteShader(fragment_Shader);
 
@@ -108,14 +106,13 @@ int gear::TextPipeline::append_Char_Virtual(CachedText *data, Vector<int, 2> *cu
 
     if ((*cursor)[0] + char_Bounds->x_End - char_Bounds->x_Start + data->state.font->get_Char_Gap() > data->state.width)
         return 1;
-    
+
     (*cursor)[0] += char_Bounds->x_End - char_Bounds->x_Start + data->state.font->get_Char_Gap();
     return 0;
 }
 
 void gear::TextPipeline::generate_Buffers(CachedText *data)
 {
-    GEAR_DEBUG_LOG("generating vertex data");
     data->char_Count = 0;
     std::vector<Vertex> vertices;
 
@@ -136,16 +133,19 @@ void gear::TextPipeline::generate_Buffers(CachedText *data)
         {
             if (text_Data[i] != ' ' && text_Data[i] != '\n' && text_Data[i] != '\t')
             {
-                if(start) {
+                if (start)
+                {
                     virtual_Cursor = cursor;
                     bool nl_Required = false;
-                    for(int j = 0; text_Data[i + j] != ' ' && text_Data[i + j] != '\n' && text_Data[i + j] != '\t' && text_Data[i + j] != 0; j++) {
-                        if(append_Char_Virtual(data, &virtual_Cursor, text_Data[i + j])) {
+                    for (int j = 0; text_Data[i + j] != ' ' && text_Data[i + j] != '\n' && text_Data[i + j] != '\t' && text_Data[i + j] != 0; j++)
+                    {
+                        if (append_Char_Virtual(data, &virtual_Cursor, text_Data[i + j]))
+                        {
                             nl_Required = true;
                             break;
                         }
                     }
-                    if(nl_Required)
+                    if (nl_Required)
                         attempt_New_Line(&cursor, data->state);
                 }
                 start = false;
@@ -190,7 +190,6 @@ void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, Transfo
         glGenBuffers(1, &data.vertex_Buffer_ID);
         glGenBuffers(1, &data.index_Buffer_ID);
 
-        GEAR_DEBUG_LOG("colors[0]: {%i, %i, %i, %i}", data.state.colors[0][0], data.state.colors[0][1], data.state.colors[0][2], data.state.colors[0][3]);
         instance.generate_Buffers(&data);
 
         instance.m_Cache[parent.get_Scene_ID()].insert({parent.get_Entity_ID(), data});
@@ -209,7 +208,6 @@ void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, Transfo
         {
             instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()].state = text;
             auto data = instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()];
-            GEAR_DEBUG_LOG("colors[0]: {%i, %i, %i, %i}", data.state.colors[0][0], data.state.colors[0][1], data.state.colors[0][2], data.state.colors[0][3]);
             instance.generate_Buffers(&(instance.m_Cache[parent.get_Scene_ID()][parent.get_Entity_ID()]));
         }
     }
@@ -240,6 +238,7 @@ void gear::TextPipeline::render_Text(Entity parent, TextComponent &text, Transfo
 
     glBindBuffer(GL_ARRAY_BUFFER, cached_Text.vertex_Buffer_ID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cached_Text.index_Buffer_ID);
+    glBindVertexBuffer(0, cached_Text.vertex_Buffer_ID, 0, sizeof(Vertex));
 
     int vertex_Size, index_Size;
     glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &vertex_Size);
@@ -254,12 +253,14 @@ void gear::TextPipeline::render(gear::Scene *scene)
     Entity::for_Each(scene->get_ID(), render_Text);
 }
 
-void gear::TextPipeline::clear_Cache(unsigned int entityID)
+void gear::TextPipeline::clear_Cache(uint8_t scene_ID, unsigned int entity_ID)
 {
-    m_Cache->erase(entityID);
+    glDeleteBuffers(1, &m_Cache[scene_ID][entity_ID].vertex_Buffer_ID);
+    glDeleteBuffers(1, &m_Cache[scene_ID][entity_ID].index_Buffer_ID);
+    m_Cache[scene_ID].erase(entity_ID);
 }
 
-void gear::_clear_Text_Cache(unsigned int entityID)
+void gear::_clear_Text_Cache(uint8_t scene_ID, unsigned int entity_ID)
 {
-    TextPipeline::get_Instance().clear_Cache(entityID);
+    TextPipeline::get_Instance().clear_Cache(scene_ID, entity_ID);
 }
