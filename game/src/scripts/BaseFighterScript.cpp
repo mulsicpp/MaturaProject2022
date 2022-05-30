@@ -1,8 +1,11 @@
 #include "BaseFighterScript.h"
 
 #include <gear/resource/ResourceManager.h>
+#include <gear/resource/Font.h>
 
 #include <gear/collision/shapes/Rect.h>
+
+#include <gear/renderer/TextComponent.h>
 
 #include "../components/FlagComponent.h"
 
@@ -191,6 +194,19 @@ void BaseFighterScript::init(void)
     m_Entity.set<FlagComponent>({FLAG_FIGHTER});
     m_Entity.add<AnimationComponent>(a_Idle[0]);
     m_Entity.add<DynamicPhysicsComponent>(physics);
+
+    health_Display = Scene::get(m_Entity.get_Scene_ID())->create_Entity();
+
+    TextComponent t;
+    t.text = "0.0%";
+    t.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
+    t.colors = std::vector<Vector<uint8_t, 4>>(t.font->get_Colors());
+    t.colors[0] = {255, 32, 32, 255};
+    t.colors[1] = {127, 16, 16, 255};
+    t.break_Word = true;
+    t.height = 200;
+    t.width = 200;
+    health_Display.add<TextComponent>(t);
 }
 
 void BaseFighterScript::init_Input(void)
@@ -270,12 +286,22 @@ int BaseFighterScript::axis_As_Int(float value)
     return value > 0.3 ? 1 : (value < -0.3 ? -1 : 0);
 }
 
+void BaseFighterScript::damage(int amount) {
+    health -= amount;
+    if(health <= 0)
+        respawn();
+}
+
+void BaseFighterScript::respawn(void) {
+    m_Entity.get<TransformComponent>()->position = {0, 0};
+    health = max_Health;
+}
+
 void BaseFighterScript::pre_Physics(void)
 {
     auto transform = m_Entity.get<TransformComponent>();
     if(transform->position[1] > 400) {
-        transform->position = {0, 0};
-        //m_Entity.set<TransformComponent>();
+        respawn();
     }
 
     auto physics = m_Entity.get<DynamicPhysicsComponent>();
@@ -315,6 +341,16 @@ void BaseFighterScript::pre_Physics(void)
 
     prev_Flags = flags;
     flags &= ~FIGHTER_GROUND;
+}
+
+void BaseFighterScript::pre_Render(void) {
+    health_Display.get<TransformComponent>()->position = m_Entity.get<TransformComponent>()->position - Vector<double, 2>{10, 20};
+    health_Display.update_Transformation();
+
+    char buffer[20];
+    sprintf(buffer, "%i/%i", health, max_Health);
+
+    health_Display.get<TextComponent>()->text = buffer;
 }
 
 void BaseFighterScript::play_Animation(AnimationComponent *animation, uint8_t type)

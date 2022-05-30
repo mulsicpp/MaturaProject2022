@@ -19,13 +19,12 @@ using namespace gear;
 EisScript::EisScript(InputDevice device, std::string palette_Name) : BaseFighterScript(device, "assets/fighters/eis", palette_Name)
 {
     physics.collider = Collider::create(Rect{{-12, 10}, {12, 28}});
-
-    
 }
 
-void EisScript::init(void) {
+void EisScript::init(void)
+{
     HurtboxComponent comp;
-    comp.hurtboxes = { Hurtbox::create<Circle>(0, Circle{{0, 19}, 13}) };
+    comp.hurtboxes = {Hurtbox::create<Circle>(0, Circle{{0, 19}, 13})};
 
     m_Entity.add(comp);
 
@@ -82,12 +81,15 @@ void EisScript::spawn_Projectile(void)
     proj.add<DynamicPhysicsComponent>(physics);
 
     HitboxComponent hitbox;
-    hitbox.hitboxes = { Hitbox::create(0, Circle{{0, 0}, 7})};
-    hitbox.hitboxes[0]->on_Collision_Begin([current_Scene, proj](HitboxEvent e) {
-        auto t = e.get_Other_Entity().get<TransformComponent>();
-        t->position[0] += e.get_Entity().get<TransformComponent>()->scale[0] * 150;
-        current_Scene->remove_Entity(proj);
-    });
+    hitbox.hitboxes = {Hitbox::create(0, Circle{{0, 0}, 7})};
+    hitbox.hitboxes[0]->on_Collision_Begin([current_Scene, proj](HitboxEvent e)
+                                           {
+        if(e.get_Other_Entity().get<FlagComponent>()->flags & FLAG_FIGHTER) {
+            auto t = e.get_Other_Entity().get<TransformComponent>();
+            t->position[0] += e.get_Entity().get<TransformComponent>()->scale[0] * 20;
+            ((BaseFighterScript *)e.get_Other_Entity().get<ScriptComponent>()->script)->damage(20);
+            current_Scene->remove_Entity(proj);
+        } });
 
     proj.add(hitbox);
 

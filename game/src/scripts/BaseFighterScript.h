@@ -12,6 +12,8 @@
 
 #include "../input/FighterInput.h"
 
+//#include <gear/scene/Entity.h>
+
 #define FIGHTER_GROUND 0x01
 #define FIGHTER_INPUT_BLOCKED 0x02
 #define FIGHTER_PERFORMING_ACTION 0x04
@@ -41,6 +43,8 @@ protected:
 
     int max_Health = 500;
     int health = 500;
+
+    gear::Entity health_Display;
 
     std::function<void(gear::Action)>
         up_Callback,
@@ -90,9 +94,12 @@ public:
     static int axis_As_Int(float value);
 
     virtual void pre_Physics(void) override;
+    virtual void pre_Render(void) override;
+
     virtual void init_Animation_Events(void);
 
-    // virtual void damage(double damage);
+    virtual void damage(int damage);
+    virtual void respawn(void);
 
     // virtual void slow(double duration);
     // virtual void stun(double duration);

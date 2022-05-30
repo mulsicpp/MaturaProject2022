@@ -146,28 +146,6 @@ void MyGame::on_Startup(void)
     platform3.set<TransformComponent>({{-sprite.sprite->get_Width() / 2 + 267., -sprite.sprite->get_Height() / 2 + 154.}, {1, 1}, 0});
     platform3.add<StaticPhysicsComponent>(physics2);
 
-    //health_P1 = main_Scene->create_Entity();
-
-    TextComponent t;
-    t.text = "0.0%";
-    t.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
-    t.colors = std::vector<Vector<uint8_t, 4>>(t.font->get_Colors());
-    t.colors[0] = {240, 16, 16, 255};
-    t.colors[1] = {120,  8,  8, 255};
-    t.break_Word = true;
-    t.height = 200;
-    t.width = 200;
-    t.offset = {-10, -20};
-    p1.add<TextComponent>(t);
-
-    //health_P2 = main_Scene->create_Entity();
-
-    t.text = "15.0%";
-    t.colors[0] = {16, 64, 255, 255};
-    t.colors[1] = { 8, 32, 127, 255};
-    t.offset = {-10, -30};
-    p2.add<TextComponent>(t);
-
     main_Scene->update_Transformation();
 
     GEAR_DEBUG_LOG("finished scene");
@@ -179,20 +157,13 @@ void MyGame::on_Startup(void)
 
 void MyGame::render(void)
 {
-    time += Game::get_Delta_Time() * 5;
-
-    char buffer[4];
-    sprintf(buffer, "%i", (int)time % 100);
-
-    p1.get<TextComponent>()->text = buffer;
-
     cam_Pos = (p1.get<TransformComponent>()->position + p2.get<TransformComponent>()->position) / 2;
 
     cam.follow_Target();
     
     Renderer::start_New_Frame();
     Renderer::render_Scene(main_Scene);
-    // Renderer::render_All_Hitboxes(main_Scene);
+    Renderer::render_All_Hitboxes(main_Scene);
     Renderer::show_Frame();
 }
 
