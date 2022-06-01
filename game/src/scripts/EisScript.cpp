@@ -16,7 +16,7 @@
 
 using namespace gear;
 
-EisScript::EisScript(InputDevice device, std::string palette_Name) : BaseFighterScript(device, "assets/fighters/eis", palette_Name)
+EisScript::EisScript(InputDevice device, std::string palette_Name, int player_Number) : BaseFighterScript(device, "assets/fighters/eis", palette_Name, player_Number)
 {
     physics.collider = Collider::create(Rect{{-12, 10}, {12, 28}});
 }
@@ -24,7 +24,7 @@ EisScript::EisScript(InputDevice device, std::string palette_Name) : BaseFighter
 void EisScript::init(void)
 {
     HurtboxComponent comp;
-    comp.hurtboxes = {Hurtbox::create<Circle>(0, Circle{{0, 19}, 13})};
+    comp.hurtboxes = {Hurtbox::create(0, Circle{{0, 19}, 13}, Circle{{-5, 6}, 8}, Circle{{-11, -4}, 5})};
 
     m_Entity.add(comp);
 

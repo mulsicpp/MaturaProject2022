@@ -22,8 +22,35 @@
 #define FIGHTER_ANIMATION_ATTACK 1
 #define FIGHTER_ANIMATION_SPECIAL 2
 
+typedef uint8_t state_t;
+
+state_t new_State(void);
+
+#define FIGHTER_STATE(x) const state_t x = new_State();
+
+FIGHTER_STATE(FIGHTER_IDLE)
+FIGHTER_STATE(FIGHTER_RUN)
+FIGHTER_STATE(FIGHTER_JUMPING)
+FIGHTER_STATE(FIGHTER_FAST_FALL)
+FIGHTER_STATE(FIGHTER_SHIELD)
+FIGHTER_STATE(FIGHTER_SIDE_SPECIAL)
+FIGHTER_STATE(FIGHTER_UP_SPECIAL)
+FIGHTER_STATE(FIGHTER_DOWN_SPECIAL)
+FIGHTER_STATE(FIGHTER_SIDE_GROUND)
+FIGHTER_STATE(FIGHTER_UP_GROUND)
+FIGHTER_STATE(FIGHTER_DOWN_GROUND)
+FIGHTER_STATE(FIGHTER_SIDE_AIR)
+FIGHTER_STATE(FIGHTER_UP_AIR)
+FIGHTER_STATE(FIGHTER_DOWN_AIR)
+FIGHTER_STATE(FIGHTER_LEDGE_GRAB)
+FIGHTER_STATE(FIGHTER_HANGING)
+FIGHTER_STATE(FIGHTER_GET_UP)
+
 class BaseFighterScript : public gear::ScriptableEntity
 {
+private:
+    state_t m_State;
+
 protected:
     static gear::Ref<gear::Animation> error_Animation;
     static gear::Ref<gear::Palette> error_Palette;
@@ -46,15 +73,15 @@ protected:
 
     gear::Entity health_Display;
 
-    std::function<void(gear::Action)>
-        up_Callback,
-        down_Callback,
-        jump_Callback,
-        attack_Callback,
-        special_Callback,
-        shield_Callback;
+    // std::function<void(gear::Action)>
+    //     up_Callback,
+    //     down_Callback,
+    //     jump_Callback,
+    //     attack_Callback,
+    //     special_Callback,
+    //     shield_Callback;
 
-    std::function<void(float)> x_Callback;
+    // std::function<void(float)> x_Callback;
 
     gear::DynamicPhysicsComponent physics;
 
@@ -80,8 +107,10 @@ protected:
         a_Hanging[2],
         a_Get_Up[2];
 
+    int player_Number = 0;
+
 public:
-    BaseFighterScript(gear::InputDevice device, const char *base_Path, std::string palette_Name);
+    BaseFighterScript(gear::InputDevice device, const char *base_Path, std::string palette_Name, int player_Number);
     ~BaseFighterScript();
 
     virtual void init(void) override;
@@ -112,4 +141,15 @@ public:
     void set_Direction(int dir);
 
     virtual bool is_Phasing(void);
+
+    void set_State(state_t new_State, bool force = false);
+    state_t get_State(void) const;
+
+    void x_Callback(float value);
+    void up_Callback(gear::Action a);
+    void down_Callback(gear::Action a);
+    void jump_Callback(gear::Action a);
+    void attack_Callback(gear::Action a);
+    void special_Callback(gear::Action a);
+    void shield_Callback(gear::Action a);
 };

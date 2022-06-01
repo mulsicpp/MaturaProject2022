@@ -9,10 +9,17 @@
 
 #include "../components/FlagComponent.h"
 
+static state_t next_State = 0;
+
 using namespace gear;
 
-gear::Ref<gear::Animation> BaseFighterScript::error_Animation = nullptr; // ResourceManager::get<Animation>("assets/fighters/_error/error.gear");
-gear::Ref<gear::Palette> BaseFighterScript::error_Palette = nullptr;     // ResourceManager::get<Palette>("assets/fighters/_error/error_palette.gear");
+state_t new_State(void)
+{
+    return next_State++;
+}
+
+gear::Ref<gear::Animation> BaseFighterScript::error_Animation = nullptr;
+gear::Ref<gear::Palette> BaseFighterScript::error_Palette = nullptr;
 
 static bool fighter_Physics_Check(gear::CollisionEvent e)
 {
@@ -21,7 +28,7 @@ static bool fighter_Physics_Check(gear::CollisionEvent e)
     return true;
 }
 
-BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path, std::string palette_Name)
+BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path, std::string palette_Name, int player_Number) : player_Number(player_Number)
 {
     if (!error_Animation)
         error_Animation = ResourceManager::get<Animation>("assets/fighters/_error/error.gear");
@@ -29,145 +36,6 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path, 
         error_Palette = ResourceManager::get<Palette>("assets/fighters/_error/error_palette.gear");
 
     input = FighterInput::create_From(device);
-
-    x_Callback = [this](float val)
-    {
-        static int prev_Val = 0;
-        int real_Val = axis_As_Int(val);
-        if (prev_Val != real_Val)
-        {
-            if (real_Val)
-            {
-                set_Direction(real_Val);
-                play_Animation(&a_Run[0]);
-                if (input->special->get_State() == State::PRESSED)
-                    play_Animation(a_Sspecial, FIGHTER_ANIMATION_SPECIAL);
-                else if (input->attack->get_State() == State::PRESSED)
-                    if (flags & FIGHTER_GROUND)
-                        play_Animation(a_Sground, FIGHTER_ANIMATION_ATTACK);
-                    else
-                        play_Animation(a_Sair, FIGHTER_ANIMATION_ATTACK);
-            }
-            else if (flags & FIGHTER_GROUND)
-            {
-                play_Animation(&a_Idle[0]);
-            }
-        }
-        prev_Val = val;
-    };
-
-    up_Callback = [this](Action a)
-    {
-        if (a == Action::PRESSED)
-        {
-            if (input->special->get_State() == State::PRESSED)
-                play_Animation(a_Uspecial, FIGHTER_ANIMATION_SPECIAL);
-            else if (input->attack->get_State() == State::PRESSED)
-                if (flags & FIGHTER_GROUND)
-                    play_Animation(a_Uground, FIGHTER_ANIMATION_ATTACK);
-                else
-                    play_Animation(a_Uair, FIGHTER_ANIMATION_ATTACK);
-        }
-    };
-
-    down_Callback = [this](Action a)
-    {
-        if (a == Action::PRESSED)
-        {
-            if (input->special->get_State() == State::PRESSED)
-                play_Animation(a_Dspecial, FIGHTER_ANIMATION_SPECIAL);
-            else if (input->attack->get_State() == State::PRESSED)
-                if (flags & FIGHTER_GROUND)
-                    play_Animation(a_Dground, FIGHTER_ANIMATION_ATTACK);
-                else
-                    play_Animation(a_Dair, FIGHTER_ANIMATION_ATTACK);
-        }
-    };
-
-    jump_Callback = [this](Action a)
-    {
-        if (a == Action::PRESSED)
-        {
-            auto physics = m_Entity.get<DynamicPhysicsComponent>();
-            if (flags & FIGHTER_GROUND)
-                physics->velocity[1] = -this->jump_Strenght;
-            else if (air_Jumps > 0)
-            {
-                physics->velocity[1] = -this->air_Jump_Strength;
-                air_Jumps--;
-            }
-        }
-    };
-
-    attack_Callback = [this](Action a)
-    {
-        if (a == Action::PRESSED)
-        {
-            int val = axis_As_Int(input->x_Axis->get_Value());
-            if (flags & FIGHTER_GROUND)
-            {
-                if (val)
-                {
-                    set_Direction(val);
-                    play_Animation(a_Sground, FIGHTER_ANIMATION_ATTACK);
-                    GEAR_DEBUG_LOG("side ground %i", val);
-                }
-                else if (input->up->get_State() == State::PRESSED)
-                {
-                    play_Animation(a_Uground, FIGHTER_ANIMATION_ATTACK);
-                    GEAR_DEBUG_LOG("up ground");
-                }
-                else if (input->down->get_State() == State::PRESSED)
-                {
-                    play_Animation(a_Dground, FIGHTER_ANIMATION_ATTACK);
-                    GEAR_DEBUG_LOG("down ground");
-                }
-            }
-            else
-            {
-                if (val)
-                {
-                    set_Direction(val);
-                    play_Animation(a_Sair, FIGHTER_ANIMATION_ATTACK);
-                    GEAR_DEBUG_LOG("side air %i", val);
-                }
-                else if (input->up->get_State() == State::PRESSED)
-                {
-                    play_Animation(a_Uair, FIGHTER_ANIMATION_ATTACK);
-                    GEAR_DEBUG_LOG("up air");
-                }
-                else if (input->down->get_State() == State::PRESSED)
-                {
-                    play_Animation(a_Dair, FIGHTER_ANIMATION_ATTACK);
-                    GEAR_DEBUG_LOG("down air");
-                }
-            }
-        }
-    };
-
-    special_Callback = [this](Action a)
-    {
-        if (a == Action::PRESSED)
-        {
-            int val = axis_As_Int(input->x_Axis->get_Value());
-            if (val)
-            {
-                set_Direction(val);
-                play_Animation(a_Sspecial, FIGHTER_ANIMATION_SPECIAL);
-                GEAR_DEBUG_LOG("side special %i", val);
-            }
-            else if (input->up->get_State() == State::PRESSED)
-            {
-                play_Animation(a_Uspecial, FIGHTER_ANIMATION_SPECIAL);
-                GEAR_DEBUG_LOG("up special");
-            }
-            else if (input->down->get_State() == State::PRESSED)
-            {
-                play_Animation(a_Dspecial, FIGHTER_ANIMATION_SPECIAL);
-                GEAR_DEBUG_LOG("down special");
-            }
-        }
-    };
 
     physics.acceleration = {0, 1000};
     physics.velocity_Y_Interval[1] = 300;
@@ -181,14 +49,157 @@ BaseFighterScript::BaseFighterScript(InputDevice device, const char *base_Path, 
     };
     physics.check = fighter_Physics_Check;
 
-    init_Input();
     init_Animations(base_Path, palette_Name);
 }
 
 BaseFighterScript::~BaseFighterScript() {}
 
+void BaseFighterScript::x_Callback(float val)
+{
+    static int prev_Val = 0;
+    int real_Val = axis_As_Int(val);
+    if (prev_Val != real_Val)
+    {
+        if (real_Val)
+        {
+            set_Direction(real_Val);
+            play_Animation(&a_Run[0]);
+            if (input->special->get_State() == State::PRESSED)
+                play_Animation(a_Sspecial, FIGHTER_ANIMATION_SPECIAL);
+            else if (input->attack->get_State() == State::PRESSED)
+                if (flags & FIGHTER_GROUND)
+                    play_Animation(a_Sground, FIGHTER_ANIMATION_ATTACK);
+                else
+                    play_Animation(a_Sair, FIGHTER_ANIMATION_ATTACK);
+        }
+        else if (flags & FIGHTER_GROUND)
+        {
+            play_Animation(&a_Idle[0]);
+        }
+    }
+    prev_Val = val;
+};
+
+void BaseFighterScript::up_Callback(Action a)
+{
+    if (a == Action::PRESSED)
+    {
+        if (input->special->get_State() == State::PRESSED)
+            play_Animation(a_Uspecial, FIGHTER_ANIMATION_SPECIAL);
+        else if (input->attack->get_State() == State::PRESSED)
+            if (flags & FIGHTER_GROUND)
+                play_Animation(a_Uground, FIGHTER_ANIMATION_ATTACK);
+            else
+                play_Animation(a_Uair, FIGHTER_ANIMATION_ATTACK);
+    }
+};
+
+void BaseFighterScript::down_Callback(Action a)
+{
+    if (a == Action::PRESSED)
+    {
+        if (input->special->get_State() == State::PRESSED)
+            play_Animation(a_Dspecial, FIGHTER_ANIMATION_SPECIAL);
+        else if (input->attack->get_State() == State::PRESSED)
+            if (flags & FIGHTER_GROUND)
+                play_Animation(a_Dground, FIGHTER_ANIMATION_ATTACK);
+            else
+                play_Animation(a_Dair, FIGHTER_ANIMATION_ATTACK);
+    }
+};
+
+void BaseFighterScript::jump_Callback(Action a)
+{
+    if (a == Action::PRESSED)
+    {
+        auto physics = m_Entity.get<DynamicPhysicsComponent>();
+        if (flags & FIGHTER_GROUND)
+            physics->velocity[1] = -this->jump_Strenght;
+        else if (air_Jumps > 0)
+        {
+            physics->velocity[1] = -this->air_Jump_Strength;
+            air_Jumps--;
+        }
+    }
+};
+
+void BaseFighterScript::attack_Callback(Action a)
+{
+    if (a == Action::PRESSED)
+    {
+        int val = axis_As_Int(input->x_Axis->get_Value());
+        if (flags & FIGHTER_GROUND)
+        {
+            if (val)
+            {
+                set_Direction(val);
+                play_Animation(a_Sground, FIGHTER_ANIMATION_ATTACK);
+                GEAR_DEBUG_LOG("side ground %i", val);
+            }
+            else if (input->up->get_State() == State::PRESSED)
+            {
+                play_Animation(a_Uground, FIGHTER_ANIMATION_ATTACK);
+                GEAR_DEBUG_LOG("up ground");
+            }
+            else if (input->down->get_State() == State::PRESSED)
+            {
+                play_Animation(a_Dground, FIGHTER_ANIMATION_ATTACK);
+                GEAR_DEBUG_LOG("down ground");
+            }
+        }
+        else
+        {
+            if (val)
+            {
+                set_Direction(val);
+                play_Animation(a_Sair, FIGHTER_ANIMATION_ATTACK);
+                GEAR_DEBUG_LOG("side air %i", val);
+            }
+            else if (input->up->get_State() == State::PRESSED)
+            {
+                play_Animation(a_Uair, FIGHTER_ANIMATION_ATTACK);
+                GEAR_DEBUG_LOG("up air");
+            }
+            else if (input->down->get_State() == State::PRESSED)
+            {
+                play_Animation(a_Dair, FIGHTER_ANIMATION_ATTACK);
+                GEAR_DEBUG_LOG("down air");
+            }
+        }
+    }
+};
+
+void BaseFighterScript::special_Callback(Action a)
+{
+    if (a == Action::PRESSED)
+    {
+        int val = axis_As_Int(input->x_Axis->get_Value());
+        if (val)
+        {
+            set_Direction(val);
+            play_Animation(a_Sspecial, FIGHTER_ANIMATION_SPECIAL);
+            GEAR_DEBUG_LOG("side special %i", val);
+        }
+        else if (input->up->get_State() == State::PRESSED)
+        {
+            play_Animation(a_Uspecial, FIGHTER_ANIMATION_SPECIAL);
+            GEAR_DEBUG_LOG("up special");
+        }
+        else if (input->down->get_State() == State::PRESSED)
+        {
+            play_Animation(a_Dspecial, FIGHTER_ANIMATION_SPECIAL);
+            GEAR_DEBUG_LOG("down special");
+        }
+    }
+}
+
+void BaseFighterScript::shield_Callback(Action a)
+{
+}
+
 void BaseFighterScript::init(void)
 {
+    init_Input();
     init_Animation_Events();
 
     m_Entity.set<FlagComponent>({FLAG_FIGHTER});
@@ -198,11 +209,20 @@ void BaseFighterScript::init(void)
     health_Display = Scene::get(m_Entity.get_Scene_ID())->create_Entity();
 
     TextComponent t;
-    t.text = "0.0%";
+    t.text = "";
     t.font = ResourceManager::get<Font>("assets/fonts/font1.gear");
     t.colors = std::vector<Vector<uint8_t, 4>>(t.font->get_Colors());
-    t.colors[0] = {255, 32, 32, 255};
-    t.colors[1] = {127, 16, 16, 255};
+    switch (player_Number)
+    {
+    case 0:
+        t.colors[0] = {255, 32, 32, 255};
+        t.colors[1] = {127, 16, 16, 255};
+        break;
+    case 1:
+        t.colors[0] = {32, 64, 255, 255};
+        t.colors[1] = {16, 32, 127, 255};
+        break;
+    }
     t.break_Word = true;
     t.height = 200;
     t.width = 200;
@@ -211,14 +231,14 @@ void BaseFighterScript::init(void)
 
 void BaseFighterScript::init_Input(void)
 {
-    input->up->set_Callback(up_Callback);
-    input->down->set_Callback(down_Callback);
-    input->jump->set_Callback(jump_Callback);
-    input->attack->set_Callback(attack_Callback);
-    input->special->set_Callback(special_Callback);
-    input->shield->set_Callback(shield_Callback);
+    input->up->set_Callback([this] (Action a) { this->up_Callback(a); });
+    input->down->set_Callback([this] (Action a) { this->down_Callback(a); });
+    input->jump->set_Callback([this] (Action a) { this->jump_Callback(a); });
+    input->attack->set_Callback([this] (Action a) { this->attack_Callback(a); });
+    input->special->set_Callback([this] (Action a) { this->special_Callback(a); });
+    input->shield->set_Callback([this] (Action a) { this->shield_Callback(a); });
 
-    input->x_Axis->set_Callback(x_Callback);
+    input->x_Axis->set_Callback([this] (float v) { this->x_Callback(v); });
 }
 
 void BaseFighterScript::init_Animation(AnimationComponent *animation, std::string path, Ref<Palette> palette)
@@ -286,13 +306,15 @@ int BaseFighterScript::axis_As_Int(float value)
     return value > 0.3 ? 1 : (value < -0.3 ? -1 : 0);
 }
 
-void BaseFighterScript::damage(int amount) {
+void BaseFighterScript::damage(int amount)
+{
     health -= amount;
-    if(health <= 0)
+    if (health <= 0)
         respawn();
 }
 
-void BaseFighterScript::respawn(void) {
+void BaseFighterScript::respawn(void)
+{
     m_Entity.get<TransformComponent>()->position = {0, 0};
     health = max_Health;
 }
@@ -300,7 +322,8 @@ void BaseFighterScript::respawn(void) {
 void BaseFighterScript::pre_Physics(void)
 {
     auto transform = m_Entity.get<TransformComponent>();
-    if(transform->position[1] > 400) {
+    if (transform->position[1] > 400)
+    {
         respawn();
     }
 
@@ -343,7 +366,8 @@ void BaseFighterScript::pre_Physics(void)
     flags &= ~FIGHTER_GROUND;
 }
 
-void BaseFighterScript::pre_Render(void) {
+void BaseFighterScript::pre_Render(void)
+{
     health_Display.get<TransformComponent>()->position = m_Entity.get<TransformComponent>()->position - Vector<double, 2>{10, 20};
     health_Display.update_Transformation();
 

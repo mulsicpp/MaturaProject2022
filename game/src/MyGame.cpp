@@ -73,6 +73,13 @@ void construct_Entity(Entity e)
     e.add<FlagComponent>({0});
 }
 
+class X {
+public:
+    void x(int i) {
+        return;
+    }
+};
+
 void MyGame::on_Startup(void)
 {
     gear::Game::on_Startup();
@@ -81,7 +88,7 @@ void MyGame::on_Startup(void)
 
     Component<FlagComponent>::allow();
 
-    // window->set_Fullscreen();
+    window->set_Fullscreen();
 
     GEAR_DEBUG_LOG("width: %i height: %i", window->get_Width(), window->get_Height());
 
@@ -119,11 +126,11 @@ void MyGame::on_Startup(void)
     //platform2.add<StaticPhysicsComponent>(physics);
 
     p1 = main_Scene->create_Entity();
-    p1.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::KEYBOARD, "vanilla.gear"));
+    p1.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::KEYBOARD, "vanilla.gear", 0));
     p1.set<TransformComponent>({{-100, -30}});
 
     p2 = main_Scene->create_Entity();
-    p2.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::CONTROLLER_1, "dark.gear"));
+    p2.add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::CONTROLLER_1, "default.gear", 1));
     p2.set<TransformComponent>({{100, -30}});
 
     StaticPhysicsComponent physics2;
@@ -163,7 +170,7 @@ void MyGame::render(void)
     
     Renderer::start_New_Frame();
     Renderer::render_Scene(main_Scene);
-    Renderer::render_All_Hitboxes(main_Scene);
+    // Renderer::render_All_Hitboxes(main_Scene);
     Renderer::show_Frame();
 }
 

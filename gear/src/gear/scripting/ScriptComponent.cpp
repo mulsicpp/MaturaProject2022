@@ -5,7 +5,7 @@
 
 static std::vector<std::function<void(void)>> callbacks(0);
 
-static void(gear::ScriptableEntity::*function)(void) = &gear::ScriptableEntity::post_Hitbox_Check;
+static void(gear::ScriptableEntity::*function)(void) = &gear::ScriptableEntity::pre_Physics;
 
 static void script_Callback(gear::Entity parent, gear::ScriptComponent &script)
 {
