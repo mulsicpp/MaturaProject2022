@@ -297,6 +297,30 @@ void BaseFighterScript::init_Animations(const char *base_Path, std::string palet
     init_Animation(&a_Ledge_Grab[0], path + "/animations/right/ledge_grab.gear", palette);
     init_Animation(&a_Hanging[0], path + "/animations/right/hanging.gear", palette);
     init_Animation(&a_Get_Up[0], path + "/animations/right/get_up.gear", palette);
+
+    map_Animations();
+}
+
+void BaseFighterScript::map_Animations(void) {
+    animations[FIGHTER_IDLE] = a_Idle;
+    animations[FIGHTER_RUN] = a_Run;
+    animations[FIGHTER_SHIELD] = a_Shield;
+
+    animations[FIGHTER_SIDE_SPECIAL] = a_Sspecial;
+    animations[FIGHTER_UP_SPECIAL] = a_Uspecial;
+    animations[FIGHTER_DOWN_SPECIAL] = a_Dspecial;
+
+    animations[FIGHTER_SIDE_GROUND] = a_Sground;
+    animations[FIGHTER_UP_GROUND] = a_Uground;
+    animations[FIGHTER_DOWN_GROUND] = a_Dground;
+
+    animations[FIGHTER_SIDE_AIR] = a_Sair;
+    animations[FIGHTER_UP_AIR] = a_Uair;
+    animations[FIGHTER_DOWN_AIR] = a_Dair;
+
+    animations[FIGHTER_LEDGE_GRAB] = a_Ledge_Grab;
+    animations[FIGHTER_HANGING] = a_Hanging;
+    animations[FIGHTER_GET_UP] = a_Get_Up;
 }
 
 void BaseFighterScript::init_Animation_Events(void) {}
@@ -429,4 +453,21 @@ void BaseFighterScript::set_Direction(int dir)
 bool BaseFighterScript::is_Phasing(void)
 {
     return input->down->get_State() == State::PRESSED;
+}
+
+void BaseFighterScript::set_State(state_t new_State, bool force) {
+    if(new_State == m_State && !force)
+        return;
+    on_State_Switch(new_State, m_State);
+    m_State = new_State;
+}
+
+state_t BaseFighterScript::get_State(void) const {
+    return m_State;
+}
+
+void BaseFighterScript::on_State_Switch(state_t new_State, state_t old_State) {
+    if(m_State != FIGHTER_JUMPING && m_State != FIGHTER_FAST_FALL) {
+        play_Animation(animations[new_State]);
+    }
 }

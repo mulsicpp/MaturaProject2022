@@ -106,6 +106,8 @@ protected:
         a_Ledge_Grab[2],
         a_Hanging[2],
         a_Get_Up[2];
+    
+    std::unordered_map<state_t, gear::AnimationComponent*> animations;
 
     int player_Number = 0;
 
@@ -117,6 +119,7 @@ public:
 
     virtual void init_Input(void);
     virtual void init_Animations(const char *base_Path, std::string palette_Name);
+    virtual void map_Animations(void);
 
     void init_Animation(gear::AnimationComponent *animation, std::string path, gear::Ref<gear::Palette> palette);
 
@@ -144,6 +147,8 @@ public:
 
     void set_State(state_t new_State, bool force = false);
     state_t get_State(void) const;
+
+    virtual void on_State_Switch(state_t new_State, state_t old_State);
 
     void x_Callback(float value);
     void up_Callback(gear::Action a);
