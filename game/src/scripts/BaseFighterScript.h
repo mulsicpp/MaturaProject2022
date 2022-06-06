@@ -18,10 +18,6 @@
 #define FIGHTER_INPUT_BLOCKED 0x02
 #define FIGHTER_PERFORMING_ACTION 0x04
 
-#define FIGHTER_ANIMATION_DEFAULT 0
-#define FIGHTER_ANIMATION_ATTACK 1
-#define FIGHTER_ANIMATION_SPECIAL 2
-
 typedef uint8_t state_t;
 
 state_t new_State(void);
@@ -29,9 +25,6 @@ state_t new_State(void);
 #define FIGHTER_STATE(x) const state_t x = new_State();
 
 FIGHTER_STATE(FIGHTER_IDLE)
-FIGHTER_STATE(FIGHTER_RUN)
-FIGHTER_STATE(FIGHTER_JUMPING)
-FIGHTER_STATE(FIGHTER_FAST_FALL)
 FIGHTER_STATE(FIGHTER_SHIELD)
 FIGHTER_STATE(FIGHTER_SIDE_SPECIAL)
 FIGHTER_STATE(FIGHTER_UP_SPECIAL)
@@ -50,6 +43,7 @@ class BaseFighterScript : public gear::ScriptableEntity
 {
 private:
     state_t m_State;
+    gear::AnimationComponent *m_Running_Animation;
 
 protected:
     static gear::Ref<gear::Animation> error_Animation;
@@ -133,12 +127,14 @@ public:
     virtual void damage(int damage);
     virtual void respawn(void);
 
+    void return_To_Idle(void);
+
     // virtual void slow(double duration);
     // virtual void stun(double duration);
 
     // virtual void reset_Hitboxes(void);
 
-    virtual void play_Animation(gear::AnimationComponent *animation, uint8_t type = FIGHTER_ANIMATION_DEFAULT);
+    virtual void play_Animation(gear::AnimationComponent *animation, bool force = false);
     virtual void end_Animation(void);
 
     void set_Direction(int dir);
