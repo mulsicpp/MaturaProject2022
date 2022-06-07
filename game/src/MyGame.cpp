@@ -88,7 +88,7 @@ void MyGame::on_Startup(void)
 
     Component<FlagComponent>::allow();
 
-    window->set_Fullscreen();
+    // window->set_Fullscreen();
 
     GEAR_DEBUG_LOG("width: %i height: %i", window->get_Width(), window->get_Height());
 

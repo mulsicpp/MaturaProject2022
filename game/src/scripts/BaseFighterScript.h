@@ -42,7 +42,7 @@ FIGHTER_STATE(FIGHTER_GET_UP)
 class BaseFighterScript : public gear::ScriptableEntity
 {
 private:
-    state_t m_State;
+    state_t m_State = FIGHTER_IDLE;
     gear::AnimationComponent *m_Running_Animation;
 
 protected:

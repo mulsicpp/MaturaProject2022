@@ -63,18 +63,13 @@ void BaseFighterScript::x_Callback(float val)
         if (real_Val)
         {
             set_Direction(real_Val);
-            play_Animation(&a_Run[0]);
             if (input->special->get_State() == State::PRESSED)
-                play_Animation(a_Sspecial);
+                set_State(FIGHTER_SIDE_SPECIAL);
             else if (input->attack->get_State() == State::PRESSED)
                 if (flags & FIGHTER_GROUND)
-                    play_Animation(a_Sground);
+                    set_State(FIGHTER_SIDE_GROUND);
                 else
-                    play_Animation(a_Sair);
-        }
-        else if (flags & FIGHTER_GROUND)
-        {
-            play_Animation(&a_Idle[0]);
+                    set_State(FIGHTER_SIDE_AIR);
         }
     }
     prev_Val = val;
@@ -85,12 +80,12 @@ void BaseFighterScript::up_Callback(Action a)
     if (a == Action::PRESSED)
     {
         if (input->special->get_State() == State::PRESSED)
-            play_Animation(a_Uspecial);
+            set_State(FIGHTER_UP_SPECIAL);
         else if (input->attack->get_State() == State::PRESSED)
             if (flags & FIGHTER_GROUND)
-                play_Animation(a_Uground);
+                set_State(FIGHTER_UP_GROUND);
             else
-                play_Animation(a_Uair);
+                set_State(FIGHTER_UP_AIR);
     }
 };
 
@@ -99,12 +94,12 @@ void BaseFighterScript::down_Callback(Action a)
     if (a == Action::PRESSED)
     {
         if (input->special->get_State() == State::PRESSED)
-            play_Animation(a_Dspecial);
+            set_State(FIGHTER_DOWN_SPECIAL);
         else if (input->attack->get_State() == State::PRESSED)
             if (flags & FIGHTER_GROUND)
-                play_Animation(a_Dground);
+                set_State(FIGHTER_DOWN_GROUND);
             else
-                play_Animation(a_Dair);
+                set_State(FIGHTER_DOWN_AIR);
     }
 };
 
@@ -133,17 +128,17 @@ void BaseFighterScript::attack_Callback(Action a)
             if (val)
             {
                 set_Direction(val);
-                play_Animation(a_Sground);
+                set_State(FIGHTER_SIDE_GROUND);
                 GEAR_DEBUG_LOG("side ground %i", val);
             }
             else if (input->up->get_State() == State::PRESSED)
             {
-                play_Animation(a_Uground);
+                set_State(FIGHTER_UP_GROUND);
                 GEAR_DEBUG_LOG("up ground");
             }
             else if (input->down->get_State() == State::PRESSED)
             {
-                play_Animation(a_Dground);
+                set_State(FIGHTER_DOWN_GROUND);
                 GEAR_DEBUG_LOG("down ground");
             }
         }
@@ -152,17 +147,17 @@ void BaseFighterScript::attack_Callback(Action a)
             if (val)
             {
                 set_Direction(val);
-                play_Animation(a_Sair);
+                set_State(FIGHTER_SIDE_AIR);
                 GEAR_DEBUG_LOG("side air %i", val);
             }
             else if (input->up->get_State() == State::PRESSED)
             {
-                play_Animation(a_Uair);
+                set_State(FIGHTER_UP_AIR);
                 GEAR_DEBUG_LOG("up air");
             }
             else if (input->down->get_State() == State::PRESSED)
             {
-                play_Animation(a_Dair);
+                set_State(FIGHTER_DOWN_AIR);
                 GEAR_DEBUG_LOG("down air");
             }
         }
@@ -177,17 +172,17 @@ void BaseFighterScript::special_Callback(Action a)
         if (val)
         {
             set_Direction(val);
-            play_Animation(a_Sspecial);
+            set_State(FIGHTER_SIDE_SPECIAL);
             GEAR_DEBUG_LOG("side special %i", val);
         }
         else if (input->up->get_State() == State::PRESSED)
         {
-            play_Animation(a_Uspecial);
+            set_State(FIGHTER_UP_SPECIAL);
             GEAR_DEBUG_LOG("up special");
         }
         else if (input->down->get_State() == State::PRESSED)
         {
-            play_Animation(a_Dspecial);
+            set_State(FIGHTER_DOWN_SPECIAL);
             GEAR_DEBUG_LOG("down special");
         }
     }
@@ -266,6 +261,11 @@ void BaseFighterScript::init_Animation(AnimationComponent *animation, std::strin
     animation->parallax_Factor = 1;
     animation->frame_Offset = 0;
     animation->frame_Rate = animation->animation->get_Frame_Rate();
+
+    animation->on_Ended = [this]()
+    {
+        set_State(FIGHTER_IDLE);
+    };
 }
 
 void BaseFighterScript::init_Animations(const char *base_Path, std::string palette_Name)
@@ -278,10 +278,6 @@ void BaseFighterScript::init_Animations(const char *base_Path, std::string palet
     init_Animation(&a_Jump[0], path + "/animations/right/jump.gear", palette);
 
     init_Animation(&a_Sground[0], path + "/animations/right/sground.gear", palette);
-    a_Sground->on_Ended = [this]()
-    {
-        set_State(FIGHTER_IDLE);
-    };
     init_Animation(&a_Uground[0], path + "/animations/right/uground.gear", palette);
     init_Animation(&a_Dground[0], path + "/animations/right/dground.gear", palette);
 
@@ -358,30 +354,34 @@ void BaseFighterScript::pre_Physics(void)
 
     double velocity = (flags & FIGHTER_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());
 
-
     physics->velocity[0] = velocity;
 
-    if ((flags & FIGHTER_GROUND) == 0)
+    if (m_State == FIGHTER_IDLE)
     {
-        if (physics->velocity[1] < -300)
-            a_Jump[0].frame_Offset = 1;
-        else if (physics->velocity[1] < -100)
-            a_Jump[0].frame_Offset = 2;
-        else if (physics->velocity[1] < 100)
-            a_Jump[0].frame_Offset = 3;
-        else if (physics->velocity[1] < 300)
-            a_Jump[0].frame_Offset = 4;
+        if ((flags & FIGHTER_GROUND) == 0)
+        {
+            if (physics->velocity[1] < -300)
+                a_Jump[0].frame_Offset = 1;
+            else if (physics->velocity[1] < -100)
+                a_Jump[0].frame_Offset = 2;
+            else if (physics->velocity[1] < 100)
+                a_Jump[0].frame_Offset = 3;
+            else if (physics->velocity[1] < 300)
+                a_Jump[0].frame_Offset = 4;
+            else
+                a_Jump[0].frame_Offset = 5;
+            play_Animation(a_Jump, true);
+        }
         else
-            a_Jump[0].frame_Offset = 5;
-        play_Animation(a_Jump, true);
+        {
+            if (axis_As_Int(input->x_Axis->get_Value()) != 0)
+                play_Animation(a_Run);
+            else
+                play_Animation(a_Idle);
+        }
     }
-    else
-    {
-        if (axis_As_Int(input->x_Axis->get_Value()) != 0)
-            play_Animation(a_Run);
-        else
-            play_Animation(a_Idle);
-    }
+
+    GEAR_DEBUG_LOG("%x", flags);
 
     prev_Flags = flags;
     flags &= ~FIGHTER_GROUND;
@@ -400,7 +400,8 @@ void BaseFighterScript::pre_Render(void)
 
 void BaseFighterScript::play_Animation(AnimationComponent *animation, bool force)
 {
-    if (animation != m_Running_Animation || force) {
+    if (animation != m_Running_Animation || force)
+    {
         m_Entity.set<AnimationComponent>(*animation);
         m_Running_Animation = animation;
     }
@@ -465,7 +466,7 @@ state_t BaseFighterScript::get_State(void) const
 
 void BaseFighterScript::on_State_Switch(state_t new_State, state_t old_State)
 {
-    if (m_State != FIGHTER_IDLE)
+    if (new_State != FIGHTER_IDLE)
     {
         play_Animation(animations[new_State]);
     }
