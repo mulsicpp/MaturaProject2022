@@ -20,7 +20,12 @@
 
 typedef uint8_t state_t;
 
-state_t new_State(void);
+static state_t next_State = 0;
+
+static state_t new_State(void)
+{
+    return next_State++;
+}
 
 #define FIGHTER_STATE(x) const state_t x = new_State();
 

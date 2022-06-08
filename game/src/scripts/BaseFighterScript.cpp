@@ -9,14 +9,7 @@
 
 #include "../components/FlagComponent.h"
 
-static state_t next_State = 0;
-
 using namespace gear;
-
-state_t new_State(void)
-{
-    return next_State++;
-}
 
 gear::Ref<gear::Animation> BaseFighterScript::error_Animation = nullptr;
 gear::Ref<gear::Palette> BaseFighterScript::error_Palette = nullptr;
@@ -56,6 +49,8 @@ BaseFighterScript::~BaseFighterScript() {}
 
 void BaseFighterScript::x_Callback(float val)
 {
+    if (flags & FIGHTER_INPUT_BLOCKED)
+        return;
     static int prev_Val = 0;
     int real_Val = axis_As_Int(val);
     if (prev_Val != real_Val)
@@ -77,6 +72,8 @@ void BaseFighterScript::x_Callback(float val)
 
 void BaseFighterScript::up_Callback(Action a)
 {
+    if (flags & FIGHTER_INPUT_BLOCKED)
+        return;
     if (a == Action::PRESSED)
     {
         if (input->special->get_State() == State::PRESSED)
@@ -91,6 +88,8 @@ void BaseFighterScript::up_Callback(Action a)
 
 void BaseFighterScript::down_Callback(Action a)
 {
+    if (flags & FIGHTER_INPUT_BLOCKED)
+        return;
     if (a == Action::PRESSED)
     {
         if (input->special->get_State() == State::PRESSED)
@@ -105,6 +104,8 @@ void BaseFighterScript::down_Callback(Action a)
 
 void BaseFighterScript::jump_Callback(Action a)
 {
+    if (flags & FIGHTER_INPUT_BLOCKED)
+        return;
     if (a == Action::PRESSED)
     {
         auto physics = m_Entity.get<DynamicPhysicsComponent>();
@@ -120,6 +121,8 @@ void BaseFighterScript::jump_Callback(Action a)
 
 void BaseFighterScript::attack_Callback(Action a)
 {
+    if (flags & FIGHTER_INPUT_BLOCKED)
+        return;
     if (a == Action::PRESSED)
     {
         int val = axis_As_Int(input->x_Axis->get_Value());
@@ -166,6 +169,8 @@ void BaseFighterScript::attack_Callback(Action a)
 
 void BaseFighterScript::special_Callback(Action a)
 {
+    if (flags & FIGHTER_INPUT_BLOCKED)
+        return;
     if (a == Action::PRESSED)
     {
         int val = axis_As_Int(input->x_Axis->get_Value());
@@ -190,6 +195,8 @@ void BaseFighterScript::special_Callback(Action a)
 
 void BaseFighterScript::shield_Callback(Action a)
 {
+    if (flags & FIGHTER_INPUT_BLOCKED)
+        return;
 }
 
 void BaseFighterScript::init(void)
@@ -352,36 +359,35 @@ void BaseFighterScript::pre_Physics(void)
 
     auto physics = m_Entity.get<DynamicPhysicsComponent>();
 
-    double velocity = (flags & FIGHTER_GROUND ? 1 : air_Movement_Factor) * movement_Speed * axis_As_Int(input->x_Axis->get_Value());
+    int dir = flags & FIGHTER_INPUT_BLOCKED ? 0 : axis_As_Int(input->x_Axis->get_Value());
 
-    physics->velocity[0] = velocity;
+    physics->velocity[0] = (flags & FIGHTER_GROUND ? 1 : air_Movement_Factor) * movement_Speed * dir;
+    set_Direction(dir);
 
     if (m_State == FIGHTER_IDLE)
     {
         if ((flags & FIGHTER_GROUND) == 0)
         {
             if (physics->velocity[1] < -300)
-                a_Jump[0].frame_Offset = 1;
+                a_Jump[0].frame_Offset = 0;
             else if (physics->velocity[1] < -100)
-                a_Jump[0].frame_Offset = 2;
+                a_Jump[0].frame_Offset = 1;
             else if (physics->velocity[1] < 100)
-                a_Jump[0].frame_Offset = 3;
+                a_Jump[0].frame_Offset = 2;
             else if (physics->velocity[1] < 300)
-                a_Jump[0].frame_Offset = 4;
+                a_Jump[0].frame_Offset = 3;
             else
-                a_Jump[0].frame_Offset = 5;
+                a_Jump[0].frame_Offset = 4;
             play_Animation(a_Jump, true);
         }
         else
         {
-            if (axis_As_Int(input->x_Axis->get_Value()) != 0)
+            if (dir != 0)
                 play_Animation(a_Run);
             else
                 play_Animation(a_Idle);
         }
     }
-
-    GEAR_DEBUG_LOG("%x", flags);
 
     prev_Flags = flags;
     flags &= ~FIGHTER_GROUND;
