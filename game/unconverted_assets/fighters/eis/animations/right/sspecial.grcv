@@ -7,6 +7,6 @@ background 0000ffff
 
 type forward
 
-frame_rate 16
+frame_rate 6
 frame_alignment v
 frame_count 8

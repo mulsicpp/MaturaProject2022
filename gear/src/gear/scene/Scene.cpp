@@ -52,7 +52,7 @@ struct X
 
 gear::Entity gear::Scene::create_Entity(void)
 {
-    GEAR_DEBUG_LOG("creating entity: %i", m_Next_ID);
+    // GEAR_DEBUG_LOG("creating entity: %i", m_Next_ID);
     m_Comp_Flags[m_Next_ID] = 0;
     if (m_Default_Construction != nullptr)
         m_Default_Construction({m_Next_ID, (uint8_t)(this - scenes)});
@@ -66,7 +66,7 @@ void gear::Scene::remove_Entity(Entity entity)
 
 void gear::Scene::remove_Entity_With_ID(unsigned int entity_ID)
 {
-    GEAR_DEBUG_LOG("deleting entity: %i", entity_ID);
+    // GEAR_DEBUG_LOG("deleting entity: %i", entity_ID);
     remove_All_Components_On(entity_ID);
     m_Comp_Flags.erase(entity_ID);
 }

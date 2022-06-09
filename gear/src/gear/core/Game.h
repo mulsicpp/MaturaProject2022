@@ -59,6 +59,7 @@ public:
 
     const char *get_App_Path(void) const;
 
+    static double get_Time(void);
     static double get_Delta_Time(void);
 };
 

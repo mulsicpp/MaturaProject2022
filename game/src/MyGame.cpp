@@ -129,9 +129,9 @@ void MyGame::on_Startup(void)
     p1.add<ScriptComponent>(ScriptComponent().bind<EisScript>(InputDevice::KEYBOARD, "vanilla.gear", 0));
     p1.set<TransformComponent>({{-100, -30}});
 
-    p2 = main_Scene->create_Entity();
-    p2.add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::CONTROLLER_1, "default.gear", 1));
-    p2.set<TransformComponent>({{100, -30}});
+    //p2 = main_Scene->create_Entity();
+    //p2.add<ScriptComponent>(ScriptComponent().bind<MedusaScript>(InputDevice::CONTROLLER_1, "default.gear", 1));
+    //p2.set<TransformComponent>({{100, -30}});
 
     StaticPhysicsComponent physics2;
     physics2.collider = Collider::create(Rect({0, 0}, {100, 6}));

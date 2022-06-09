@@ -14,9 +14,9 @@
 
 //#include <gear/scene/Entity.h>
 
-#define FIGHTER_GROUND 0x01
-#define FIGHTER_INPUT_BLOCKED 0x02
-#define FIGHTER_PERFORMING_ACTION 0x04
+#define FIGHTER_GROUND_F 0x01
+#define FIGHTER_INPUT_BLOCKED_F 0x02
+#define FIGHTER_BUFFER_REQUIRED_F 0x04
 
 typedef uint8_t state_t;
 
@@ -44,11 +44,17 @@ FIGHTER_STATE(FIGHTER_LEDGE_GRAB)
 FIGHTER_STATE(FIGHTER_HANGING)
 FIGHTER_STATE(FIGHTER_GET_UP)
 
+struct BufferedAction {
+    std::function<void(void)> action;
+    double timestamp;
+};
+
 class BaseFighterScript : public gear::ScriptableEntity
 {
 private:
     state_t m_State = FIGHTER_IDLE;
     gear::AnimationComponent *m_Running_Animation;
+    std::vector<BufferedAction> m_Buffered_Actions;
 
 protected:
     static gear::Ref<gear::Animation> error_Animation;
@@ -140,7 +146,6 @@ public:
     // virtual void reset_Hitboxes(void);
 
     virtual void play_Animation(gear::AnimationComponent *animation, bool force = false);
-    virtual void end_Animation(void);
 
     void set_Direction(int dir);
 
@@ -158,4 +163,7 @@ public:
     void attack_Callback(gear::Action a);
     void special_Callback(gear::Action a);
     void shield_Callback(gear::Action a);
+
+    void buffer_Action(std::function<void(void)> action);
+    void resolve_Buffered_Actions(void);
 };

@@ -98,7 +98,7 @@ void EisScript::spawn_Projectile(void)
     class ProjectileScript : public ScriptableEntity
     {
     private:
-        double time_To_Live = 5;
+        double time_To_Live = 2;
 
         void pre_Input(void) override
         {

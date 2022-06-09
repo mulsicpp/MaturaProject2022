@@ -275,4 +275,6 @@ void gear::Game::gear_Terminate(void)
 
 const char *gear::Game::get_App_Path(void) const { return m_Path_To_App; }
 
+double gear::Game::get_Time(void) { return glfwGetTime(); }
+
 double gear::Game::get_Delta_Time(void) { return m_Delta_Time; }

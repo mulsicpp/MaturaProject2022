@@ -46,7 +46,7 @@ void Component<ScriptComponent>::on_Component_Add(Entity entity, ScriptComponent
     
   component->script = component->construct_Script();
   component->script->m_Entity = entity;
-  GEAR_DEBUG_LOG("constructed script %p", component->script);
+  // GEAR_DEBUG_LOG("constructed script %p", component->script);
   component->script->init();
 }
 
@@ -54,7 +54,7 @@ template <>
 void Component<ScriptComponent>::on_Component_Remove(Entity entity, ScriptComponent *component)
 {
   component->destruct_Script(component);
-  GEAR_DEBUG_LOG("destructed script %p", component->script);
+  // GEAR_DEBUG_LOG("destructed script %p", component->script);
 }
 
 void call_Script_Function(void(ScriptableEntity::*member)(void), Scene *scene);
