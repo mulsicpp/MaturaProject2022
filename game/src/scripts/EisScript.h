@@ -4,6 +4,8 @@ class EisScript : public BaseFighterScript
 {
 protected:
     gear::AnimationComponent a_Projectile[2];
+
+    //gear::
 public:
     EisScript(gear::InputDevice device, std::string palette_Name, int player_Number);
 

@@ -63,10 +63,10 @@ void BaseFighterScript::x_Callback(float val)
             else if (input->attack->get_State() == State::PRESSED)
                 if (flags & FIGHTER_GROUND_F)
                     buffer_Action([this, real_Val]()
-                              { set_Direction(real_Val); set_State(FIGHTER_SIDE_GROUND); });
+                                  { set_Direction(real_Val); set_State(FIGHTER_SIDE_GROUND); });
                 else
                     buffer_Action([this, real_Val]()
-                              { set_Direction(real_Val); set_State(FIGHTER_SIDE_AIR); });
+                                  { set_Direction(real_Val); set_State(FIGHTER_SIDE_AIR); });
         }
     }
     prev_Val = val;
@@ -80,7 +80,7 @@ void BaseFighterScript::up_Callback(Action a)
     {
         if (input->special->get_State() == State::PRESSED)
             buffer_Action([this]()
-                              { set_State(FIGHTER_UP_SPECIAL); });
+                          { set_State(FIGHTER_UP_SPECIAL); });
         else if (input->attack->get_State() == State::PRESSED)
             if (flags & FIGHTER_GROUND_F)
                 buffer_Action([this]()
@@ -99,7 +99,7 @@ void BaseFighterScript::down_Callback(Action a)
     {
         if (input->special->get_State() == State::PRESSED)
             buffer_Action([this]()
-                              { set_State(FIGHTER_DOWN_SPECIAL); });
+                          { set_State(FIGHTER_DOWN_SPECIAL); });
         else if (input->attack->get_State() == State::PRESSED)
             if (flags & FIGHTER_GROUND_F)
                 buffer_Action([this]()
@@ -116,14 +116,16 @@ void BaseFighterScript::jump_Callback(Action a)
         return;
     if (a == Action::PRESSED)
     {
-        auto physics = m_Entity.get<DynamicPhysicsComponent>();
-        if (flags & FIGHTER_GROUND_F)
-            physics->velocity[1] = -this->jump_Strenght;
-        else if (air_Jumps > 0)
-        {
-            physics->velocity[1] = -this->air_Jump_Strength;
-            air_Jumps--;
-        }
+        buffer_Action([this]()
+                      {
+            auto physics = m_Entity.get<DynamicPhysicsComponent>();
+            if (flags & FIGHTER_GROUND_F)
+                physics->velocity[1] = -this->jump_Strenght;
+            else if (air_Jumps > 0)
+            {
+                physics->velocity[1] = -this->air_Jump_Strength;
+                air_Jumps--;
+            } });
     }
 };
 
@@ -179,20 +181,20 @@ void BaseFighterScript::special_Callback(Action a)
     {
         int val = axis_As_Int(input->x_Axis->get_Value());
         if (val)
-            {
-                buffer_Action([this, val]()
-                              { set_Direction(val); set_State(FIGHTER_SIDE_SPECIAL); GEAR_DEBUG_LOG("side special"); });
-            }
-            else if (input->up->get_State() == State::PRESSED)
-            {
-                buffer_Action([this]()
-                              { set_State(FIGHTER_UP_SPECIAL); });
-            }
-            else if (input->down->get_State() == State::PRESSED)
-            {
-                buffer_Action([this]()
-                              { set_State(FIGHTER_DOWN_SPECIAL); });
-            }
+        {
+            buffer_Action([this, val]()
+                          { set_Direction(val); set_State(FIGHTER_SIDE_SPECIAL); GEAR_DEBUG_LOG("side special"); });
+        }
+        else if (input->up->get_State() == State::PRESSED)
+        {
+            buffer_Action([this]()
+                          { set_State(FIGHTER_UP_SPECIAL); });
+        }
+        else if (input->down->get_State() == State::PRESSED)
+        {
+            buffer_Action([this]()
+                          { set_State(FIGHTER_DOWN_SPECIAL); });
+        }
     }
 }
 
@@ -276,7 +278,6 @@ void BaseFighterScript::init_Animation(AnimationComponent *animation, std::strin
     {
         set_State(FIGHTER_IDLE);
         resolve_Buffered_Actions();
-        GEAR_DEBUG_LOG("ended animation");
     };
 }
 
@@ -364,7 +365,7 @@ void BaseFighterScript::pre_Physics(void)
 
     auto physics = m_Entity.get<DynamicPhysicsComponent>();
 
-    int dir = flags & FIGHTER_INPUT_BLOCKED_F ? 0 : axis_As_Int(input->x_Axis->get_Value());
+    int dir = flags & FIGHTER_BUFFER_REQUIRED_F ? 0 : axis_As_Int(input->x_Axis->get_Value());
 
     physics->velocity[0] = (flags & FIGHTER_GROUND_F ? 1 : air_Movement_Factor) * movement_Speed * dir;
     set_Direction(dir);
@@ -413,7 +414,6 @@ void BaseFighterScript::play_Animation(AnimationComponent *animation, bool force
 {
     if (animation != m_Running_Animation || force)
     {
-        GEAR_DEBUG_LOG("playing animation offset: %f", animation->frame_Offset);
         m_Entity.set<AnimationComponent>(*animation);
         m_Running_Animation = animation;
     }
@@ -439,7 +439,6 @@ void BaseFighterScript::set_State(state_t new_State, bool force)
     if (new_State == m_State && !force)
         return;
     on_State_Switch(new_State, m_State);
-    GEAR_DEBUG_LOG("new state: %i", new_State);
     m_State = new_State;
 }
 
@@ -454,17 +453,18 @@ void BaseFighterScript::on_State_Switch(state_t new_State, state_t old_State)
     {
         play_Animation(animations[new_State], true);
     }
-    if (new_State == FIGHTER_IDLE)
+    if (new_State == FIGHTER_IDLE) {
         flags &= ~FIGHTER_BUFFER_REQUIRED_F;
+    }
     else
         flags |= FIGHTER_BUFFER_REQUIRED_F;
 }
 
 void BaseFighterScript::buffer_Action(std::function<void(void)> action)
 {
-    if (flags & FIGHTER_BUFFER_REQUIRED_F) {
+    if (flags & FIGHTER_BUFFER_REQUIRED_F)
+    {
         m_Buffered_Actions.push_back({action, Game::get_Time()});
-        GEAR_DEBUG_LOG("buffered action");
     }
     else
         action();
@@ -473,9 +473,9 @@ void BaseFighterScript::buffer_Action(std::function<void(void)> action)
 void BaseFighterScript::resolve_Buffered_Actions(void)
 {
     double time = Game::get_Time();
-    for(const auto &ba : m_Buffered_Actions)
-        if(time - ba.timestamp < 0.3) {
-            GEAR_DEBUG_LOG("resolving action");
+    for (const auto &ba : m_Buffered_Actions)
+        if (time - ba.timestamp < 0.18)
+        {
             ba.action();
             break;
         }

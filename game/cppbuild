@@ -1,42 +1,25 @@
-const var conf ?= debug
-compvar conf
-echo conf = $conf
-[$conf != debug ? ([$conf != release ? (error conf has to be debug or release)])]
+output app out/${_platform}_${_config}_${_arch}/$app(game)
 
-output app out/$conf/$_platform/$_arch/app(game)
-
-var gear ?= yes
-var grcv ?= yes
-
-[$conf = debug ? (define GEAR_DEBUG)]
-
-[$gear = yes ? (dependency ../gear --var:conf=$conf)]
-#[$conf = debug ? (dependency ../gear/external/imgui)]
+if ${_config} = debug
+    define GEAR_DEBUG
+endif
 
 std c++17
 
-incpath ../gear/src
-incpath ../gear/external/glad/include
-incpath ../gear/external/glfw/include
+incpath ../gear/src ../gear/external/glad/include ../gear/external/glfw/include
 
 
-libpath ../gear/external/glfw/lib/$_platform/$_arch
+libpath ../gear/external/glfw/lib/${_platform}/${_arch}
 linklib glfw3
 
-[$_platform = win32 ? (linklib opengl32)]
-[$_platform = win32 ? (linklib kernel32)]
-[$_platform = win32 ? (linklib user32)]
-[$_platform = win32 ? (linklib gdi32)]
-[$_platform = win32 ? (linklib shell32)]
+if ${_platform} = win32
+    linklib opengl32 kernel32 user32 gdi32 shell32
+else
+    linklib X11 dl pthread
+endif
 
 
-[$_platform = linux ? (linklib X11)]
-[$_platform = linux ? (linklib dl)]
-[$_platform = linux ? (linklib pthread)]
+lib ../gear/lib/${_platform}_${_config}_${_arch}/$lib(gear)
 
-
-src src
-lib ../gear/lib/$conf/$_platform/$_arch/lib(gear)
-
-[ $grcv = yes ? (dependency ../grcv)]
-cmd ../grcv/out/$_platform/$_arch/app(grcv) unconverted_assets assets
+require ../gear ../grcv
+cmd ../grcv/out/${_platform}_${_config}_${_arch}/$app(grcv) "grcv unconverted_assets assets"

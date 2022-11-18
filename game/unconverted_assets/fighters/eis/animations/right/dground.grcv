@@ -1,0 +1,12 @@
+animation dground_temp.png ../../palettes/default.png
+
+img dground_temp.png
+palette ../../palettes/default.png
+
+background 0000ffff
+
+type forward
+
+frame_rate 16
+frame_alignment v
+frame_count 4

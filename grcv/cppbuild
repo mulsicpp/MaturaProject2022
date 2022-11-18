@@ -1,8 +1,9 @@
-output app out/$_platform/$_arch/app(grcv)
+output app out/${_platform}_${_config}_${_arch}/$app(grcv)
 
 std c++17
 
 incpath ../gear/src
 
-src src
-src ../gear/src/gear/data
+require ../gear
+
+lib ../gear/lib/${_platform}_${_config}_${_arch}/$lib(gear)

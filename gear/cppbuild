@@ -1,17 +1,9 @@
-const var conf ?= debug
-compvar conf
-echo conf = $conf
-[$conf != debug ? ([$conf != release ? (error conf has to be debug or release)])]
+output lib lib/${_platform}_${_config}_${_arch}/$lib(gear)
 
-output lib lib/$conf/$_platform/$_arch/lib(gear)
+if ${_config} = debug
+    define GEAR_DEBUG
+endif
 
-[$conf = debug ? (define GEAR_DEBUG)]
-
-incpath src
-incpath external/glad/include
-incpath external/glfw/include
+incpath src external/glad/include external/glfw/include
 
 std c++17
-
-src src
-src external/glad/src

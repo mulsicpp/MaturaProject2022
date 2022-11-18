@@ -1,0 +1,12 @@
+animation sground.png ../../palettes/default.png
+
+img sground.png
+palette ../../palettes/default.png
+
+background 0000ffff
+
+type forward
+
+frame_rate 14
+frame_alignment v
+frame_count 5
