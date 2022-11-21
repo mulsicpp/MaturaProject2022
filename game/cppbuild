@@ -22,4 +22,4 @@ endif
 lib ../gear/lib/${_platform}_${_config}_${_arch}/$lib(gear)
 
 require ../gear ../grcv
-cmd ../grcv/out/${_platform}_${_config}_${_arch}/$app(grcv) "grcv unconverted_assets assets"
+execute ../grcv/out/${_platform}_${_config}_${_arch}/$app(grcv) "grcv unconverted_assets assets"

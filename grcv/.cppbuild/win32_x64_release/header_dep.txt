@@ -1,0 +1,7 @@
+src\animation_converter.cpp:src\animation_converter.h;src\converter.h;..\gear\src\gear\data\FileStream.h;..\gear\src\gear\core\core.h;..\gear\src\gear\data\Grid.h;..\gear\src\gear\core\debug\log.h;..\gear\src\gear\data\memcpy.h;src\ext\stb_image.h;
+src\converter.cpp:src\converter.h;..\gear\src\gear\data\FileStream.h;..\gear\src\gear\core\core.h;..\gear\src\gear\data\memcpy.h;
+src\ext\stb_image.cpp:src\ext\stb_image.h;
+src\image_converter.cpp:src\image_converter.h;src\converter.h;..\gear\src\gear\data\FileStream.h;..\gear\src\gear\core\core.h;..\gear\src\gear\data\Grid.h;..\gear\src\gear\core\debug\log.h;..\gear\src\gear\data\memcpy.h;src\ext\stb_image.h;
+src\font_converter.cpp:src\font_converter.h;src\converter.h;..\gear\src\gear\data\FileStream.h;..\gear\src\gear\core\core.h;..\gear\src\gear\data\Grid.h;..\gear\src\gear\core\debug\log.h;..\gear\src\gear\data\memcpy.h;src\ext\stb_image.h;
+src\palette_converter.cpp:src\palette_converter.h;src\converter.h;..\gear\src\gear\data\FileStream.h;..\gear\src\gear\core\core.h;..\gear\src\gear\data\Grid.h;..\gear\src\gear\core\debug\log.h;..\gear\src\gear\data\memcpy.h;src\ext\stb_image.h;
+src\main.cpp:src\global.h;src\converter.h;..\gear\src\gear\data\FileStream.h;..\gear\src\gear\core\core.h;src\font_converter.h;..\gear\src\gear\data\Grid.h;..\gear\src\gear\core\debug\log.h;..\gear\src\gear\data\memcpy.h;src\image_converter.h;src\animation_converter.h;src\palette_converter.h;
